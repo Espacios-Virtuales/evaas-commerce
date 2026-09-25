@@ -20,8 +20,9 @@
     --color-text-muted: #aeb5bc;
     --color-border: #41474e;
     --color-brand: #39d8e3;
-    --color-accent: #d4af37;
-    --color-accent-text: #0b0b0c;
+    --color-commercial-action: #d4af37;
+    --color-commercial-action-soft: rgba(212,175,55,.16);
+    --color-commercial-action-contrast: #0b0b0c;
     --color-focus: #63e4ec;
     --color-success: #79e0a0;
     --color-warning: #f4cf72;
@@ -65,7 +66,6 @@
     --muted: var(--color-text-muted);
     --blue: #003e6b;
     --cyan: var(--color-brand);
-    --gold: var(--color-accent);
     --white: #f6f6f2;
     --max: 1240px;
     --radius-s: .75rem;
@@ -84,8 +84,9 @@
     --color-text-muted: #485d67;
     --color-border: #aabcc4;
     --color-brand: #005870;
-    --color-accent: #765500;
-    --color-accent-text: #fff;
+    --color-commercial-action: #765500;
+    --color-commercial-action-soft: rgba(118,85,0,.12);
+    --color-commercial-action-contrast: #fff;
     --color-focus: #006d8b;
     --color-success: #17643b;
     --color-warning: #8d5600;
@@ -130,8 +131,9 @@
     --color-text-muted: #c0e2e6;
     --color-border: #70aeb8;
     --color-brand: #83eff1;
-    --color-accent: #f4cf72;
-    --color-accent-text: #062e38;
+    --color-commercial-action: #f4cf72;
+    --color-commercial-action-soft: rgba(244,207,114,.16);
+    --color-commercial-action-contrast: #062e38;
     --color-focus: #fff0a2;
     --color-success: #a1f1b9;
     --color-warning: #ffe08a;
@@ -238,7 +240,7 @@
   .brand-mark { position: relative; width: 2rem; aspect-ratio: 1; border: 1px solid var(--color-brand); border-radius: 50%; box-shadow: inset 0 0 1rem var(--color-overlay); }
   .brand-mark i, .brand-mark b { position: absolute; display: block; content: ""; }
   .brand-mark i { inset: 5px 9px; border: 1px solid var(--cyan); border-block: 0; border-radius: 50%; }
-  .brand-mark b { right: 0; top: 2px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+  .brand-mark b { right: 0; top: 2px; width: 5px; height: 5px; border-radius: 50%; background: var(--color-brand); }
   .desktop-nav { display: flex; margin-left: auto; align-items: center; gap: clamp(.6rem, 1.6vw, 1.7rem); }
   .desktop-nav a { color: var(--color-text-muted); font-size: .9rem; text-decoration: none; transition: color .2s; }
   .desktop-nav a:hover { color: var(--color-text); }
@@ -276,7 +278,11 @@
   .button-secondary:hover { border-color: var(--cyan); box-shadow: none; }
   .button-light { border-color: var(--color-border); color: var(--color-panel-text); background: var(--color-panel-bg); }
   .button-dark { color: var(--color-bg); background: var(--color-text); }
-  .button-gold { color: var(--color-accent-text); background: var(--gold); }
+  .button-commercial { color: var(--color-commercial-action-contrast); background: var(--color-commercial-action); }
+  .button-commercial:hover { box-shadow: 0 .8rem 2rem var(--color-commercial-action-soft); }
+  .button-commercial:active { transform: translateY(1px); filter: brightness(.94); }
+  .button-commercial:disabled, .button-commercial[aria-disabled="true"] { opacity: .58; cursor: not-allowed; transform: none; box-shadow: none; }
+  .button-commercial:focus-visible { outline-color: var(--color-focus); }
   .button-small { min-height: 2.65rem; padding: .7rem 1rem; font-size: .86rem; }
   .button-wide { width: 100%; }
 
@@ -299,8 +305,8 @@
   .stage-site h2 { max-width: 7ch; margin-top: 3rem; font-family: var(--serif); font-size: clamp(2.6rem, 5vw, 4.5rem); }
   .stage-site p { max-width: 22rem; margin-top: 1rem; color: #5b625e; }
   .stage-site span { display: inline-flex; margin-top: 1.4rem; padding: .65rem 1rem; border-radius: 999px; color: #fff; background: #1e4935; font-size: .8rem; }
-  .stage-note { position: absolute; right: -1rem; bottom: 2rem; width: 15rem; padding: 1.1rem; border: 1px solid var(--color-accent); border-radius: 1rem; background: var(--color-surface-elevated); box-shadow: 0 1.5rem 4rem var(--color-overlay); }
-  .stage-note small { color: var(--gold); text-transform: uppercase; letter-spacing: .1em; }
+  .stage-note { position: absolute; right: -1rem; bottom: 2rem; width: 15rem; padding: 1.1rem; border: 1px solid var(--color-commercial-action); border-radius: 1rem; background: var(--color-surface-elevated); box-shadow: 0 1.5rem 4rem var(--color-overlay); }
+  .stage-note small { color: var(--color-commercial-action); text-transform: uppercase; letter-spacing: .1em; }
   .stage-note strong { display: block; margin-top: .5rem; font-size: 1rem; }
 
   .quick-choice { border-block: 1px solid var(--line); background: var(--color-surface); }
@@ -370,7 +376,7 @@
   .selector-result p { max-width: 34rem; margin-top: .8rem; color: var(--color-panel-muted); }
   .selector-result .price { display: block; margin-block: 1.7rem; font-size: 1.5rem; font-weight: 760; }
   .selector-reset { margin-top: 1.3rem; border: 0; border-bottom: 1px solid; color: var(--color-panel-muted); background: transparent; cursor: pointer; }
-  .selector-out { padding: 1rem; border: 1px solid var(--color-accent); border-radius: .8rem; background: var(--color-panel-accent-bg); }
+  .selector-out { padding: 1rem; border: 1px solid var(--color-panel-border); border-radius: .8rem; background: var(--color-panel-accent-bg); }
 
   .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
   .product-card { position: relative; display: flex; min-height: 39rem; flex-direction: column; padding: 2rem; overflow: hidden; border: 1px solid var(--line); border-radius: 1.5rem; background: var(--ink-soft); }
@@ -410,7 +416,7 @@
 
   .trust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
   .trust-card { min-height: 16rem; padding: 2rem; border: 1px solid var(--line); border-radius: 1.2rem; background: var(--color-surface); }
-  .trust-card .trust-index { color: var(--gold); font-family: var(--serif); font-size: 1rem; font-style: italic; }
+  .trust-card .trust-index { color: var(--color-text-muted); font-family: var(--serif); font-size: 1rem; font-style: italic; }
   .trust-card h3 { max-width: 19ch; margin-top: 2.4rem; }
   .trust-card p { max-width: 38rem; margin-top: .8rem; color: var(--muted); }
 
@@ -460,7 +466,7 @@
   .segmented button { min-height: 2.2rem; padding: .5rem .8rem; border: 0; border-radius: 999px; color: var(--muted); background: transparent; font-size: .8rem; cursor: pointer; }
   .segmented button.active { color: var(--color-panel-text); background: var(--color-panel-bg); }
   .demo-disclaimer { display: flex; align-items: center; gap: .55rem; color: var(--muted); font-size: .78rem; }
-  .demo-disclaimer::before { width: .45rem; height: .45rem; border-radius: 50%; content: ""; background: var(--gold); }
+  .demo-disclaimer::before { width: .45rem; height: .45rem; border-radius: 50%; content: ""; background: var(--color-text-muted); }
   .demo-canvas { display: grid; min-height: 44rem; place-items: center; padding: clamp(1rem,4vw,4rem); border: 1px solid var(--line); background: var(--color-surface); transition: background .3s; }
   .demo-device { width: min(100%, 72rem); overflow: hidden; border: 8px solid var(--color-border); border-radius: 1rem; background: var(--color-panel-bg); box-shadow: 0 3rem 6rem var(--color-overlay); transition: width .35s ease, border-radius .35s; }
   .demo-device.mobile { width: min(100%, 25rem); border-radius: 2rem; }
@@ -499,7 +505,7 @@
   .scope-list li { display: grid; grid-template-columns: 1.5rem 1fr; gap: .65rem; }
   .scope-list li::before { content: "✓"; color: var(--cyan); }
   .not-included { margin-top: 1.8rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
-  .not-included strong { color: var(--gold); }
+  .not-included strong { color: var(--color-panel-muted); }
   .not-included p { margin-top: .6rem; color: var(--muted); font-size: .88rem; }
   .sticky-purchase { position: sticky; top: 7rem; align-self: start; padding: 2.4rem; border-radius: 1.4rem; color: var(--color-panel-text); background: var(--color-panel-bg); }
   .sticky-purchase .price-big { display: block; margin-top: 1.5rem; font-size: clamp(2.4rem,5vw,4rem); font-weight: 760; letter-spacing: -.04em; }
@@ -571,7 +577,7 @@
 
 @layer utilities {
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-  .gold { color: var(--gold); }
+  .commercial-value { color: var(--color-commercial-action); }
 }
 
 @media (max-width: 980px) {
