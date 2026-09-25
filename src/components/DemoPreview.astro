@@ -6,7 +6,7 @@ interface Props {
 const { type, expanded = false } = Astro.props;
 ---
 
-<div class:list={['preview-browser', expanded && 'expanded-preview']} data-preview-type={type}>
+<div class:list={['preview-browser', expanded && 'expanded-preview']} data-preview-type={type} data-aos="fade-up" data-aos-offset="16">
   <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i></div>
   {type === 'landing' && (
     <div class="preview-ui landing-ui">

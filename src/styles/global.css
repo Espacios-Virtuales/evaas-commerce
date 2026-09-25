@@ -1,3 +1,5 @@
+@import 'aos/dist/aos.css';
+
 @layer reset, base, components, utilities;
 
 @layer reset {
@@ -647,4 +649,24 @@
 @media (max-width: 600px) {
   .hero-video-frame { display: none; }
   .hero-video::after { background: linear-gradient(90deg, var(--color-bg) 8%, color-mix(in srgb, var(--color-bg) 76%, transparent) 100%), linear-gradient(0deg, var(--color-bg) 0%, transparent 72%); }
+}
+
+/* AOS is progressive enhancement: until it initializes, previews stay visible and operable. */
+html:not(.aos-enabled) [data-aos] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  pointer-events: auto !important;
+}
+
+html.aos-enabled [data-aos="fade-up"] { transform: translate3d(0, 16px, 0); }
+html.aos-enabled [data-aos="fade-up"].aos-animate { transform: translate3d(0, 0, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  html [data-aos], html [data-aos].aos-init {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    pointer-events: auto !important;
+  }
 }

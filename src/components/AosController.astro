@@ -1,0 +1,45 @@
+<script>
+  import AOS from 'aos';
+
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let initialized = false;
+
+  const startAos = () => {
+    if (reducedMotion.matches) {
+      root.classList.remove('aos-enabled');
+      return;
+    }
+
+    try {
+      if (!initialized) {
+        AOS.init({
+          once: true,
+          mirror: false,
+          offset: 16,
+          duration: 450,
+          easing: 'ease-out-cubic',
+          disable: () => reducedMotion.matches
+        });
+        initialized = true;
+      } else {
+        AOS.refreshHard();
+      }
+      root.classList.add('aos-enabled');
+    } catch {
+      root.classList.remove('aos-enabled');
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startAos, { once: true });
+  } else {
+    startAos();
+  }
+
+  reducedMotion.addEventListener('change', startAos);
+  window.addEventListener('pageshow', () => {
+    if (reducedMotion.matches) root.classList.remove('aos-enabled');
+    else startAos();
+  });
+</script>
