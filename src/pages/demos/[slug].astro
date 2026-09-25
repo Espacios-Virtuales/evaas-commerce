@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DemoPreview from '../../components/DemoPreview.astro';
+import ProjectColorSelector from '../../components/ProjectColorSelector.astro';
 import { products, formatCLP, type Product } from '../../data/products';
+import { INITIAL_PREVIEW_COLOR } from '../../data/project-colors';
 
 export const prerender = true;
 export function getStaticPaths() {
@@ -50,14 +52,16 @@ const { product } = Astro.props;
             <button type="button" data-filter="textil">Textil</button>
           </div>
         )}
-        <div class="segmented" aria-label="Cambiar dirección visual">
-          <button class="active" type="button" data-theme="base" aria-pressed="true">Estilo A</button>
-          <button type="button" data-theme="alt" aria-pressed="false">Estilo B</button>
-        </div>
         <span class="demo-disclaimer">Ejemplo de estructura y dirección visual</span>
       </div>
+      <ProjectColorSelector name={`demo-${product.slug}-project-color`} previewTarget="[data-demo-page] [data-device-frame]" />
       <div class="demo-canvas">
-        <div class="demo-device" data-device-frame>
+        <div
+          class="demo-device"
+          data-device-frame
+          data-project-color={INITIAL_PREVIEW_COLOR.id}
+          style={`--project-accent: ${INITIAL_PREVIEW_COLOR.cssValue}; --project-accent-contrast: ${INITIAL_PREVIEW_COLOR.textColor}`}
+        >
           <DemoPreview type={product.slug} expanded />
         </div>
       </div>
@@ -110,14 +114,7 @@ const { product } = Astro.props;
         recordInteraction();
       }));
 
-      demoPage.querySelectorAll('[data-theme]').forEach((button) => button.addEventListener('click', () => {
-        demoPage.querySelectorAll('[data-theme]').forEach((item) => {
-          item.classList.toggle('active', item === button);
-          item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
-        });
-        frame.classList.toggle('theme-alt', button.dataset.theme === 'alt');
-        recordInteraction();
-      }));
+      demoPage.addEventListener('evaas:project-color-change', recordInteraction);
 
       demoPage.querySelectorAll('[data-panel-target]').forEach((button) => button.addEventListener('click', () => {
         demoPage.querySelectorAll('[data-panel-target]').forEach((item) => item.classList.toggle('active', item === button));

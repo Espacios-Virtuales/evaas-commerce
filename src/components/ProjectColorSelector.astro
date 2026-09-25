@@ -1,0 +1,59 @@
+---
+import { INITIAL_PREVIEW_COLOR, PROJECT_COLOR_OPTIONS } from '../data/project-colors';
+
+interface Props {
+  name: string;
+  previewTarget?: string;
+}
+
+const { name, previewTarget } = Astro.props;
+---
+
+<fieldset class="project-color-selector" data-project-color-selector data-preview-target={previewTarget} aria-describedby={`${name}-hint`}>
+  <legend>Color del proyecto</legend>
+  <p id={`${name}-hint`}>Este color orienta tu proyecto; no cambia el producto elegido.</p>
+  <div class="project-color-options">
+    {PROJECT_COLOR_OPTIONS.map((option) => (
+      <label class="project-color-option">
+        <input
+          type="radio"
+          name={name}
+          value={option.id}
+          data-accent={option.cssValue}
+          data-contrast={option.textColor}
+          checked={option.id === INITIAL_PREVIEW_COLOR.id}
+        />
+        <span class="project-color-swatch" style={`--project-swatch: ${option.cssValue}; --project-swatch-text: ${option.textColor}`} aria-hidden="true"><span>✓</span></span>
+        <span class="project-color-label">{option.label}<small>Seleccionado</small></span>
+      </label>
+    ))}
+  </div>
+</fieldset>
+<noscript><style>.project-color-selector { display: none !important; }</style></noscript>
+
+<script>
+  document.querySelectorAll<HTMLFieldSetElement>('[data-project-color-selector]').forEach((selector) => {
+    selector.addEventListener('keydown', (event) => {
+      const input = event.target;
+      if (event.key !== 'Enter' || !(input instanceof HTMLInputElement) || input.type !== 'radio') return;
+      event.preventDefault();
+      input.checked = true;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    selector.addEventListener('change', (event) => {
+      const input = event.target;
+      if (!(input instanceof HTMLInputElement) || input.type !== 'radio' || !input.checked) return;
+      const previewTarget = selector.dataset.previewTarget;
+      const preview = previewTarget ? document.querySelector<HTMLElement>(previewTarget) : null;
+      if (preview) {
+        preview.dataset.projectColor = input.value;
+        preview.style.setProperty('--project-accent', input.dataset.accent ?? '');
+        preview.style.setProperty('--project-accent-contrast', input.dataset.contrast ?? '');
+      }
+      selector.dispatchEvent(new CustomEvent('evaas:project-color-change', {
+        bubbles: true,
+        detail: { projectColor: input.value }
+      }));
+    });
+  });
+</script>
