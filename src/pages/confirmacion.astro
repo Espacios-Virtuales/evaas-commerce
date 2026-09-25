@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+
+<BaseLayout title="Solicitud recibida · EVAAS Station" noindex>
+  <div class="container">
+    <section class="success-card">
+      <span class="success-mark" aria-hidden="true">✓</span>
+      <span class="eyebrow">Solicitud registrada</span>
+      <h1>Ya tenemos tu punto de partida.</h1>
+      <p>Revisaremos la información y continuaremos por el canal informado. No compres dominio ni contrates servicios adicionales hasta confirmar los siguientes pasos.</p>
+      <p class="muted" data-request-reference></p>
+      <a class="button" href="/">Volver al showroom</a>
+    </section>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const reference = params.get('id');
+    const product = params.get('producto');
+    const referenceNode = document.querySelector('[data-request-reference]');
+    if (reference && referenceNode) referenceNode.textContent = `Referencia: ${reference.slice(0, 8).toUpperCase()}`;
+    window.evaasTrack?.('activation_completed', { product: product || 'unknown', request_id: reference || '' });
+  </script>
+</BaseLayout>

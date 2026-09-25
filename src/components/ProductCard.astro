@@ -1,0 +1,28 @@
+---
+import type { Product } from '../data/products';
+import { formatCLP } from '../data/products';
+
+interface Props { product: Product; featured?: boolean; }
+const { product, featured = false } = Astro.props;
+---
+
+<article class:list={['product-card', featured && 'featured']}>
+  {featured && <span class="badge">Equilibrio ideal</span>}
+  <small>{product.eyebrow}</small>
+  <h3>{product.name}</h3>
+  <p class="product-purpose">{product.purpose}</p>
+  <div class="product-price">
+    <strong>{formatCLP(product.finalPrice)}</strong>
+    <span>precio final · incluye IVA</span>
+  </div>
+  <ul class="product-includes">
+    <li>{product.scope}</li>
+    <li>Branding básico y responsive</li>
+    <li>Publicación y conexión de dominio</li>
+    <li>Sin ecommerce</li>
+  </ul>
+  <div class="card-actions">
+    <a class:list={['button', !featured && 'button-light']} href={`/activar/${product.slug}`} data-track="product_selected" data-product={product.slug}>Elegir {product.name}</a>
+    <a class="text-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Explorar demo</a>
+  </div>
+</article>

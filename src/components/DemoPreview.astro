@@ -1,0 +1,53 @@
+---
+interface Props {
+  type: 'landing' | 'catalogo' | 'corporativa';
+  expanded?: boolean;
+}
+const { type, expanded = false } = Astro.props;
+---
+
+<div class:list={['preview-browser', expanded && 'expanded-preview']} data-preview-type={type}>
+  <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+  {type === 'landing' && (
+    <div class="preview-ui landing-ui">
+      <nav><strong>Lumen</strong><span>Origen · Carta · Visítanos</span></nav>
+      <h4>Café lento. Ideas despiertas.</h4>
+      <p>Una pausa bien hecha en el centro de la ciudad.</p>
+      <button type="button">Reservar mesa</button>
+    </div>
+  )}
+  {type === 'catalogo' && (
+    <div class="preview-ui catalog-ui">
+      <nav><strong>Noma</strong><span>Colección · Taller · Contacto</span></nav>
+      <h4>Objetos para vivir mejor.</h4>
+      <div class="mini-products">
+        <div class="mini-product" data-category="mesa"><i></i><strong>Fuente Sur</strong><small>Cerámica · Consultar</small></div>
+        <div class="mini-product" data-category="textil"><i></i><strong>Manta Bruma</strong><small>Lana · Consultar</small></div>
+        <div class="mini-product" data-category="mesa"><i></i><strong>Vaso Piedra</strong><small>Vidrio · Consultar</small></div>
+        <div class="mini-product" data-category="textil"><i></i><strong>Cojín Origen</strong><small>Lino · Consultar</small></div>
+        {expanded && <div class="mini-product" data-category="mesa"><i></i><strong>Jarra Norte</strong><small>Cerámica · Consultar</small></div>}
+        {expanded && <div class="mini-product" data-category="textil"><i></i><strong>Pie de cama</strong><small>Algodón · Consultar</small></div>}
+      </div>
+    </div>
+  )}
+  {type === 'corporativa' && (
+    <div class="preview-ui corporate-ui demo-nav-panels">
+      <nav><strong>Arista</strong><span>Empresa · Servicios · Contacto</span></nav>
+      <div class="active" data-panel="inicio">
+        <h4>Ingeniería que sostiene decisiones.</h4>
+        <p>Diagnóstico, diseño y ejecución para operaciones que no pueden detenerse.</p>
+        <button type="button">Conocer servicios</button>
+      </div>
+      <div data-panel="empresa">
+        <h4>Experiencia aplicada en terreno.</h4>
+        <p>Un equipo técnico cercano, con método y trazabilidad en cada proyecto.</p>
+        <button type="button">Ver nuestra forma de trabajo</button>
+      </div>
+      <div data-panel="servicios">
+        <h4>De la evaluación a la puesta en marcha.</h4>
+        <p>Inspección, diseño, coordinación y soporte para infraestructura crítica.</p>
+        <button type="button">Solicitar una evaluación</button>
+      </div>
+    </div>
+  )}
+</div>

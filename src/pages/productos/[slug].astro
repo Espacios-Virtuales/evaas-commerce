@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DemoPreview from '../../components/DemoPreview.astro';
+import { products, formatCLP, type Product } from '../../data/products';
+
+export const prerender = true;
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+interface Props { product: Product }
+const { product } = Astro.props;
+---
+
+<BaseLayout title={`${product.name} · EVAAS Station`} description={product.purpose}>
+  <header class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Inicio</a><span>/</span><span>Configuraciones</span><span>/</span><strong>{product.name}</strong></div>
+      <div class="page-hero-grid">
+        <div><span class="eyebrow">{product.eyebrow}</span><h1>{product.name}</h1></div>
+        <div class="page-hero-copy"><p>{product.purpose}</p><span class="price-line">{formatCLP(product.finalPrice)} · precio final</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section-tight">
+    <div class="container product-detail-grid">
+      <div>
+        <div class="demo-card-preview" style="border-radius:1.4rem"><DemoPreview type={product.slug} expanded /></div>
+        <div class="scope-panel" style="margin-top:1rem">
+          <span class="eyebrow">Alcance definido</span>
+          <h2>Qué recibes</h2>
+          <p>{product.scope}</p>
+          <ul class="scope-list">{product.includes.map((item) => <li>{item}</li>)}</ul>
+          <div class="not-included"><strong>No incluido en esta activación</strong><p>{product.excludes.join(' · ')}. Cualquier necesidad adicional se cotiza y aprueba por separado.</p></div>
+        </div>
+      </div>
+      <aside class="sticky-purchase">
+        <span class="eyebrow eyebrow-dark">Activación digital</span>
+        <h2>{product.shortPurpose}</h2>
+        <strong class="price-big">{formatCLP(product.finalPrice)}</strong>
+        <span class="tax-copy">Precio final para consumidor · neto {formatCLP(product.netPrice)} + IVA</span>
+        <ul>
+          <li>1 revisión consolidada</li>
+          <li>Tu contenido dentro del alcance</li>
+          <li>Responsive y publicación inicial</li>
+          <li>Conexión del dominio del cliente</li>
+        </ul>
+        <a class="button button-dark button-wide" href={`/activar/${product.slug}`} data-track="product_selected" data-product={product.slug}>Comenzar activación</a>
+        <div class="control-note"><strong>Tu dominio sigue siendo tuyo.</strong><br />Tú lo compras y conservas; nosotros lo conectamos.</div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

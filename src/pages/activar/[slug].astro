@@ -1,0 +1,179 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { products, formatCLP, type Product } from '../../data/products';
+
+export const prerender = true;
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+interface Props { product: Product }
+const { product } = Astro.props;
+---
+
+<BaseLayout title={`Activar ${product.name} · EVAAS Station`} description={`Comienza tu activación digital ${product.name}.`} noindex>
+  <div class="container activation-layout" data-activation-page data-product={product.slug}>
+    <aside class="activation-summary">
+      <span class="eyebrow">Tu selección</span>
+      <h1>{product.name}</h1>
+      <span class="summary-price">{formatCLP(product.finalPrice)}</span>
+      <span class="muted">precio final · incluye IVA</span>
+      <ul>
+        <li>{product.scope}</li>
+        <li>Branding básico y responsive</li>
+        <li>Publicación inicial en Vercel*</li>
+        <li>Conexión de tu dominio</li>
+        <li>Sin ecommerce</li>
+      </ul>
+      <a href={`/productos/${product.slug}`}>Revisar alcance completo</a>
+    </aside>
+
+    <section class="activation-panel">
+      <span class="eyebrow eyebrow-dark">Comenzar activación</span>
+      <h2>Lo esencial para comenzar.</h2>
+      <p>Tus respuestas preparan la solicitud. No te pediremos textos finales ni accesos en esta etapa.</p>
+      <div class="form-progress" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+
+      <form data-activation-form novalidate>
+        <input type="hidden" name="product" value={product.slug} />
+        <input type="hidden" name="formStartedAt" value="" />
+        <div class="honeypot" aria-hidden="true"><label>Empresa web <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+        <div class="form-step active" data-form-step="1">
+          <div class="field-grid">
+            <div class="field field-full">
+              <label for="project">Nombre del proyecto o negocio</label>
+              <input id="project" name="project" required maxlength="100" autocomplete="organization" placeholder="Ej. Café Lumen" />
+            </div>
+            <fieldset class="field field-full" style="border:0;padding:0;margin:0">
+              <legend>¿Ya tienes dominio?</legend>
+              <div class="radio-grid">
+                <div class="radio-card"><input id="domain-yes" type="radio" name="domainStatus" value="owned" required /><label for="domain-yes"><strong>Sí</strong><span>Ya es mío</span></label></div>
+                <div class="radio-card"><input id="domain-no" type="radio" name="domainStatus" value="needed" /><label for="domain-no"><strong>No</strong><span>Necesito comprarlo</span></label></div>
+                <div class="radio-card"><input id="domain-unsure" type="radio" name="domainStatus" value="unsure" /><label for="domain-unsure"><strong>No sé</strong><span>Necesito orientación</span></label></div>
+              </div>
+              <small>El dominio lo compras y conservas tú. Te ayudamos a conectarlo.</small>
+            </fieldset>
+            <div class="field field-full">
+              <label for="context">¿Qué necesitas que una persona entienda o haga?</label>
+              <textarea id="context" name="context" maxlength="600" placeholder="Ej. Conocer mis servicios y solicitar una hora."></textarea>
+              <small>Una frase es suficiente. Podrás completar la información después.</small>
+            </div>
+          </div>
+          <div class="form-actions"><span></span><button class="button button-dark" type="button" data-next>Continuar</button></div>
+        </div>
+
+        <div class="form-step" data-form-step="2">
+          <div class="field-grid">
+            <div class="field"><label for="name">Tu nombre</label><input id="name" name="name" required maxlength="80" autocomplete="name" /></div>
+            <div class="field"><label for="email">Correo</label><input id="email" name="email" required type="email" maxlength="160" autocomplete="email" /></div>
+            <div class="field field-full"><label for="whatsapp">WhatsApp <span class="muted">(opcional)</span></label><input id="whatsapp" name="whatsapp" type="tel" maxlength="30" autocomplete="tel" placeholder="+56 9…" /></div>
+          </div>
+          <div class="form-actions"><button class="button-plain" type="button" data-back>Volver</button><button class="button button-dark" type="button" data-next>Revisar solicitud</button></div>
+        </div>
+
+        <div class="form-step" data-form-step="3">
+          <h3>Confirma antes de enviar</h3>
+          <p class="muted" style="margin-top:.6rem">Verifica el punto de partida. El alcance definitivo se mantiene en la configuración elegida.</p>
+          <div class="review-box" data-review></div>
+          <div class="checkbox">
+            <input id="consent" name="consent" type="checkbox" required />
+            <label for="consent">Acepto que Espacios Virtuales use estos datos para gestionar esta solicitud. Leí el <a href="/privacidad" target="_blank">aviso de privacidad</a> y el <a href="/terminos" target="_blank">alcance de la activación</a>.</label>
+          </div>
+          <div class="form-status" data-form-status role="status" aria-live="polite"></div>
+          <div class="form-actions"><button class="button-plain" type="button" data-back>Volver</button><button class="button button-dark" type="submit">Enviar y continuar</button></div>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script define:vars={{ productName: product.name, productSlug: product.slug }}>
+    // @ts-nocheck -- form controls and Astro serialized variables are runtime DOM values.
+    const page = document.querySelector('[data-activation-page]');
+    const form = page?.querySelector('[data-activation-form]');
+    if (form) {
+      const steps = [...form.querySelectorAll('[data-form-step]')];
+      const progress = [...page.querySelectorAll('.form-progress span')];
+      const status = form.querySelector('[data-form-status]');
+      let current = 0;
+      form.elements.formStartedAt.value = String(Date.now());
+      window.evaasTrack?.('activation_started', { product: productSlug });
+
+      const showStep = (index) => {
+        current = index;
+        steps.forEach((step, i) => step.classList.toggle('active', i === index));
+        progress.forEach((bar, i) => bar.classList.toggle('active', i <= index));
+        page.querySelector('.activation-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+
+      const fieldsForStep = (index) => [...steps[index].querySelectorAll('input, textarea, select')].filter((field) => field.type !== 'hidden');
+      const validateStep = (index) => {
+        for (const field of fieldsForStep(index)) {
+          if (!field.checkValidity()) { field.reportValidity(); return false; }
+        }
+        return true;
+      };
+
+      const renderReview = () => {
+        const data = new FormData(form);
+        const domain = { owned: 'Ya tiene dominio', needed: 'Necesita comprar dominio', unsure: 'Necesita orientación' }[data.get('domainStatus')];
+        const values = [
+          ['Configuración', productName],
+          ['Proyecto', data.get('project')],
+          ['Dominio', domain],
+          ['Contacto', data.get('name')],
+          ['Correo', data.get('email')]
+        ];
+        const box = form.querySelector('[data-review]');
+        box.replaceChildren(...values.map(([label, value]) => {
+          const row = document.createElement('div');
+          const key = document.createElement('span');
+          const content = document.createElement('strong');
+          key.textContent = label;
+          content.textContent = value || '—';
+          row.append(key, content);
+          return row;
+        }));
+      };
+
+      form.querySelectorAll('[data-next]').forEach((button) => button.addEventListener('click', () => {
+        if (!validateStep(current)) return;
+        if (current === 1) renderReview();
+        showStep(Math.min(2, current + 1));
+      }));
+      form.querySelectorAll('[data-back]').forEach((button) => button.addEventListener('click', () => showStep(Math.max(0, current - 1))));
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!validateStep(2)) return;
+        status.className = 'form-status';
+        const submit = form.querySelector('[type="submit"]');
+        submit.disabled = true;
+        submit.textContent = 'Enviando…';
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.attribution = window.evaasAttribution || {};
+        try {
+          const response = await fetch('/api/activation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.message || 'No fue posible enviar la solicitud.');
+          sessionStorage.removeItem('evaas_selected_product');
+          window.evaasTrack?.('activation_submitted', { product: productSlug, request_id: result.requestId });
+          if (result.checkoutUrl) {
+            location.assign(result.checkoutUrl);
+          } else {
+            location.assign(`/confirmacion?producto=${encodeURIComponent(productSlug)}&id=${encodeURIComponent(result.requestId)}`);
+          }
+        } catch (error) {
+          status.textContent = error.message || 'No fue posible enviar. Intenta nuevamente.';
+          status.className = 'form-status error';
+          submit.disabled = false;
+          submit.textContent = 'Enviar y continuar';
+          window.evaasTrack?.('activation_error', { product: productSlug });
+        }
+      });
+    }
+  </script>
+</BaseLayout>

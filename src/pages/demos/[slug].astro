@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DemoPreview from '../../components/DemoPreview.astro';
+import { products, formatCLP, type Product } from '../../data/products';
+
+export const prerender = true;
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+
+interface Props { product: Product }
+const { product } = Astro.props;
+---
+
+<BaseLayout title={`Demo ${product.name} · EVAAS Station`} description={`Explora un ejemplo demostrativo de la configuración ${product.name}.`}>
+  <header class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Inicio</a><span>/</span><span>Demos</span><span>/</span><strong>{product.name}</strong></div>
+      <div class="page-hero-grid">
+        <div>
+          <span class="eyebrow">Ejemplo demostrativo · {product.demoCategory}</span>
+          <h1>{product.demoName}</h1>
+        </div>
+        <div class="page-hero-copy">
+          <p>{product.demoDescription} Explora el formato, cambia la vista y observa el nivel de profundidad incluido.</p>
+          <span class="price-line">{product.name} · {formatCLP(product.finalPrice)} final</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="demo-workbench" data-demo-page data-demo={product.slug}>
+    <div class="container">
+      <div class="demo-toolbar">
+        <div class="segmented" aria-label="Cambiar tamaño de pantalla">
+          <button class="active" type="button" data-device="desktop" aria-pressed="true">Escritorio</button>
+          <button type="button" data-device="mobile" aria-pressed="false">Móvil</button>
+        </div>
+        {product.slug === 'corporativa' && (
+          <div class="segmented" aria-label="Navegar ejemplo">
+            <button class="active" type="button" data-panel-target="inicio">Inicio</button>
+            <button type="button" data-panel-target="empresa">Empresa</button>
+            <button type="button" data-panel-target="servicios">Servicios</button>
+          </div>
+        )}
+        {product.slug === 'catalogo' && (
+          <div class="segmented" aria-label="Filtrar catálogo">
+            <button class="active" type="button" data-filter="all">Todo</button>
+            <button type="button" data-filter="mesa">Mesa</button>
+            <button type="button" data-filter="textil">Textil</button>
+          </div>
+        )}
+        <div class="segmented" aria-label="Cambiar dirección visual">
+          <button class="active" type="button" data-theme="base" aria-pressed="true">Estilo A</button>
+          <button type="button" data-theme="alt" aria-pressed="false">Estilo B</button>
+        </div>
+        <span class="demo-disclaimer">Ejemplo de estructura y dirección visual</span>
+      </div>
+      <div class="demo-canvas">
+        <div class="demo-device" data-device-frame>
+          <DemoPreview type={product.slug} expanded />
+        </div>
+      </div>
+
+      <div class="demo-detail">
+        <div>
+          <span class="eyebrow">Lo que esta demo demuestra</span>
+          <h2>Una referencia concreta, no una promesa literal.</h2>
+        </div>
+        <div>
+          <p>Tu resultado usará tu contenido, tu nombre y una dirección visual definida para tu proyecto. La demo muestra el tipo de recorrido y la profundidad posible dentro de {product.name}; no garantiza una copia exacta ni capacidades fuera del alcance.</p>
+          <ul>
+            <li><strong>Formato:</strong> {product.scope}</li>
+            <li><strong>Interacción útil:</strong> adaptación móvil y exploración del contenido.</li>
+            <li><strong>Personalización:</strong> color, tipografía, mensajes e identidad básica.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="demo-cta">
+        <div><strong>¿Este nivel de presencia se parece a lo que necesitas?</strong><p>Puedes revisar el alcance completo antes de comenzar.</p></div>
+        <a class="button" href={`/activar/${product.slug}`} data-track="demo_completed" data-demo={product.slug} data-product={product.slug}>Quiero comenzar con esta estructura</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // @ts-nocheck -- dataset-driven controls are guarded by the demo-page container.
+    const demoPage = document.querySelector('[data-demo-page]');
+    if (demoPage) {
+      const slug = demoPage.dataset.demo;
+      const frame = demoPage.querySelector('[data-device-frame]');
+      let interactions = 0;
+      let completed = false;
+      window.evaasTrack?.('demo_opened', { demo: slug });
+
+      const recordInteraction = () => {
+        interactions += 1;
+        if (!completed && interactions >= 2) {
+          completed = true;
+          window.evaasTrack?.('demo_completed', { demo: slug, method: 'interaction' });
+        }
+      };
+
+      demoPage.querySelectorAll('[data-device]').forEach((button) => button.addEventListener('click', () => {
+        demoPage.querySelectorAll('[data-device]').forEach((item) => {
+          item.classList.toggle('active', item === button);
+          item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
+        });
+        frame.classList.toggle('mobile', button.dataset.device === 'mobile');
+        recordInteraction();
+      }));
+
+      demoPage.querySelectorAll('[data-theme]').forEach((button) => button.addEventListener('click', () => {
+        demoPage.querySelectorAll('[data-theme]').forEach((item) => {
+          item.classList.toggle('active', item === button);
+          item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
+        });
+        frame.classList.toggle('theme-alt', button.dataset.theme === 'alt');
+        recordInteraction();
+      }));
+
+      demoPage.querySelectorAll('[data-panel-target]').forEach((button) => button.addEventListener('click', () => {
+        demoPage.querySelectorAll('[data-panel-target]').forEach((item) => item.classList.toggle('active', item === button));
+        demoPage.querySelectorAll('[data-panel]').forEach((panel) => panel.classList.toggle('active', panel.dataset.panel === button.dataset.panelTarget));
+        recordInteraction();
+      }));
+
+      demoPage.querySelectorAll('[data-filter]').forEach((button) => button.addEventListener('click', () => {
+        demoPage.querySelectorAll('[data-filter]').forEach((item) => item.classList.toggle('active', item === button));
+        demoPage.querySelectorAll('[data-category]').forEach((item) => {
+          item.hidden = button.dataset.filter !== 'all' && item.dataset.category !== button.dataset.filter;
+        });
+        recordInteraction();
+      }));
+    }
+  </script>
+</BaseLayout>

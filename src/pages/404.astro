@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+
+<BaseLayout title="Página no encontrada · EVAAS Station" noindex>
+  <div class="container">
+    <section class="success-card">
+      <span class="eyebrow">Error 404</span>
+      <h1>Esta ruta no forma parte del recorrido.</h1>
+      <p>Vuelve al showroom para explorar ejemplos, comparar las tres configuraciones y elegir un punto de partida.</p>
+      <a class="button" href="/">Volver al inicio</a>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,116 @@
+---
+import { products } from '../data/products';
+---
+
+<div class="selector-shell" data-selector>
+  <div class="selector-intro">
+    <span class="eyebrow">Selector simple</span>
+    <h2>Encuentra tu punto de partida.</h2>
+    <p>Tres preguntas breves. Sin diagnóstico, sin tecnicismos y sin pedir tus datos.</p>
+    <div class="selector-progress" aria-hidden="true"><i class="active"></i><i></i><i></i></div>
+  </div>
+  <div class="selector-body" aria-live="polite">
+    <section class="selector-step active" data-step="1">
+      <small>Pregunta 1 de 3</small>
+      <h3>¿Qué necesitas mostrar principalmente?</h3>
+      <div class="selector-options">
+        <button class="selector-option" type="button" data-value="landing"><b>Una propuesta principal</b><span>Servicio, campaña o profesional</span></button>
+        <button class="selector-option" type="button" data-value="catalogo"><b>Varios productos o servicios</b><span>Para recorrer y consultar</span></button>
+        <button class="selector-option" type="button" data-value="corporativa"><b>Una empresa u organización</b><span>Con más contexto institucional</span></button>
+      </div>
+    </section>
+    <section class="selector-step" data-step="2">
+      <small>Pregunta 2 de 3</small>
+      <h3>¿Cuánta profundidad necesita tu presencia?</h3>
+      <div class="selector-options">
+        <button class="selector-option" type="button" data-value="landing"><b>Una página breve</b><span>Todo en un recorrido directo</span></button>
+        <button class="selector-option" type="button" data-value="catalogo"><b>Una colección organizada</b><span>Hasta 12 ítems</span></button>
+        <button class="selector-option" type="button" data-value="corporativa"><b>Varias áreas</b><span>Inicio, empresa, servicios y contacto</span></button>
+      </div>
+    </section>
+    <section class="selector-step" data-step="3">
+      <small>Pregunta 3 de 3</small>
+      <h3>¿Necesitas vender y cobrar en línea ahora?</h3>
+      <div class="selector-options">
+        <button class="selector-option" type="button" data-value="no"><b>No</b><span>Quiero presentar y recibir contactos</span></button>
+        <button class="selector-option" type="button" data-value="yes"><b>Sí</b><span>Necesito carrito o pago en línea</span></button>
+      </div>
+    </section>
+    <section class="selector-result" data-result>
+      <span class="result-label">Tu mejor punto de partida</span>
+      <h3 data-result-name>Landing</h3>
+      <p data-result-copy></p>
+      <strong class="price" data-result-price></strong>
+      <a class="button button-dark" data-result-link href="/activar/landing" data-track="product_selected" data-product="landing">Elegir esta opción</a>
+      <br />
+      <button class="selector-reset" type="button">Volver a responder</button>
+    </section>
+    <section class="selector-result" data-out-result>
+      <div class="selector-out">
+        <span class="result-label">Esta activación no incluye ecommerce</span>
+        <h3>Conviene evaluar una solución distinta.</h3>
+        <p>Estas tres configuraciones presentan tu oferta y generan contacto, pero no incorporan carrito ni pago en línea. Puedes comenzar con Catálogo si hoy vendes por consulta, o conversar una evolución posterior.</p>
+        <a class="text-link" href="/#comparar">Ver qué sí incluye</a><br />
+        <button class="selector-reset" type="button">Volver a responder</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script define:vars={{ products }}>
+  // @ts-nocheck -- variables serialized by Astro are available at runtime.
+  const selector = document.querySelector('[data-selector]');
+  if (selector) {
+    const steps = [...selector.querySelectorAll('[data-step]')];
+    const bars = [...selector.querySelectorAll('.selector-progress i')];
+    const result = selector.querySelector('[data-result]');
+    const outResult = selector.querySelector('[data-out-result]');
+    const answers = [];
+    let current = 0;
+
+    const showStep = (index) => {
+      steps.forEach((step, i) => step.classList.toggle('active', i === index));
+      bars.forEach((bar, i) => bar.classList.toggle('active', i <= index));
+    };
+
+    const reset = () => {
+      answers.length = 0;
+      current = 0;
+      result.classList.remove('active');
+      outResult.classList.remove('active');
+      bars.forEach((bar, i) => bar.classList.toggle('active', i === 0));
+      showStep(0);
+    };
+
+    selector.querySelectorAll('.selector-option').forEach((button) => {
+      button.addEventListener('click', () => {
+        answers[current] = button.dataset.value;
+        if (current < 2) {
+          current += 1;
+          showStep(current);
+          return;
+        }
+        steps.forEach((step) => step.classList.remove('active'));
+        bars.forEach((bar) => bar.classList.add('active'));
+        if (answers[2] === 'yes') {
+          outResult.classList.add('active');
+          window.evaasTrack?.('selector_completed', { outcome: 'ecommerce_out_of_scope' });
+          return;
+        }
+        const scores = { landing: 0, catalogo: 0, corporativa: 0 };
+        answers.slice(0, 2).forEach((answer) => { if (scores[answer] !== undefined) scores[answer] += 1; });
+        const slug = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+        const product = products.find((item) => item.slug === slug);
+        selector.querySelector('[data-result-name]').textContent = product.name;
+        selector.querySelector('[data-result-copy]').textContent = product.purpose;
+        selector.querySelector('[data-result-price]').textContent = `$${new Intl.NumberFormat('es-CL').format(product.finalPrice)} precio final`;
+        const link = selector.querySelector('[data-result-link]');
+        link.href = `/activar/${product.slug}`;
+        link.dataset.product = product.slug;
+        result.classList.add('active');
+        window.evaasTrack?.('selector_completed', { outcome: product.slug });
+      });
+    });
+    selector.querySelectorAll('.selector-reset').forEach((button) => button.addEventListener('click', reset));
+  }
+</script>

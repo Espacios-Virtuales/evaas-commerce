@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = true;
+---
+
+<BaseLayout title="Privacidad · EVAAS Station" description="Uso de datos en la solicitud de activación EVAAS Station.">
+  <article class="container legal">
+    <span class="eyebrow">Privacidad</span>
+    <h1>Tus datos se usan para gestionar tu solicitud.</h1>
+    <p>Solicitamos solo la información necesaria para identificar el proyecto, contactarte y preparar la activación seleccionada.</p>
+
+    <h2>Datos solicitados</h2>
+    <ul><li>Nombre y correo.</li><li>WhatsApp, si decides entregarlo.</li><li>Nombre y contexto básico del proyecto.</li><li>Estado del dominio.</li><li>Fuente o campaña de llegada, para medir la experiencia.</li></ul>
+
+    <h2>Finalidad</h2>
+    <p>Usamos estos datos para revisar la solicitud, coordinar el siguiente paso, emitir confirmaciones y mejorar el recorrido comercial. No se solicitan claves, accesos técnicos ni datos de pago en este formulario.</p>
+
+    <h2>Medición</h2>
+    <p>La aplicación registra eventos de navegación como demo abierta, opción comparada o activación iniciada. Estos eventos no deben incluir el contenido libre del formulario ni credenciales.</p>
+
+    <h2>Canal operativo</h2>
+    <p>La solicitud solo se confirma cuando el sistema muestra la pantalla de recepción. Si ocurre un error, se informa que los datos no quedaron confirmados para evitar una falsa sensación de envío.</p>
+  </article>
+</BaseLayout>
