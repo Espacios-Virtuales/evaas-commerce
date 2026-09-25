@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import DemoPreview from '../components/DemoPreview.astro';
 import ProductCard from '../components/ProductCard.astro';
 import ProductSelector from '../components/ProductSelector.astro';
+import HeroVideo from '../components/HeroVideo.astro';
 import { products, formatCLP } from '../data/products';
 
 export const prerender = true;
@@ -10,6 +11,7 @@ export const prerender = true;
 
 <BaseLayout>
   <section class="hero">
+    <HeroVideo />
     <div class="container hero-grid">
       <div class="hero-copy">
         <span class="eyebrow">EVAAS Station · Activación Digital</span>

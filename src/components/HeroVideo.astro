@@ -1,0 +1,89 @@
+---
+const videoId = import.meta.env.PUBLIC_EV_YOUTUBE_VIDEO_ID?.trim() ?? '';
+const videoUrl = import.meta.env.PUBLIC_EV_YOUTUBE_VIDEO_URL?.trim() ?? '';
+const enabled = import.meta.env.PUBLIC_EV_YOUTUBE_VIDEO_ENABLED === 'true';
+const validVideoId = /^[A-Za-z0-9_-]{11}$/.test(videoId);
+
+function getYouTubeVideoId(value: string) {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    if (url.protocol !== 'https:') return '';
+    if (host === 'youtu.be') return url.pathname.split('/').filter(Boolean)[0] ?? '';
+    if (!['youtube.com', 'www.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'].includes(host)) return '';
+    if (url.pathname === '/watch') return url.searchParams.get('v') ?? '';
+    return url.pathname.match(/^\/(?:embed|shorts|live)\/([A-Za-z0-9_-]{11})(?:\/|$)/)?.[1] ?? '';
+  } catch {
+    return '';
+  }
+}
+
+// The ID is canonical, but a configured URL must identify that exact same video.
+const configuredVideo = enabled && validVideoId && getYouTubeVideoId(videoUrl) === videoId;
+const posterPath = import.meta.env.PUBLIC_EV_YOUTUBE_VIDEO_POSTER?.trim() ?? '';
+const safePosterPath = /^\/(?!\/)(?!.*\.\.)(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.(?:avif|jpe?g|png|webp)$/i.test(posterPath)
+  ? posterPath
+  : '';
+---
+
+<div
+  class="hero-video"
+  data-video-id={configuredVideo ? videoId : undefined}
+  data-video-enabled={configuredVideo ? 'true' : 'false'}
+  aria-hidden="true"
+>
+  <div class="hero-video-fallback" style={safePosterPath ? `--hero-poster-url: url('${safePosterPath}')` : undefined}></div>
+  <div class="hero-video-frame" data-video-frame></div>
+</div>
+
+{configuredVideo && <script is:inline>
+  (() => {
+    const media = document.querySelector('.hero-video[data-video-enabled="true"]');
+    const frame = media?.querySelector('[data-video-frame]');
+    const videoId = media?.dataset.videoId;
+    if (!media || !frame || !videoId || !/^[A-Za-z0-9_-]{11}$/.test(videoId)) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const connection = navigator.connection;
+    const smallScreen = window.matchMedia('(max-width: 600px)');
+    let iframe;
+
+    const shouldUseFallback = () => reducedMotion.matches || smallScreen.matches || connection?.saveData === true;
+    const syncPlayback = () => {
+      if (shouldUseFallback()) {
+        iframe?.remove();
+        iframe = undefined;
+        media.dataset.videoState = 'fallback';
+        return;
+      }
+      if (iframe) return;
+
+      iframe = document.createElement('iframe');
+      const params = new URLSearchParams({ autoplay: '1', mute: '1', playsinline: '1', controls: '0', loop: '1', playlist: videoId });
+      iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?${params}`;
+      iframe.title = 'Video de ambiente del showroom EVAAS Commerce, sin audio';
+      iframe.tabIndex = -1;
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allow = 'autoplay; encrypted-media';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.addEventListener('load', () => {
+        media.dataset.videoState = 'loaded';
+      }, { once: true });
+      frame.replaceChildren(iframe);
+      media.dataset.videoState = 'loading';
+      window.setTimeout(() => {
+        if (media.dataset.videoState === 'loading') {
+          iframe?.remove();
+          iframe = undefined;
+          media.dataset.videoState = 'fallback';
+        }
+      }, 10000);
+    };
+
+    syncPlayback();
+    reducedMotion.addEventListener('change', syncPlayback);
+    smallScreen.addEventListener('change', syncPlayback);
+    connection?.addEventListener?.('change', syncPlayback);
+  })();
+</script>}
