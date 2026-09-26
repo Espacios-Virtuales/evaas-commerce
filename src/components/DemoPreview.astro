@@ -10,10 +10,10 @@ const { type, expanded = false } = Astro.props;
   <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i></div>
   {type === 'landing' && (
     <div class="preview-ui landing-ui">
-      <nav><strong>Lumen</strong><span>Origen · Carta · Visítanos</span></nav>
+      <nav><strong>Grano Claro</strong><span>Origen · Carta · Visítanos</span></nav>
       <h4>Café lento. Ideas despiertas.</h4>
       <p>Una pausa bien hecha en el centro de la ciudad.</p>
-      <button type="button">Reservar mesa</button>
+      <span class="preview-action">Explorar carta</span>
     </div>
   )}
   {type === 'catalogo' && (

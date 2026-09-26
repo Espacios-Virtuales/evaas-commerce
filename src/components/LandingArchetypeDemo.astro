@@ -1,0 +1,246 @@
+---
+import { INITIAL_PREVIEW_COLOR } from '../data/project-colors';
+
+const initialColor = INITIAL_PREVIEW_COLOR;
+---
+
+<article
+  class="landing-demo"
+  data-landing-demo
+  data-project-color={initialColor.id}
+  aria-label="Demo completa de una cafetería de especialidad"
+  style={`--project-accent: ${initialColor.cssValue}; --project-accent-contrast: ${initialColor.textColor}`}
+>
+  <header class="landing-site-header">
+    <a class="landing-brand" href="#landing-inicio" aria-label="Grano Claro, inicio de la demo">
+      <span class="landing-brand-mark" aria-hidden="true">g</span>
+      <span><strong>Grano Claro</strong><small>Café de especialidad</small></span>
+    </a>
+    <nav class="landing-nav" aria-label="Navegación de Grano Claro">
+      <a href="#landing-inicio">Inicio</a>
+      <a href="#landing-carta">Carta</a>
+      <a href="#landing-origen">Origen</a>
+      <a href="#landing-contacto">Visítanos</a>
+    </nav>
+    <a class="landing-button landing-header-cta" href="#landing-carta">Ver la carta</a>
+  </header>
+
+  <div class="landing-demo-label"><span aria-hidden="true">●</span> Contenido demostrativo · estructura de referencia</div>
+
+  <section class="landing-hero" id="landing-inicio" aria-labelledby="landing-title">
+    <div class="landing-hero-copy">
+      <span class="landing-eyebrow">Una pausa, bien preparada</span>
+      <h2 id="landing-title">Café lento.<br /><em>Ideas despiertas.</em></h2>
+      <p>Un buen café y un lugar tranquilo para quienes necesitan bajar el ritmo, aunque sea por un momento.</p>
+      <div class="landing-actions">
+        <a class="landing-button" href="#landing-carta">Explorar la carta <span aria-hidden="true">↓</span></a>
+        <a class="landing-text-link" href="#landing-origen">Conoce nuestra forma de preparar</a>
+      </div>
+    </div>
+    <div class="landing-hero-art" aria-hidden="true">
+      <div class="landing-art-sun"></div>
+      <div class="landing-art-beans"><i></i><i></i><i></i></div>
+      <div class="landing-cup"><span></span></div>
+      <div class="landing-art-caption"><span>PAUSA DE TEMPORADA</span><strong>Un momento<br />para ti.</strong></div>
+      <span class="landing-art-stamp">DEMO<br />CAFÉ</span>
+    </div>
+  </section>
+
+  <section class="landing-value landing-section" aria-labelledby="landing-value-title">
+    <div class="landing-value-heading">
+      <span class="landing-eyebrow">Más que una taza</span>
+      <h3 id="landing-value-title">Un pequeño espacio<br />para volver a tu ritmo.</h3>
+    </div>
+    <div class="landing-value-copy">
+      <p>Grano Claro es una cafetería de barrio pensada para quienes disfrutan el café sin apuro. Aquí encuentras preparaciones cuidadas, algo rico para acompañar y un rincón amable entre una cosa y la siguiente.</p>
+      <p class="landing-note">Ejemplo de propuesta de valor; el contenido final se define para cada proyecto.</p>
+    </div>
+  </section>
+
+  <section class="landing-menu landing-section" id="landing-carta" aria-labelledby="landing-menu-title">
+    <div class="landing-section-heading">
+      <div><span class="landing-eyebrow">La carta</span><h3 id="landing-menu-title">Pocas cosas.<br /><em>Hechas con cuidado.</em></h3></div>
+      <p>Una selección breve para elegir algo conocido o probar una preparación distinta. Productos y descripciones de ejemplo.</p>
+    </div>
+    <div class="landing-service-grid">
+      <article class="landing-service-card" data-aos="fade-up">
+        <span class="landing-card-number">01</span><span class="landing-card-icon" aria-hidden="true">◉</span>
+        <h4>Café de origen</h4>
+        <p>Espresso y bebidas con leche, preparados para disfrutar los matices de cada grano.</p>
+        <details><summary>Ver detalle de ejemplo</summary><p>La selección de granos y sus notas cambiarían según la propuesta real de cada cafetería.</p></details>
+      </article>
+      <article class="landing-service-card" data-aos="fade-up">
+        <span class="landing-card-number">02</span><span class="landing-card-icon" aria-hidden="true">⌁</span>
+        <h4>Métodos filtrados</h4>
+        <p>Preparaciones suaves para tomarse el tiempo de descubrir una taza diferente.</p>
+        <details><summary>Ver detalle de ejemplo</summary><p>Un bloque como este puede explicar métodos disponibles sin prometer stock o disponibilidad en tiempo real.</p></details>
+      </article>
+      <article class="landing-service-card" data-aos="fade-up">
+        <span class="landing-card-number">03</span><span class="landing-card-icon" aria-hidden="true">✳</span>
+        <h4>Algo para acompañar</h4>
+        <p>Pastelería y sabores simples que hacen de la pausa un momento completo.</p>
+        <details><summary>Ver detalle de ejemplo</summary><p>La carta final puede describir acompañamientos seleccionados por el negocio.</p></details>
+      </article>
+    </div>
+    <p class="landing-caption">Carta ilustrativa · no representa disponibilidad ni precios reales</p>
+  </section>
+
+  <section class="landing-origin landing-section" id="landing-origen" aria-labelledby="landing-origin-title">
+    <div class="landing-origin-intro">
+      <span class="landing-eyebrow">Del grano a tu pausa</span>
+      <h3 id="landing-origin-title">El proceso también<br /><em>es parte del sabor.</em></h3>
+      <p>Una forma sencilla de contar qué hace especial a una propuesta y ayudar a que cada visita se sienta cercana.</p>
+    </div>
+    <ol class="landing-process">
+      <li data-aos="fade-up"><span>01</span><div><h4>Elegimos</h4><p>Granos y preparaciones que dan forma a una carta breve.</p></div></li>
+      <li data-aos="fade-up"><span>02</span><div><h4>Preparamos</h4><p>Cada taza se hace al momento, con atención en los detalles.</p></div></li>
+      <li data-aos="fade-up"><span>03</span><div><h4>Hacemos una pausa</h4><p>Un espacio para disfrutar el café y seguir el día con calma.</p></div></li>
+    </ol>
+    <p class="landing-note landing-origin-note">Proceso narrativo de ejemplo · no describe una operación real</p>
+  </section>
+
+  <section class="landing-visit" aria-labelledby="landing-visit-title">
+    <div><span class="landing-eyebrow">Tu próxima pausa</span><h3 id="landing-visit-title">Hay días que empiezan<br />con un buen café.</h3><p>Esta llamada a la acción muestra cómo una Landing puede conducir hacia el siguiente paso, sin conectar una reserva real.</p></div>
+    <a class="landing-button landing-button-contrast" href="#landing-contacto">Conoce el espacio <span aria-hidden="true">↗</span></a>
+  </section>
+
+  <section class="landing-contact landing-section" id="landing-contacto" aria-labelledby="landing-contact-title">
+    <div class="landing-contact-copy"><span class="landing-eyebrow">Encuéntranos</span><h3 id="landing-contact-title">Un café cerca<br /><em>de tu camino.</em></h3><p>Un cierre claro puede reunir la información para visitar el negocio y facilitar una consulta.</p></div>
+    <div class="landing-contact-card">
+      <span class="landing-contact-icon" aria-hidden="true">⌖</span>
+      <div><strong>Centro · ubicación de ejemplo</strong><p>Dirección y horarios ilustrativos, reemplazables por los datos del proyecto.</p></div>
+      <a class="landing-text-link" href="#landing-inicio">Volver al inicio ↑</a>
+    </div>
+  </section>
+
+  <footer class="landing-site-footer">
+    <a class="landing-brand" href="#landing-inicio" aria-label="Grano Claro, volver al inicio">
+      <span class="landing-brand-mark" aria-hidden="true">g</span>
+      <span><strong>Grano Claro</strong><small>Café de especialidad · marca ficticia</small></span>
+    </a>
+    <p>Demo de estructura · cada proyecto define su propio contenido e identidad.</p>
+    <a href="#landing-contacto">Contacto</a>
+  </footer>
+</article>
+
+<style>
+  .landing-demo {
+    --landing-accent: var(--project-accent, #224A36);
+    --landing-accent-contrast: var(--project-accent-contrast, #fff);
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 1.35rem;
+    color: var(--color-text);
+    background: var(--color-bg);
+    box-shadow: 0 1.5rem 4rem var(--color-overlay);
+  }
+  .landing-site-header { display: flex; min-height: 5.25rem; align-items: center; gap: 1.3rem; padding: .8rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+  .landing-brand { display: inline-flex; flex: none; align-items: center; gap: .65rem; color: var(--color-text); text-decoration: none; }
+  .landing-brand > span:last-child { display: grid; line-height: 1.15; }
+  .landing-brand strong { font-family: var(--serif); font-size: 1.05rem; }
+  .landing-brand small { margin-top: .2rem; color: var(--color-text-muted); font-size: .68rem; }
+  .landing-brand-mark { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: 50%; color: var(--landing-accent-contrast); background: var(--landing-accent); font-family: var(--serif); font-size: 1.45rem; font-style: italic; }
+  .landing-nav { display: flex; flex: 1; justify-content: center; gap: clamp(.6rem, 2.1vw, 1.8rem); }
+  .landing-nav a, .landing-site-footer > a:last-child { color: var(--color-text-muted); font-size: .82rem; text-decoration: none; }
+  .landing-nav a:hover, .landing-site-footer > a:last-child:hover { color: var(--color-text); text-decoration: underline; text-decoration-color: var(--landing-accent); text-underline-offset: .25em; }
+  .landing-button { display: inline-flex; min-height: 2.9rem; align-items: center; justify-content: center; gap: .6rem; padding: .7rem 1.15rem; border: 1px solid var(--landing-accent); border-radius: 999px; color: var(--landing-accent-contrast); background: var(--landing-accent); font-size: .86rem; font-weight: 700; text-align: center; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+  .landing-button:hover { transform: translateY(-2px); box-shadow: 0 .65rem 1.6rem var(--color-overlay); }
+  .landing-demo a:focus-visible, .landing-demo summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+  .landing-demo-label { display: flex; min-height: 2rem; align-items: center; gap: .45rem; padding-inline: clamp(1rem, 4vw, 3rem); color: var(--color-text-muted); background: var(--color-surface-elevated); font-size: .7rem; letter-spacing: .04em; }
+  .landing-demo-label span { color: var(--landing-accent); font-size: .55rem; }
+  .landing-hero { display: grid; min-height: 31rem; grid-template-columns: 1.08fr .92fr; align-items: center; gap: clamp(1rem, 5vw, 4.5rem); padding: clamp(2.4rem, 6vw, 5rem) clamp(1.25rem, 7vw, 6rem); background: radial-gradient(ellipse at 80% 18%, color-mix(in srgb, var(--landing-accent) 16%, transparent), transparent 55%), var(--color-surface); }
+  .landing-hero-copy { max-width: 36rem; }
+  .landing-eyebrow { display: inline-flex; margin-bottom: .9rem; padding-left: .55rem; border-left: 3px solid var(--landing-accent); color: var(--color-text-muted); font-size: .68rem; font-weight: 760; letter-spacing: .14em; text-transform: uppercase; }
+  .landing-hero h2 { max-width: 10ch; font-family: var(--serif); font-size: clamp(3rem, 6.5vw, 5.7rem); font-weight: 450; line-height: .98; letter-spacing: -.055em; }
+  .landing-hero h2 em, .landing-section-heading h3 em, .landing-origin h3 em, .landing-contact h3 em { color: var(--color-text); font-weight: 400; text-decoration: underline; text-decoration-color: var(--landing-accent); text-decoration-thickness: .08em; text-underline-offset: .12em; }
+  .landing-hero-copy > p { max-width: 31rem; margin-top: 1.2rem; color: var(--color-text-muted); font-size: clamp(.98rem, 1.45vw, 1.12rem); }
+  .landing-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.3rem; margin-top: 1.6rem; }
+  .landing-text-link { min-height: 2.75rem; display: inline-flex; align-items: center; color: var(--color-text); font-size: .84rem; font-weight: 650; text-underline-offset: .2em; }
+  .landing-hero-art { position: relative; display: grid; min-height: 22rem; place-items: center; overflow: hidden; border-radius: 48% 48% 1.2rem 1.2rem; background: linear-gradient(155deg, color-mix(in srgb, var(--landing-accent) 16%, var(--color-surface-elevated)), var(--color-surface-elevated)); }
+  .landing-art-sun { position: absolute; top: 9%; right: 10%; width: 7rem; aspect-ratio: 1; border: 1px solid color-mix(in srgb, var(--landing-accent) 55%, transparent); border-radius: 50%; }
+  .landing-cup { position: relative; z-index: 1; display: grid; width: 10rem; height: 8rem; place-items: center; margin-top: 2rem; border: .6rem solid color-mix(in srgb, var(--landing-accent) 22%, var(--color-surface)); border-radius: 1rem 1rem 3rem 3rem; background: var(--color-surface); box-shadow: 0 1.2rem 2.6rem var(--color-overlay); transform: rotate(-7deg); }
+  .landing-cup::after { position: absolute; right: -2.65rem; top: 1.2rem; width: 2.6rem; height: 3.3rem; border: .55rem solid color-mix(in srgb, var(--landing-accent) 22%, var(--color-surface)); border-left: 0; border-radius: 0 2rem 2rem 0; content: ""; }
+  .landing-cup span { width: 4rem; height: 1.5rem; border-radius: 50%; background: radial-gradient(ellipse, #513521 0 34%, #8c6039 36% 62%, var(--landing-accent) 64% 68%, transparent 70%); }
+  .landing-art-beans { position: absolute; top: 23%; left: 14%; display: flex; gap: .7rem; transform: rotate(-25deg); }
+  .landing-art-beans i { width: 1.05rem; height: 1.6rem; border: 2px solid var(--landing-accent); border-radius: 50%; transform: rotate(25deg); }
+  .landing-art-beans i:nth-child(2) { margin-top: 1rem; }
+  .landing-art-beans i:nth-child(3) { margin-top: -.5rem; }
+  .landing-art-caption { position: absolute; right: 8%; bottom: 8%; display: grid; gap: .3rem; padding: .8rem 1rem; border: 1px solid var(--color-border); border-radius: .8rem; background: var(--color-surface); box-shadow: 0 .6rem 1.8rem var(--color-overlay); transform: rotate(3deg); }
+  .landing-art-caption span { color: var(--color-text-muted); font-size: .56rem; letter-spacing: .12em; }
+  .landing-art-caption strong { font-family: var(--serif); font-size: 1rem; font-weight: 500; line-height: 1.05; }
+  .landing-art-stamp { position: absolute; left: 7%; bottom: 13%; display: grid; width: 3.4rem; height: 3.4rem; place-content: center; border: 2px solid var(--landing-accent); border-radius: 50%; color: var(--color-text); font-size: .5rem; font-weight: 750; line-height: 1.2; text-align: center; transform: rotate(-12deg); }
+  .landing-section { padding: clamp(2.8rem, 6vw, 5rem) clamp(1.25rem, 7vw, 6rem); }
+  .landing-value { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(2rem, 8vw, 7rem); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); background: var(--color-bg); }
+  .landing-value h3, .landing-section-heading h3, .landing-origin h3, .landing-contact h3, .landing-visit h3 { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 450; line-height: 1.02; letter-spacing: -.04em; }
+  .landing-value-copy { align-self: center; }
+  .landing-value-copy > p:first-child { max-width: 43rem; color: var(--color-text); font-size: clamp(1.05rem, 1.8vw, 1.3rem); }
+  .landing-note, .landing-caption { color: var(--color-text-muted); font-size: .72rem; }
+  .landing-note { margin-top: .8rem; }
+  .landing-menu { background: var(--color-surface); }
+  .landing-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 2rem; }
+  .landing-section-heading h3 { max-width: 13ch; }
+  .landing-section-heading > p { max-width: 25rem; color: var(--color-text-muted); }
+  .landing-service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .landing-service-card { position: relative; min-height: 17rem; padding: 1.4rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-bg); }
+  .landing-service-card:hover { border-color: var(--landing-accent); }
+  .landing-card-number { position: absolute; top: 1.3rem; right: 1.3rem; color: var(--color-text-muted); font-size: .68rem; }
+  .landing-card-icon { display: grid; width: 2.8rem; height: 2.8rem; place-items: center; margin-bottom: 1.3rem; border-radius: 50%; color: var(--landing-accent-contrast); background: var(--landing-accent); font-size: 1.1rem; }
+  .landing-service-card h4 { font-family: var(--serif); font-size: 1.35rem; font-weight: 550; }
+  .landing-service-card > p { margin-top: .5rem; color: var(--color-text-muted); font-size: .87rem; }
+  .landing-service-card details { margin-top: .9rem; border-top: 1px solid var(--color-border); }
+  .landing-service-card summary { min-height: 2.75rem; padding-top: .7rem; color: var(--color-text); font-size: .78rem; font-weight: 700; text-decoration: underline; text-decoration-color: var(--landing-accent); text-underline-offset: .2em; cursor: pointer; }
+  .landing-service-card details p { padding: 0 0 .7rem; color: var(--color-text-muted); font-size: .76rem; }
+  .landing-caption { margin-top: 1rem; }
+  .landing-origin { display: grid; grid-template-columns: .9fr 1.1fr; column-gap: clamp(2rem, 8vw, 7rem); background: var(--color-bg); }
+  .landing-origin-intro > p { max-width: 27rem; margin-top: 1rem; color: var(--color-text-muted); }
+  .landing-process { display: grid; align-self: center; gap: .75rem; list-style: none; }
+  .landing-process li { display: flex; gap: 1rem; padding: 1rem; border: 1px solid var(--color-border); border-radius: .9rem; background: var(--color-surface); }
+  .landing-process li > span { display: grid; width: 2rem; height: 2rem; flex: none; place-items: center; border-radius: 50%; color: var(--landing-accent-contrast); background: var(--landing-accent); font-size: .7rem; font-weight: 750; }
+  .landing-process h4 { font-family: var(--serif); font-size: 1.05rem; }
+  .landing-process p { color: var(--color-text-muted); font-size: .82rem; }
+  .landing-origin-note { grid-column: 2; }
+  .landing-visit { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 7vw, 6rem); color: var(--color-text); background: var(--color-surface-elevated); }
+  .landing-visit h3 { font-size: clamp(2.1rem, 4vw, 3.4rem); }
+  .landing-visit > div > p { max-width: 39rem; margin-top: .8rem; color: var(--color-text-muted); font-size: .88rem; }
+  .landing-button-contrast { flex: none; color: var(--color-button-primary-text); background: var(--color-button-primary-bg); border-color: var(--color-button-primary-bg); }
+  .landing-contact { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 3rem; background: var(--color-surface); }
+  .landing-contact-copy > p { max-width: 26rem; margin-top: 1rem; color: var(--color-text-muted); }
+  .landing-contact-card { display: grid; grid-template-columns: 2.5rem 1fr; align-items: start; gap: .8rem; padding: 1.4rem; border: 1px solid var(--color-border); border-radius: 1rem; background: var(--color-bg); }
+  .landing-contact-icon { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border-radius: 50%; color: var(--landing-accent-contrast); background: var(--landing-accent); }
+  .landing-contact-card strong { font-family: var(--serif); font-size: 1.1rem; }
+  .landing-contact-card p { margin-top: .35rem; color: var(--color-text-muted); font-size: .82rem; }
+  .landing-contact-card .landing-text-link { grid-column: 2; width: max-content; }
+  .landing-site-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.2rem clamp(1rem, 4vw, 3rem); border-top: 1px solid var(--color-border); background: var(--color-bg); }
+  .landing-site-footer > p { color: var(--color-text-muted); font-size: .7rem; text-align: center; }
+  .landing-site-footer .landing-brand-mark { width: 1.9rem; height: 1.9rem; font-size: 1.2rem; }
+
+  @media (max-width: 900px) {
+    .landing-hero { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .landing-service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .landing-service-card:last-child { grid-column: 1 / -1; min-height: auto; }
+    .landing-site-footer { flex-wrap: wrap; }
+    .landing-site-footer > p { order: 3; flex-basis: 100%; }
+  }
+  @media (max-width: 680px) {
+    .landing-site-header { flex-wrap: wrap; gap: .65rem; }
+    .landing-header-cta { min-height: 2.75rem; margin-left: auto; padding-inline: .85rem; font-size: .78rem; }
+    .landing-nav { order: 3; flex-basis: 100%; justify-content: space-between; gap: .5rem; padding-top: .55rem; border-top: 1px solid var(--color-border); }
+    .landing-nav a { min-height: 2.5rem; display: inline-flex; align-items: center; font-size: .72rem; }
+    .landing-hero { grid-template-columns: 1fr; min-height: auto; padding-block: 2.6rem; }
+    .landing-hero h2 { font-size: clamp(3rem, 13vw, 4.5rem); }
+    .landing-hero-art { min-height: 17rem; margin: .3rem 0 0; border-radius: 45% 45% .9rem .9rem; }
+    .landing-cup { transform: scale(.82) rotate(-7deg); }
+    .landing-value, .landing-origin, .landing-contact { grid-template-columns: 1fr; gap: 1.5rem; }
+    .landing-section-heading { align-items: start; flex-direction: column; gap: .8rem; }
+    .landing-service-grid { grid-template-columns: 1fr; }
+    .landing-service-card:last-child { grid-column: auto; }
+    .landing-origin-note { grid-column: 1; }
+    .landing-visit { align-items: flex-start; flex-direction: column; }
+    .landing-site-footer { align-items: flex-start; flex-direction: column; }
+    .landing-site-footer > p { order: initial; text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-demo *, .landing-demo *::before, .landing-demo *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  }
+</style>

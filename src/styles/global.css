@@ -348,7 +348,7 @@
   .landing-ui { min-height: 19.3rem; background: linear-gradient(145deg,#f4eadb 0 66%,#2b523e 66%); }
   .landing-ui h4 { max-width: 7ch; margin-top: 3.5rem; font-family: var(--serif); font-size: 2.1rem; line-height: .95; }
   .landing-ui p { max-width: 13rem; min-height: auto; margin-top: .6rem; color: #616a62; font-size: .58rem; }
-  .landing-ui button, .corporate-ui button { margin-top: 1rem; padding: .45rem .7rem; border: 0; border-radius: 99px; color: #fff; background: #224a36; font-size: .5rem; }
+  .landing-ui .preview-action, .corporate-ui button { display: inline-block; margin-top: 1rem; padding: .45rem .7rem; border: 0; border-radius: 99px; color: #fff; background: #224a36; font-size: .5rem; }
   .catalog-ui { min-height: 19.3rem; color: #171717; background: #f3f1ea; }
   .catalog-ui h4 { margin-top: 1.5rem; font-family: var(--serif); font-size: 1.6rem; }
   .mini-products { display: grid; grid-template-columns: repeat(2, 1fr); gap: .5rem; margin-top: 1rem; }
@@ -448,6 +448,7 @@
   .page-hero { padding-block: clamp(5rem,9vw,8rem) 4rem; }
   .page-hero-grid { display: grid; grid-template-columns: 1fr .72fr; gap: 4rem; align-items: end; }
   .page-hero h1 { max-width: 11ch; }
+  .page-hero h1.landing-demo-title { max-width: 12ch; font-size: clamp(2.6rem, 5vw, 4.8rem); }
   .page-hero-copy { max-width: 35rem; }
   .page-hero-copy > p { color: var(--muted); font-size: 1.15rem; }
   .page-hero-copy .price-line { display: block; margin-top: 1.5rem; color: var(--color-text); font-size: 1.5rem; font-weight: 740; }
@@ -487,7 +488,7 @@
   .demo-device .preview-ui nav strong { font-size: .82rem; }
   .demo-device .landing-ui h4 { margin-top: 7rem; font-size: clamp(3rem,8vw,6.5rem); }
   .demo-device .landing-ui { background: linear-gradient(145deg,#f4eadb 0 66%,var(--project-accent) 66%); }
-  .demo-device .landing-ui button, .demo-device .corporate-ui button { color: var(--project-accent-contrast); background: var(--project-accent); }
+  .demo-device .landing-ui .preview-action, .demo-device .corporate-ui button { color: var(--project-accent-contrast); background: var(--project-accent); }
   .demo-device .landing-ui p { max-width: 30rem; font-size: .9rem; }
   .demo-device .catalog-ui h4 { font-size: clamp(2.4rem,5vw,4rem); }
   .demo-device .mini-products { grid-template-columns: repeat(3,1fr); }
@@ -506,6 +507,9 @@
   .demo-detail li { padding-bottom: .8rem; border-bottom: 1px solid var(--line); }
   .demo-cta { display: flex; align-items: center; justify-content: space-between; gap: 2rem; margin-top: 4rem; padding: 2rem; border: 1px solid var(--color-brand); border-radius: 1.2rem; background: var(--color-surface-elevated); }
   .demo-cta p { color: var(--muted); }
+  .demo-return-links { display: flex; flex-wrap: wrap; gap: .6rem 1rem; margin-top: .75rem; }
+  .demo-return-links a { color: var(--color-text-muted); font-size: .8rem; text-underline-offset: .2em; }
+  .demo-return-links a:hover { color: var(--color-text); }
 
   .product-detail-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 5rem; }
   .scope-panel { padding: 2rem; border: 1px solid var(--line); border-radius: 1.2rem; background: var(--ink-soft); }
@@ -616,6 +620,7 @@
 
 @media (max-width: 700px) {
   h1 { font-size: clamp(2.9rem, 15vw, 4.8rem); }
+  .page-hero h1.landing-demo-title { font-size: clamp(2.2rem, 10vw, 3.4rem); }
   .section-heading { grid-template-columns: 1fr; gap: 1rem; }
   .section-heading p { justify-self: start; }
   .hero { padding-block: 3.5rem; }

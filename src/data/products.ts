@@ -30,9 +30,9 @@ export const products: Product[] = [
     scope: '1 página · hasta 6 secciones · 1 revisión consolidada',
     includes: ['Branding básico', 'Estructura comercial', 'CTA y contacto', 'Diseño responsive', 'Publicación inicial en Vercel', 'Conexión de dominio'],
     excludes: ['Tienda o carrito', 'Pasarela de pago', 'Agenda o integraciones', 'Producción fotográfica'],
-    demoName: 'Lumen Café',
+    demoName: 'Grano Claro',
     demoCategory: 'Cafetería de especialidad',
-    demoDescription: 'Una propuesta breve que conduce desde el deseo hasta una reserva.'
+    demoDescription: 'Una cafetería de ejemplo para recorrer su propuesta, su carta y su contacto.'
   },
   {
     slug: 'catalogo',

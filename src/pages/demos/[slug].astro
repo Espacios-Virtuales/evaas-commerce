@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DemoPreview from '../../components/DemoPreview.astro';
+import LandingArchetypeDemo from '../../components/LandingArchetypeDemo.astro';
 import ProjectColorSelector from '../../components/ProjectColorSelector.astro';
 import { products, formatCLP, type Product } from '../../data/products';
 import { INITIAL_PREVIEW_COLOR } from '../../data/project-colors';
@@ -12,6 +13,7 @@ export function getStaticPaths() {
 
 interface Props { product: Product }
 const { product } = Astro.props;
+const isLanding = product.slug === 'landing';
 ---
 
 <BaseLayout title={`Demo ${product.name} · EVAAS Station`} description={`Explora un ejemplo demostrativo de la configuración ${product.name}.`}>
@@ -21,10 +23,10 @@ const { product } = Astro.props;
       <div class="page-hero-grid">
         <div>
           <span class="eyebrow">Ejemplo demostrativo · {product.demoCategory}</span>
-          <h1>{product.demoName}</h1>
+          <h1 class={isLanding ? 'landing-demo-title' : undefined}>{product.demoName}</h1>
         </div>
         <div class="page-hero-copy">
-          <p>{product.demoDescription} Explora el formato, cambia la vista y observa el nivel de profundidad incluido.</p>
+          <p>{product.demoDescription} {isLanding ? 'Recorre el layout completo y explora su estructura de principio a fin.' : 'Explora el formato, cambia la vista y observa el nivel de profundidad incluido.'}</p>
           <span class="price-line">{product.name} · {formatCLP(product.finalPrice)} final</span>
         </div>
       </div>
@@ -34,10 +36,10 @@ const { product } = Astro.props;
   <section class="demo-workbench" data-demo-page data-demo={product.slug}>
     <div class="container">
       <div class="demo-toolbar">
-        <div class="segmented" aria-label="Cambiar tamaño de pantalla">
+        {!isLanding && <div class="segmented" aria-label="Cambiar tamaño de pantalla">
           <button class="active" type="button" data-device="desktop" aria-pressed="true">Escritorio</button>
           <button type="button" data-device="mobile" aria-pressed="false">Móvil</button>
-        </div>
+        </div>}
         {product.slug === 'corporativa' && (
           <div class="segmented" aria-label="Navegar ejemplo">
             <button class="active" type="button" data-panel-target="inicio">Inicio</button>
@@ -52,37 +54,47 @@ const { product } = Astro.props;
             <button type="button" data-filter="textil">Textil</button>
           </div>
         )}
-        <span class="demo-disclaimer">Ejemplo de estructura y dirección visual</span>
+        <span class="demo-disclaimer">{isLanding ? 'Sitio completo · contenido demostrativo' : 'Ejemplo de estructura y dirección visual'}</span>
       </div>
-      <ProjectColorSelector name={`demo-${product.slug}-project-color`} previewTarget="[data-demo-page] [data-device-frame]" />
-      <div class="demo-canvas">
-        <div
-          class="demo-device"
-          data-device-frame
-          data-project-color={INITIAL_PREVIEW_COLOR.id}
-          style={`--project-accent: ${INITIAL_PREVIEW_COLOR.cssValue}; --project-accent-contrast: ${INITIAL_PREVIEW_COLOR.textColor}`}
-        >
-          <DemoPreview type={product.slug} expanded />
+      <ProjectColorSelector
+        name={`demo-${product.slug}-project-color`}
+        previewTarget={isLanding ? '[data-landing-demo]' : '[data-demo-page] [data-device-frame]'}
+      />
+      {isLanding ? <LandingArchetypeDemo /> : (
+        <div class="demo-canvas">
+          <div
+            class="demo-device"
+            data-device-frame
+            data-project-color={INITIAL_PREVIEW_COLOR.id}
+            style={`--project-accent: ${INITIAL_PREVIEW_COLOR.cssValue}; --project-accent-contrast: ${INITIAL_PREVIEW_COLOR.textColor}`}
+          >
+            <DemoPreview type={product.slug} expanded />
+          </div>
         </div>
-      </div>
+      )}
 
       <div class="demo-detail">
         <div>
           <span class="eyebrow">Lo que esta demo demuestra</span>
-          <h2>Una referencia concreta, no una promesa literal.</h2>
+          <h2>{isLanding ? 'Un recorrido completo para una propuesta clara.' : 'Una referencia concreta, no una promesa literal.'}</h2>
         </div>
         <div>
-          <p>Tu resultado usará tu contenido, tu nombre y una dirección visual definida para tu proyecto. La demo muestra el tipo de recorrido y la profundidad posible dentro de {product.name}; no garantiza una copia exacta ni capacidades fuera del alcance.</p>
-          <ul>
+          <p>{isLanding ? 'Esta cafetería y su contenido son ficticios. La estructura ayuda a imaginar una página enfocada en una propuesta principal; el resultado de cada proyecto se define con su propio contenido y alcance.' : `Tu resultado usará tu contenido, tu nombre y una dirección visual definida para tu proyecto. La demo muestra el tipo de recorrido y la profundidad posible dentro de ${product.name}; no garantiza una copia exacta ni capacidades fuera del alcance.`}</p>
+          {!isLanding && <ul>
             <li><strong>Formato:</strong> {product.scope}</li>
             <li><strong>Interacción útil:</strong> adaptación móvil y exploración del contenido.</li>
             <li><strong>Personalización:</strong> color, tipografía, mensajes e identidad básica.</li>
-          </ul>
+          </ul>}
         </div>
       </div>
       <div class="demo-cta">
-        <div><strong>¿Este nivel de presencia se parece a lo que necesitas?</strong><p>Puedes revisar el alcance completo antes de comenzar.</p></div>
-        <a class="button" href={`/activar/${product.slug}`} data-track="demo_completed" data-demo={product.slug} data-product={product.slug}>Quiero comenzar con esta estructura</a>
+        <div>
+          {isLanding && <span class="eyebrow">EVAAS · Configuración</span>}
+          <strong>{isLanding ? '¿Una página directa se parece a lo que necesitas?' : '¿Este nivel de presencia se parece a lo que necesitas?'}</strong>
+          <p>Puedes revisar el alcance completo antes de comenzar.</p>
+          {isLanding && <div class="demo-return-links"><a href="/productos/landing">Revisar producto</a><a href="/#showroom">Volver al showroom</a></div>}
+        </div>
+        <a class="button" href={`/activar/${product.slug}`} data-track="demo_completed" data-demo={product.slug} data-product={product.slug}>{isLanding ? 'Elegir Landing' : 'Quiero comenzar con esta estructura'}</a>
       </div>
     </div>
   </section>
