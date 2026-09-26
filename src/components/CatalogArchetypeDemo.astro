@@ -1,0 +1,313 @@
+---
+import { INITIAL_PREVIEW_COLOR } from '../data/project-colors';
+import { catalogDemoItems } from '../data/catalog-demo';
+
+const categories = [
+  { id: 'all', label: 'Todo' },
+  { id: 'mesa', label: 'Mesa' },
+  { id: 'textil', label: 'Textil' }
+] as const;
+---
+
+<article
+  class="catalog-demo"
+  data-catalog-demo
+  data-project-color={INITIAL_PREVIEW_COLOR.id}
+  style={`--project-accent: ${INITIAL_PREVIEW_COLOR.cssValue}; --project-accent-contrast: ${INITIAL_PREVIEW_COLOR.textColor}`}
+>
+  <header class="catalog-site-header" id="catalogo-inicio">
+    <a class="catalog-brand" href="#catalogo-inicio" aria-label="Taller de Objetos, inicio">
+      <span class="catalog-brand-mark" aria-hidden="true">t.</span>
+      <span><strong>Taller de Objetos</strong><small>Casa · materia · oficio</small></span>
+    </a>
+    <nav class="catalog-nav" aria-label="Navegación del catálogo de ejemplo">
+      <a href="#catalogo-inicio">Inicio</a>
+      <a href="#catalogo-categorias">Categorías</a>
+      <a href="#catalogo-piezas">Piezas</a>
+      <a href="#catalogo-consulta">Contacto</a>
+    </nav>
+    <a class="catalog-header-link" href="#catalogo-piezas">Explorar piezas <span aria-hidden="true">↘</span></a>
+  </header>
+
+  <div class="catalog-demo-label"><span aria-hidden="true">●</span> Contenido demostrativo · estructura de referencia</div>
+
+  <section class="catalog-hero" aria-labelledby="catalog-hero-title">
+    <div class="catalog-hero-copy">
+      <span class="catalog-eyebrow">Objetos para habitar lo cotidiano</span>
+      <h2 id="catalog-hero-title">La casa se arma<br />con <em>pequeños gestos.</em></h2>
+      <p>Una colección de piezas para la mesa y los espacios de pausa. Recorre el catálogo por categoría y conoce cada objeto a tu ritmo.</p>
+      <a class="catalog-button" href="#catalogo-categorias">Recorrer el catálogo <span aria-hidden="true">↓</span></a>
+      <small>Ejemplo ficticio · no representa productos, stock ni ventas reales</small>
+    </div>
+    <div class="catalog-hero-art" aria-hidden="true">
+      <div class="catalog-hero-sun"></div>
+      <div class="catalog-hero-vase"></div>
+      <div class="catalog-hero-bowl"></div>
+      <div class="catalog-hero-cloth"></div>
+      <span>FORMAS PARA<br />LA VIDA DIARIA</span>
+    </div>
+  </section>
+
+  <section class="catalog-intro" aria-labelledby="catalog-intro-title">
+    <div><span class="catalog-eyebrow">Una colección, dos recorridos</span><h3 id="catalog-intro-title">Materia honesta.<br /><em>Uso cotidiano.</em></h3></div>
+    <div><p>Este ejemplo presenta objetos de diseño y hogar con información breve sobre su forma y material. La estructura ayuda a encontrar una pieza y abrir una consulta, sin carrito ni compra en línea.</p><p class="catalog-note">El contenido, la marca y las piezas son ficticios y sirven solo como referencia de estructura.</p></div>
+  </section>
+
+  <section class="catalog-collection" id="catalogo-categorias" aria-labelledby="catalog-collection-title">
+    <div class="catalog-section-heading">
+      <div><span class="catalog-eyebrow">Explora por categoría</span><h3 id="catalog-collection-title">Piezas para cada espacio.</h3></div>
+      <p>Dos grupos organizan esta muestra. El filtro facilita el recorrido cuando una colección crece.</p>
+    </div>
+    <div class="catalog-category-cards" aria-label="Categorías del catálogo">
+      <a class="catalog-category-card catalog-category-table" href="#catalogo-piezas" data-category-link="mesa">
+        <span>01 / MESA</span><strong>Compartir<br />alrededor.</strong><i aria-hidden="true">↗</i>
+      </a>
+      <a class="catalog-category-card catalog-category-textile" href="#catalogo-piezas" data-category-link="textil">
+        <span>02 / TEXTIL</span><strong>Texturas<br />para quedarse.</strong><i aria-hidden="true">↗</i>
+      </a>
+    </div>
+  </section>
+
+  <section class="catalog-products" id="catalogo-piezas" aria-labelledby="catalog-products-title">
+    <div class="catalog-section-heading catalog-products-heading">
+      <div><span class="catalog-eyebrow">Selección de ejemplo</span><h3 id="catalog-products-title">Objetos con historia material.</h3></div>
+      <p>Conoce una selección representativa y consulta por la información que necesitas.</p>
+    </div>
+    <div class="catalog-filter" data-catalog-filter-controls hidden>
+      <span>Filtrar piezas</span>
+      <div class="catalog-filter-options" role="group" aria-label="Filtrar piezas por categoría">
+        {categories.map((category, index) => <button type="button" data-catalog-filter={category.id} aria-pressed={index === 0 ? 'true' : 'false'}>{category.label}</button>)}
+      </div>
+    </div>
+    <div class="catalog-product-grid" data-catalog-items>
+      {catalogDemoItems.map((item, index) => (
+        <article class="catalog-product-card" data-catalog-item data-category={item.category} data-aos="fade-up" data-aos-offset="16">
+          <div class:list={['catalog-product-art', `art-${item.visual}`]} aria-hidden="true">
+            <span class="catalog-art-stamp">EJEMPLO<br />{String(index + 1).padStart(2, '0')}</span>
+            <i></i><b></b>
+          </div>
+          <div class="catalog-product-copy">
+            <div class="catalog-product-meta"><span>{item.categoryLabel}</span><small>Contenido demo</small></div>
+            <h4>{item.name}</h4>
+            <p>{item.description}</p>
+            <p class="catalog-material">{item.material}</p>
+            <details class="catalog-details">
+              <summary>Ver ficha de ejemplo</summary>
+              <div><strong>Sobre esta pieza</strong><p>La ficha reúne una descripción, material y categoría. Los datos finales se definen para cada proyecto y no implican disponibilidad ni venta en línea.</p></div>
+            </details>
+            <a class="catalog-query-link" href="#catalogo-consulta">Consultar sobre esta pieza <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      ))}
+    </div>
+    <p class="catalog-empty" data-catalog-empty hidden>No hay piezas de demostración en esta categoría.</p>
+    <p class="catalog-grid-note">8 piezas ficticias · sin precios, stock ni disponibilidad real</p>
+  </section>
+
+  <section class="catalog-story" aria-labelledby="catalog-story-title">
+    <div class="catalog-story-art" aria-hidden="true"><div></div><span>OBJETOS<br />CON CALMA</span></div>
+    <div><span class="catalog-eyebrow">Una ficha también cuenta</span><h3 id="catalog-story-title">Del objeto a la consulta,<br /><em>sin perder el contexto.</em></h3><p>Un catálogo digital puede combinar categorías, imágenes, materiales y detalles para ayudar a comparar opciones antes de conversar. Cada contenido de esta página es una referencia ficticia; no muestra una operación activa.</p><a class="catalog-text-link" href="#catalogo-consulta">Ver cómo se consulta <span aria-hidden="true">↓</span></a></div>
+  </section>
+
+  <section class="catalog-contact" id="catalogo-consulta" aria-labelledby="catalog-contact-title">
+    <div><span class="catalog-eyebrow">Contacto de ejemplo</span><h3 id="catalog-contact-title">¿Quieres conocer<br /><em>una pieza?</em></h3><p>En un proyecto real, esta sección puede reunir los canales de contacto del negocio. Aquí el botón solo demuestra la ubicación del siguiente paso y no envía información.</p><span class="catalog-contact-detail">Canal de consulta ilustrativo · no conectado</span></div>
+    <a class="catalog-button catalog-contact-button" href="#catalogo-inicio">Volver al catálogo <span aria-hidden="true">↑</span></a>
+  </section>
+
+  <footer class="catalog-site-footer">
+    <a class="catalog-brand" href="#catalogo-inicio"><span class="catalog-brand-mark" aria-hidden="true">t.</span><span><strong>Taller de Objetos</strong><small>Marca ficticia · contenido de ejemplo</small></span></a>
+    <p>Demo de estructura · un punto de partida, no una plantilla exacta.</p>
+    <nav aria-label="Enlaces de cierre del catálogo"><a href="#catalogo-piezas">Piezas</a><a href="#catalogo-consulta">Contacto</a></nav>
+  </footer>
+</article>
+
+<noscript><style>.catalog-filter { display: none !important; }</style></noscript>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-catalog-demo]').forEach((catalog) => {
+    const controls = catalog.querySelector<HTMLElement>('[data-catalog-filter-controls]');
+    const filters = Array.from(catalog.querySelectorAll<HTMLButtonElement>('[data-catalog-filter]'));
+    const items = Array.from(catalog.querySelectorAll<HTMLElement>('[data-catalog-item]'));
+    const emptyState = catalog.querySelector<HTMLElement>('[data-catalog-empty]');
+    if (!controls || filters.length === 0) return;
+
+    controls.hidden = false;
+    filters.forEach((filter) => filter.addEventListener('click', () => {
+      const category = filter.dataset.catalogFilter ?? 'all';
+      filters.forEach((button) => button.setAttribute('aria-pressed', String(button === filter)));
+      let visible = 0;
+      items.forEach((item) => {
+        const show = category === 'all' || item.dataset.category === category;
+        item.hidden = !show;
+        if (show) visible += 1;
+      });
+      if (emptyState) emptyState.hidden = visible > 0;
+    }));
+
+    catalog.querySelectorAll<HTMLAnchorElement>('[data-category-link]').forEach((link) => link.addEventListener('click', () => {
+      const filter = filters.find((button) => button.dataset.catalogFilter === link.dataset.categoryLink);
+      filter?.click();
+    }));
+  });
+</script>
+
+<style>
+  .catalog-demo { --catalog-accent: var(--project-accent, #224A36); --catalog-accent-contrast: var(--project-accent-contrast, #fff); width: 100%; overflow: hidden; border: 1px solid var(--color-border); border-radius: 1.35rem; color: var(--color-text); background: var(--color-bg); box-shadow: 0 1.5rem 4rem var(--color-overlay); }
+  .catalog-demo a:focus-visible, .catalog-demo button:focus-visible, .catalog-demo summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+  .catalog-site-header { display: flex; min-height: 5.2rem; align-items: center; gap: 1.3rem; padding: .75rem clamp(1rem,4vw,3rem); border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+  .catalog-brand { display: inline-flex; flex: none; align-items: center; gap: .65rem; color: var(--color-text); text-decoration: none; }
+  .catalog-brand > span:last-child { display: grid; line-height: 1.15; }
+  .catalog-brand strong { font-family: var(--serif); font-size: 1rem; }
+  .catalog-brand small { margin-top: .2rem; color: var(--color-text-muted); font-size: .65rem; }
+  .catalog-brand-mark { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: 50%; color: var(--catalog-accent-contrast); background: var(--catalog-accent); font-family: var(--serif); font-size: 1.15rem; font-style: italic; }
+  .catalog-nav { display: flex; flex: 1; justify-content: center; gap: clamp(.65rem,2vw,1.65rem); }
+  .catalog-nav a, .catalog-header-link { color: var(--color-text-muted); font-size: .78rem; text-decoration: none; }
+  .catalog-nav a:hover, .catalog-header-link:hover, .catalog-site-footer nav a:hover { color: var(--color-text); text-decoration: underline; text-decoration-color: var(--catalog-accent); text-underline-offset: .25em; }
+  .catalog-header-link { min-height: 2.75rem; display: inline-flex; flex: none; align-items: center; gap: .45rem; color: var(--color-text); font-weight: 700; }
+  .catalog-demo-label { display: flex; min-height: 2rem; align-items: center; gap: .45rem; padding-inline: clamp(1rem,4vw,3rem); color: var(--color-text-muted); background: var(--color-surface-elevated); font-size: .68rem; letter-spacing: .035em; }
+  .catalog-demo-label span, .catalog-eyebrow { color: var(--catalog-accent); }
+  .catalog-hero { display: grid; min-height: 29rem; grid-template-columns: 1fr .9fr; align-items: center; gap: clamp(1.5rem,5vw,5rem); padding: clamp(2.5rem,6vw,5rem) clamp(1.25rem,7vw,6rem); background: var(--color-surface); }
+  .catalog-hero-copy { max-width: 37rem; }
+  .catalog-eyebrow { display: inline-flex; margin-bottom: .85rem; padding-left: .55rem; border-left: 3px solid var(--catalog-accent); color: var(--color-text-muted); font-size: .64rem; font-weight: 760; letter-spacing: .13em; text-transform: uppercase; }
+  .catalog-hero h2 { max-width: 11ch; font-family: var(--serif); font-size: clamp(2.8rem,6vw,5.4rem); font-weight: 450; line-height: .98; letter-spacing: -.055em; }
+  .catalog-hero h2 em, .catalog-intro h3 em, .catalog-story h3 em, .catalog-contact h3 em { color: var(--color-text); font-weight: 400; text-decoration: underline; text-decoration-color: var(--catalog-accent); text-decoration-thickness: .07em; text-underline-offset: .13em; }
+  .catalog-hero-copy > p { max-width: 31rem; margin-top: 1.15rem; color: var(--color-text-muted); font-size: 1rem; }
+  .catalog-button { display: inline-flex; min-height: 2.9rem; align-items: center; justify-content: center; gap: .6rem; margin-top: 1.35rem; padding: .7rem 1.1rem; border: 1px solid var(--catalog-accent); border-radius: 999px; color: var(--catalog-accent-contrast); background: var(--catalog-accent); font-size: .8rem; font-weight: 700; text-decoration: none; }
+  .catalog-button:hover { filter: brightness(1.1); }
+  .catalog-hero-copy > small { display: block; margin-top: .7rem; color: var(--color-text-muted); font-size: .68rem; }
+  .catalog-hero-art { position: relative; min-height: 21rem; overflow: hidden; border-radius: 1rem 7rem 1rem 1rem; background: linear-gradient(145deg,var(--color-surface-elevated),var(--color-bg)); }
+  .catalog-hero-sun { position: absolute; top: 11%; right: 11%; width: 7rem; aspect-ratio: 1; border: 1px solid color-mix(in srgb,var(--catalog-accent) 45%,transparent); border-radius: 50%; box-shadow: 0 0 0 1.7rem color-mix(in srgb,var(--catalog-accent) 6%,transparent); }
+  .catalog-hero-vase { position: absolute; z-index: 1; left: 27%; bottom: 12%; width: 7.5rem; height: 12rem; border-radius: 44% 44% 35% 35% / 30% 30% 20% 20%; background: linear-gradient(100deg,color-mix(in srgb,var(--catalog-accent) 70%,#d3bba0),color-mix(in srgb,var(--catalog-accent) 28%,#e9dcc8) 48%,color-mix(in srgb,var(--catalog-accent) 55%,#baa184)); box-shadow: 1rem 1.5rem 2.5rem var(--color-overlay); }
+  .catalog-hero-vase::before { position: absolute; top: -1.4rem; left: 2.15rem; width: 3.2rem; height: 2.1rem; border-radius: .4rem .4rem 0 0; background: inherit; content: ""; }
+  .catalog-hero-vase::after { position: absolute; top: -1.55rem; left: 2.05rem; width: 3.4rem; height: .4rem; border-radius: 50%; background: color-mix(in srgb,var(--catalog-accent) 50%,#dfccb4); content: ""; }
+  .catalog-hero-bowl { position: absolute; z-index: 2; right: 15%; bottom: 14%; width: 8rem; height: 3.5rem; border: .45rem solid color-mix(in srgb,var(--catalog-accent) 35%,#e6d8c5); border-top-width: .28rem; border-radius: 0 0 50% 50%; background: var(--color-surface); transform: rotate(-8deg); }
+  .catalog-hero-cloth { position: absolute; right: 5%; bottom: -14%; width: 55%; height: 8rem; border-radius: 50% 0 0; background: repeating-linear-gradient(90deg,color-mix(in srgb,var(--catalog-accent) 16%,var(--color-surface)) 0 8px,color-mix(in srgb,var(--catalog-accent) 5%,var(--color-surface)) 8px 16px); transform: rotate(-11deg); }
+  .catalog-hero-art > span { position: absolute; top: 10%; left: 8%; color: var(--color-text-muted); font-size: .55rem; letter-spacing: .16em; line-height: 1.5; }
+  .catalog-intro, .catalog-story { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(2rem,8vw,7rem); padding: clamp(2.7rem,6vw,4.8rem) clamp(1.25rem,7vw,6rem); border-top: 1px solid var(--color-border); background: var(--color-bg); }
+  .catalog-intro h3, .catalog-section-heading h3, .catalog-story h3, .catalog-contact h3 { font-family: var(--serif); font-size: clamp(2rem,4vw,3.45rem); font-weight: 450; line-height: 1.02; letter-spacing: -.04em; }
+  .catalog-intro > div:last-child { align-self: center; }
+  .catalog-intro > div:last-child > p, .catalog-story > div:last-child > p, .catalog-contact > div > p { color: var(--color-text-muted); font-size: .92rem; }
+  .catalog-note { margin-top: .8rem; font-size: .7rem !important; }
+  .catalog-collection, .catalog-products { padding: clamp(2.7rem,6vw,4.8rem) clamp(1.25rem,7vw,6rem); background: var(--color-surface); }
+  .catalog-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 1.7rem; }
+  .catalog-section-heading h3 { max-width: 14ch; }
+  .catalog-section-heading > p { max-width: 25rem; color: var(--color-text-muted); font-size: .82rem; }
+  .catalog-category-cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+  .catalog-category-card { position: relative; display: flex; min-height: 13rem; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 1.25rem; border: 1px solid var(--color-border); border-radius: .8rem; color: var(--color-text); text-decoration: none; background: radial-gradient(ellipse at 90% 80%,color-mix(in srgb,var(--catalog-accent) 18%,transparent),transparent 55%),var(--color-bg); }
+  .catalog-category-card > span { color: var(--color-text-muted); font-size: .62rem; font-weight: 700; letter-spacing: .12em; }
+  .catalog-category-card strong { align-self: start; font-family: var(--serif); font-size: clamp(1.55rem,3vw,2.5rem); font-weight: 450; line-height: 1; }
+  .catalog-category-card i { position: absolute; right: 1.3rem; bottom: 1.1rem; display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border: 1px solid var(--catalog-accent); border-radius: 50%; color: var(--catalog-accent); font-style: normal; }
+  .catalog-category-textile { background: repeating-linear-gradient(135deg,transparent 0 18px,color-mix(in srgb,var(--catalog-accent) 4%,transparent) 18px 36px),var(--color-bg); }
+  .catalog-products { background: var(--color-bg); }
+  .catalog-products-heading { margin-bottom: 1.25rem; }
+  .catalog-filter { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem 1rem; margin-bottom: 1.5rem; }
+  .catalog-filter > span { color: var(--color-text-muted); font-size: .75rem; font-weight: 700; }
+  .catalog-filter-options { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .catalog-filter button { min-height: 2.75rem; padding: .55rem .9rem; border: 1px solid var(--color-border); border-radius: 999px; color: var(--color-text); background: var(--color-surface); font-size: .75rem; font-weight: 650; cursor: pointer; }
+  .catalog-filter button::before { content: "○"; margin-right: .4rem; }
+  .catalog-filter button[aria-pressed="true"] { border-color: var(--catalog-accent); }
+  .catalog-filter button[aria-pressed="true"]::before { content: "✓"; color: var(--catalog-accent); }
+  .catalog-product-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1rem; }
+  .catalog-product-card { min-width: 0; overflow: hidden; border: 1px solid var(--color-border); border-radius: .85rem; background: var(--color-surface); }
+  .catalog-product-card[hidden] { display: none; }
+  .catalog-product-art { position: relative; display: grid; min-height: 12rem; place-items: center; overflow: hidden; background: color-mix(in srgb,var(--catalog-accent) 8%,var(--color-surface-elevated)); }
+  .catalog-product-art > i { position: relative; z-index: 1; display: block; width: 5rem; height: 6rem; border-radius: 45% 45% 35% 35%; background: linear-gradient(100deg,color-mix(in srgb,var(--catalog-accent) 58%,#d8c7b2),color-mix(in srgb,var(--catalog-accent) 18%,#eee2d2) 55%,color-mix(in srgb,var(--catalog-accent) 48%,#bca78f)); box-shadow: .8rem 1rem 1.8rem var(--color-overlay); }
+  .catalog-product-art > b { position: absolute; right: 8%; bottom: 8%; width: 4rem; height: 2rem; border: 1px solid color-mix(in srgb,var(--catalog-accent) 35%,transparent); border-radius: 50%; transform: rotate(-12deg); }
+  .catalog-art-stamp { position: absolute; top: .65rem; left: .65rem; color: var(--color-text-muted); font-size: .48rem; font-weight: 750; letter-spacing: .08em; line-height: 1.4; }
+  .art-glass > i { width: 3.3rem; height: 6.2rem; border: 2px solid color-mix(in srgb,var(--catalog-accent) 35%,var(--color-text-muted)); border-radius: .45rem .45rem 1rem 1rem; background: linear-gradient(transparent 50%,color-mix(in srgb,var(--catalog-accent) 20%,transparent) 50%); }
+  .art-bowl > i { width: 6.5rem; height: 3.6rem; border: .5rem solid color-mix(in srgb,var(--catalog-accent) 38%,#e5d7c4); border-top-width: .25rem; border-radius: 0 0 50% 50%; background: var(--color-surface); }
+  .art-pitcher > i { width: 4.6rem; height: 6.2rem; border-radius: 42% 42% 35% 35%; }
+  .art-pitcher > i::before { position: absolute; top: -1rem; left: 1.2rem; width: 2rem; height: 1.2rem; border-radius: .3rem .3rem 0 0; background: inherit; content: ""; }
+  .art-pitcher > b { right: 14%; bottom: 36%; width: 2.8rem; height: 3rem; border: .35rem solid color-mix(in srgb,var(--catalog-accent) 36%,#d8c7b2); border-left: 0; border-radius: 0 50% 50% 0; }
+  .art-throw > i { width: 8rem; height: 5.5rem; border-radius: .4rem; background: repeating-linear-gradient(0deg,color-mix(in srgb,var(--catalog-accent) 35%,#d7c6b0) 0 5px,color-mix(in srgb,var(--catalog-accent) 9%,#e7ddcf) 5px 10px); transform: rotate(12deg); }
+  .art-cushion > i { width: 6rem; height: 5rem; border-radius: 1.4rem; background: repeating-linear-gradient(135deg,color-mix(in srgb,var(--catalog-accent) 38%,#d7c6b0) 0 3px,color-mix(in srgb,var(--catalog-accent) 12%,#e7ddcf) 3px 7px); transform: rotate(-8deg); }
+  .art-runner > i { width: 3.4rem; height: 8.5rem; border-radius: .3rem; background: repeating-linear-gradient(90deg,color-mix(in srgb,var(--catalog-accent) 36%,#d7c6b0) 0 5px,color-mix(in srgb,var(--catalog-accent) 10%,#e7ddcf) 5px 10px); transform: rotate(8deg); }
+  .art-linen > i { width: 6.7rem; height: 5rem; border-radius: 2rem .4rem 2rem .4rem; background: repeating-linear-gradient(0deg,color-mix(in srgb,var(--catalog-accent) 32%,#d7c6b0) 0 2px,color-mix(in srgb,var(--catalog-accent) 8%,#e7ddcf) 2px 6px); transform: rotate(6deg); }
+  .catalog-product-copy { padding: .95rem; }
+  .catalog-product-meta { display: flex; align-items: center; justify-content: space-between; gap: .4rem; }
+  .catalog-product-meta > span { color: var(--catalog-accent); font-size: .64rem; font-weight: 750; text-transform: uppercase; letter-spacing: .08em; }
+  .catalog-product-meta small { color: var(--color-text-muted); font-size: .56rem; }
+  .catalog-product-copy h4 { margin-top: .4rem; font-family: var(--serif); font-size: 1.25rem; font-weight: 550; }
+  .catalog-product-copy > p { margin-top: .4rem; color: var(--color-text-muted); font-size: .73rem; line-height: 1.5; }
+  .catalog-product-copy .catalog-material { color: var(--color-text); font-size: .65rem; }
+  .catalog-details { margin-top: .65rem; border-top: 1px solid var(--color-border); }
+  .catalog-details summary { min-height: 2.75rem; padding-top: .7rem; color: var(--color-text); font-size: .7rem; font-weight: 700; text-decoration: underline; text-decoration-color: var(--catalog-accent); text-underline-offset: .2em; cursor: pointer; }
+  .catalog-details > div { padding-bottom: .6rem; }
+  .catalog-details > div strong { font-size: .67rem; }
+  .catalog-details > div p { margin-top: .2rem; color: var(--color-text-muted); font-size: .66rem; }
+  .catalog-query-link, .catalog-text-link { display: inline-flex; min-height: 2.75rem; align-items: center; gap: .4rem; color: var(--color-text); font-size: .68rem; font-weight: 700; text-decoration-color: var(--catalog-accent); text-underline-offset: .25em; }
+  .catalog-empty { margin-top: 1rem; padding: 1rem; border: 1px dashed var(--color-border); color: var(--color-text-muted); }
+  .catalog-grid-note { margin-top: 1rem; color: var(--color-text-muted); font-size: .66rem; }
+  .catalog-story { align-items: center; background: var(--color-surface); }
+  .catalog-story-art { position: relative; min-height: 16rem; overflow: hidden; border-radius: 50% 50% .8rem .8rem; background: color-mix(in srgb,var(--catalog-accent) 9%,var(--color-surface-elevated)); }
+  .catalog-story-art > div { position: absolute; left: 30%; bottom: 9%; width: 8rem; height: 9rem; border-radius: 2rem 2rem 1rem 1rem; background: linear-gradient(100deg,color-mix(in srgb,var(--catalog-accent) 56%,#d8c7b2),color-mix(in srgb,var(--catalog-accent) 16%,#eee2d2)); transform: rotate(7deg); }
+  .catalog-story-art > span { position: absolute; top: 12%; left: 10%; color: var(--color-text-muted); font-size: .58rem; letter-spacing: .14em; line-height: 1.5; }
+  .catalog-story h3 { margin-bottom: .8rem; }
+  .catalog-story .catalog-text-link { margin-top: .5rem; }
+  .catalog-contact { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: clamp(2.7rem,6vw,4.8rem) clamp(1.25rem,7vw,6rem); background: var(--color-surface-elevated); }
+  .catalog-contact h3 { margin-bottom: .8rem; }
+  .catalog-contact > div > p { max-width: 39rem; }
+  .catalog-contact-detail { display: inline-block; margin-top: .9rem; color: var(--color-text-muted); font-size: .68rem; }
+  .catalog-contact-button { flex: none; margin-top: 0; }
+  .catalog-site-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.2rem clamp(1rem,4vw,3rem); border-top: 1px solid var(--color-border); background: var(--color-bg); }
+  .catalog-site-footer > p { max-width: 22rem; color: var(--color-text-muted); font-size: .67rem; text-align: center; }
+  .catalog-site-footer nav { display: flex; flex-wrap: wrap; gap: .8rem; }
+  .catalog-site-footer nav a { color: var(--color-text-muted); font-size: .72rem; text-underline-offset: .2em; }
+  @media (max-width: 1000px) { .catalog-product-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+  @media (max-width: 760px) {
+    .catalog-site-header { flex-wrap: wrap; gap: .65rem; }
+    .catalog-nav { order: 3; flex-basis: 100%; justify-content: space-between; gap: .4rem; padding-top: .45rem; border-top: 1px solid var(--color-border); }
+    .catalog-nav a { min-height: 2.75rem; display: inline-flex; align-items: center; font-size: .7rem; }
+    .catalog-header-link { margin-left: auto; font-size: .7rem; }
+    .catalog-hero { grid-template-columns: 1fr 1fr; gap: 1rem; padding-inline: 1.25rem; }
+    .catalog-hero-art { min-height: 17rem; }
+    .catalog-hero-vase { left: 22%; transform: scale(.8); transform-origin: bottom center; }
+    .catalog-hero-bowl { right: 5%; transform: scale(.8) rotate(-8deg); }
+    .catalog-section-heading { align-items: flex-start; flex-direction: column; gap: .7rem; }
+    .catalog-product-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .catalog-story { grid-template-columns: .8fr 1.2fr; gap: 1.5rem; }
+    .catalog-site-footer { flex-wrap: wrap; }
+    .catalog-site-footer > p { order: 3; flex-basis: 100%; text-align: left; }
+  }
+  @media (max-width: 520px) {
+    .catalog-site-header { padding-inline: .85rem; }
+    .catalog-brand strong { font-size: .9rem; }
+    .catalog-brand small { font-size: .58rem; }
+    .catalog-brand-mark { width: 2rem; height: 2rem; }
+    .catalog-nav { justify-content: space-between; }
+    .catalog-nav a { font-size: .64rem; }
+    .catalog-hero { grid-template-columns: 1fr; padding-block: 2.3rem; }
+    .catalog-hero h2 { font-size: clamp(2.7rem,12vw,4rem); }
+    .catalog-hero-art { min-height: 15rem; margin-top: .4rem; }
+    .catalog-hero-vase { left: 28%; transform: scale(.72); }
+    .catalog-intro, .catalog-story { grid-template-columns: 1fr; gap: 1.1rem; }
+    .catalog-category-cards { grid-template-columns: 1fr; }
+    .catalog-category-card { min-height: 9rem; }
+    .catalog-filter { align-items: flex-start; flex-direction: column; }
+    .catalog-filter-options { width: 100%; }
+    .catalog-filter button { flex: 1; min-width: 0; padding-inline: .5rem; font-size: .67rem; }
+    .catalog-product-grid { grid-template-columns: 1fr; }
+    .catalog-product-card { display: grid; grid-template-columns: minmax(6rem,.72fr) 1.28fr; }
+    .catalog-product-art { min-height: 100%; }
+    .catalog-product-art > i { transform: scale(.72); }
+    .catalog-product-art > b { display: none; }
+    .catalog-product-copy { padding: .8rem; }
+    .catalog-product-copy h4 { font-size: 1.08rem; }
+    .catalog-product-copy > p { font-size: .7rem; }
+    .catalog-product-meta small { display: none; }
+    .catalog-story-art { min-height: 12rem; }
+    .catalog-contact { align-items: flex-start; flex-direction: column; }
+    .catalog-contact-button { width: 100%; }
+    .catalog-site-footer { align-items: flex-start; flex-direction: column; }
+    .catalog-site-footer > p { order: initial; }
+  }
+  @media (max-width: 370px) {
+    .catalog-nav a { font-size: .6rem; }
+    .catalog-product-card { grid-template-columns: minmax(5rem,.62fr) 1.38fr; }
+    .catalog-product-copy { padding: .68rem; }
+    .catalog-product-copy > p { font-size: .66rem; }
+    .catalog-filter-options { gap: .3rem; }
+    .catalog-filter button { padding-inline: .38rem; font-size: .62rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .catalog-demo *, .catalog-demo *::before, .catalog-demo *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+</style>

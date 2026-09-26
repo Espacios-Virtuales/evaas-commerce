@@ -46,7 +46,7 @@ export const products: Product[] = [
     scope: '1 catálogo · hasta 12 ítems · 1 revisión consolidada',
     includes: ['Branding básico', 'Categorías simples', 'Fichas o bloques', 'CTA y contacto', 'Publicación inicial en Vercel', 'Conexión de dominio'],
     excludes: ['Carrito o stock', 'Pago en línea', 'Carga masiva', 'Integración con ERP'],
-    demoName: 'Noma Objetos',
+    demoName: 'Taller de Objetos',
     demoCategory: 'Diseño y hogar',
     demoDescription: 'Una colección visual que permite explorar, filtrar y consultar.'
   },
