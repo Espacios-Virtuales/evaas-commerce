@@ -1,0 +1,318 @@
+---
+import { INITIAL_PREVIEW_COLOR } from '../data/project-colors';
+
+const services = [
+  { number: '01', title: 'Diagnóstico técnico', summary: 'Entender las condiciones existentes antes de definir un camino.', detail: 'Un levantamiento ordenado ayuda a describir el contexto, reconocer restricciones y priorizar preguntas para la siguiente etapa.' },
+  { number: '02', title: 'Diseño y especificación', summary: 'Traducir necesidades en criterios y soluciones posibles.', detail: 'La documentación de referencia puede organizar criterios, alternativas y requerimientos para facilitar decisiones informadas.' },
+  { number: '03', title: 'Coordinación de especialidades', summary: 'Conectar disciplinas y responsabilidades en torno al proyecto.', detail: 'La coordinación reúne antecedentes y acuerdos entre participantes para mantener una lectura común del trabajo.' },
+  { number: '04', title: 'Acompañamiento de ejecución', summary: 'Dar continuidad técnica a los acuerdos definidos.', detail: 'El seguimiento puede revisar observaciones y decisiones de cada etapa. El alcance se define en cada proyecto.' }
+];
+
+const method = [
+  { number: '01', title: 'Diagnóstico', text: 'Leemos el contexto, las condiciones y las preguntas que deben resolverse.' },
+  { number: '02', title: 'Diseño', text: 'Ordenamos criterios y alternativas para dar forma a una propuesta técnica.' },
+  { number: '03', title: 'Coordinación', text: 'Alineamos especialidades, prioridades y responsabilidades del proyecto.' },
+  { number: '04', title: 'Seguimiento', text: 'Acompañamos la continuidad de las decisiones durante la ejecución acordada.' }
+];
+
+const cases = [
+  { number: 'A', title: 'Lectura de una instalación existente', category: 'DIAGNÓSTICO', text: 'Un relato de ejemplo puede mostrar cómo se organiza el levantamiento de condiciones y la evaluación de alternativas.', visual: 'case-existing' },
+  { number: 'B', title: 'Coordinación en un espacio técnico', category: 'COORDINACIÓN', text: 'Una referencia ficticia permite explicar cómo se conectan disciplinas y necesidades operativas.', visual: 'case-coordination' },
+  { number: 'C', title: 'Diseño para continuidad operativa', category: 'DISEÑO', text: 'Este caso narrativo ilustra la estructura para presentar un desafío, su enfoque y los criterios considerados.', visual: 'case-continuity' }
+];
+---
+
+<article
+  class="corporate-demo"
+  data-corporate-demo
+  data-project-color={INITIAL_PREVIEW_COLOR.id}
+  aria-label="Demo institucional de Arista Ingeniería, contenido ficticio"
+  style={`--project-accent: ${INITIAL_PREVIEW_COLOR.cssValue}; --project-accent-contrast: ${INITIAL_PREVIEW_COLOR.textColor}`}
+>
+  <header class="corporate-header" id="corp-inicio">
+    <a class="corporate-brand" href="#corp-inicio" aria-label="Arista Ingeniería, inicio de la demo">
+      <span class="corporate-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span><strong>Arista Ingeniería</strong><small>Servicios técnicos · marca ficticia</small></span>
+    </a>
+    <nav aria-label="Navegación de Arista Ingeniería">
+      <a href="#corp-inicio">Inicio</a>
+      <a href="#corp-empresa">Empresa</a>
+      <a href="#corp-servicios">Servicios</a>
+      <a href="#corp-metodo">Método</a>
+      <a href="#corp-casos">Casos</a>
+      <a href="#corp-contacto">Contacto</a>
+    </nav>
+    <a class="corporate-header-cta" href="#corp-contacto">Conversemos <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <div class="corporate-demo-label"><span aria-hidden="true">●</span> Contenido demostrativo · empresa y casos ficticios</div>
+
+  <section class="corporate-hero" aria-labelledby="corp-hero-title">
+    <div class="corporate-hero-copy">
+      <span class="corporate-eyebrow">Ingeniería · servicios técnicos</span>
+      <h2 id="corp-hero-title">Ingeniería que<br /><em>sostiene decisiones.</em></h2>
+      <p>Una mirada técnica para organizaciones que necesitan entender, diseñar y coordinar sus desafíos de infraestructura.</p>
+      <div class="corporate-hero-actions">
+        <a class="corporate-button" href="#corp-servicios">Conocer capacidades <span aria-hidden="true">↓</span></a>
+        <a class="corporate-text-link" href="#corp-contacto">Solicitar información</a>
+      </div>
+      <small>Propuesta institucional de ejemplo · no describe una empresa real</small>
+    </div>
+    <div class="corporate-hero-visual" aria-hidden="true">
+      <div class="corporate-blueprint-grid"></div>
+      <div class="corporate-blueprint-frame"><span>PLANO DE REFERENCIA</span><i></i><b></b><em></em></div>
+      <div class="corporate-hero-index"><strong>01</strong><span>LECTURA<br />TÉCNICA</span></div>
+      <div class="corporate-hero-caption">CONTEXTO <b>→</b> CRITERIO <b>→</b> DECISIÓN</div>
+    </div>
+  </section>
+
+  <section class="corporate-proof-strip" aria-label="Enfoques institucionales">
+    <span>ANÁLISIS TÉCNICO</span><i aria-hidden="true"></i><span>DISEÑO APLICADO</span><i aria-hidden="true"></i><span>COORDINACIÓN CLARA</span><i aria-hidden="true"></i><span>CONTENIDO DE EJEMPLO</span>
+  </section>
+
+  <section class="corporate-company" id="corp-empresa" aria-labelledby="corp-company-title">
+    <div class="corporate-section-index"><span>01</span><span>EMPRESA</span></div>
+    <div class="corporate-company-heading">
+      <span class="corporate-eyebrow">Una mirada común al desafío</span>
+      <h3 id="corp-company-title">Ingeniería cercana<br />a la operación.</h3>
+    </div>
+    <div class="corporate-company-copy">
+      <p>Arista Ingeniería es una organización ficticia de servicios técnicos. Su relato representa a un equipo que combina análisis, diseño y coordinación para ayudar a ordenar decisiones en proyectos de infraestructura.</p>
+      <p>No se atribuyen años de trayectoria, certificaciones, clientes ni obras ejecutadas. En un proyecto real, esta área presenta el propósito, las capacidades y el contexto de la organización.</p>
+      <a href="#corp-metodo" class="corporate-text-link">Así entendemos el trabajo <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="corporate-services" id="corp-servicios" aria-labelledby="corp-services-title">
+    <div class="corporate-section-heading">
+      <div><div class="corporate-section-index"><span>02</span><span>SERVICIOS</span></div><span class="corporate-eyebrow">Capacidades técnicas</span><h3 id="corp-services-title">Del diagnóstico<br />a la coordinación.</h3></div>
+      <p>Una oferta institucional organizada ayuda a reconocer el tipo de apoyo disponible y cómo puede encajar en cada desafío.</p>
+    </div>
+    <div class="corporate-service-list">
+      {services.map((service) => (
+        <article class="corporate-service" data-aos="fade-up" data-aos-offset="16">
+          <span class="corporate-service-number">{service.number}</span>
+          <div><h4>{service.title}</h4><p>{service.summary}</p></div>
+          <details><summary>Ver alcance de ejemplo</summary><p>{service.detail}</p></details>
+        </article>
+      ))}
+    </div>
+    <p class="corporate-demo-note">Capacidades de referencia · el alcance se define para cada proyecto</p>
+  </section>
+
+  <section class="corporate-method" id="corp-metodo" aria-labelledby="corp-method-title">
+    <div class="corporate-method-heading">
+      <div class="corporate-section-index"><span>03</span><span>MÉTODO</span></div>
+      <span class="corporate-eyebrow">Forma de trabajo · ejemplo</span>
+      <h3 id="corp-method-title">Cada decisión<br /><em>con su contexto.</em></h3>
+      <p>Un proceso legible explica cómo se conectan las etapas y qué aporta cada conversación.</p>
+    </div>
+    <ol class="corporate-method-steps">
+      {method.map((step) => (
+        <li data-aos="fade-up" data-aos-offset="16">
+          <span>{step.number}</span><div><h4>{step.title}</h4><p>{step.text}</p></div>
+        </li>
+      ))}
+    </ol>
+    <div class="corporate-method-foot"><span>SECUENCIA ILUSTRATIVA</span><span>01 — 04</span></div>
+  </section>
+
+  <section class="corporate-cases" id="corp-casos" aria-labelledby="corp-cases-title">
+    <div class="corporate-section-heading">
+      <div><div class="corporate-section-index"><span>04</span><span>EXPERIENCIA</span></div><span class="corporate-eyebrow">Relatos de caso ficticios</span><h3 id="corp-cases-title">El contexto detrás<br />de cada decisión.</h3></div>
+      <p>Los casos narrativos muestran una forma de presentar desafíos y enfoques sin atribuir resultados reales, clientes o proyectos ejecutados.</p>
+    </div>
+    <div class="corporate-case-grid">
+      {cases.map((item) => (
+        <article class="corporate-case" data-aos="fade-up" data-aos-offset="16">
+          <div class:list={['corporate-case-visual', item.visual]} aria-hidden="true"><span>{item.number}</span><i></i><b></b></div>
+          <div class="corporate-case-copy"><span>{item.category} · EJEMPLO FICTICIO</span><h4>{item.title}</h4><p>{item.text}</p><details><summary>Sobre este relato</summary><p>Escenario creado solo para ilustrar cómo se puede organizar una sección de experiencia institucional.</p></details></div>
+        </article>
+      ))}
+    </div>
+    <p class="corporate-demo-note">Contenido demostrativo · no acredita clientes ni trabajos de Espacios Virtuales</p>
+  </section>
+
+  <section class="corporate-contact" id="corp-contacto" aria-labelledby="corp-contact-title">
+    <div class="corporate-contact-index"><span>05 / CONTACTO</span><span aria-hidden="true">↘</span></div>
+    <div class="corporate-contact-copy"><span class="corporate-eyebrow">Hablemos del desafío</span><h3 id="corp-contact-title">Una conversación<br /><em>puede ordenar el inicio.</em></h3><p>En esta demo, los canales de contacto son solo una representación. No se envían solicitudes ni se recopilan datos.</p></div>
+    <div class="corporate-contact-card"><span>CONTACTO DE EJEMPLO</span><strong>Canales definidos para cada proyecto</strong><p>Una Web Corporativa puede reunir los datos públicos y autorizados de una organización en un mismo lugar.</p><a class="corporate-button" href="#corp-inicio">Volver al inicio <span aria-hidden="true">↑</span></a></div>
+  </section>
+
+  <footer class="corporate-footer">
+    <a class="corporate-brand" href="#corp-inicio"><span class="corporate-mark" aria-hidden="true"><i></i><i></i><i></i></span><span><strong>Arista Ingeniería</strong><small>Marca ficticia · servicios técnicos</small></span></a>
+    <p>Demo de arquitectura institucional · contenido de referencia</p>
+    <nav aria-label="Enlaces de cierre"><a href="#corp-empresa">Empresa</a><a href="#corp-servicios">Servicios</a><a href="#corp-contacto">Contacto</a></nav>
+  </footer>
+</article>
+
+<style>
+  .corporate-demo { --corporate-accent: var(--project-accent,#224A36); --corporate-accent-contrast: var(--project-accent-contrast,#fff); width: 100%; overflow: hidden; border: 1px solid var(--color-border); border-radius: 1.35rem; color: var(--color-text); background: var(--color-bg); box-shadow: 0 1.5rem 4rem var(--color-overlay); }
+  .corporate-demo a:focus-visible, .corporate-demo summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+  .corporate-header { display: flex; min-height: 5.3rem; align-items: center; gap: 1.1rem; padding: .8rem clamp(1rem,3.4vw,2.75rem); border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+  .corporate-brand { display: inline-flex; flex: none; align-items: center; gap: .65rem; color: var(--color-text); text-decoration: none; }
+  .corporate-brand > span:last-child { display: grid; line-height: 1.15; }
+  .corporate-brand strong { font-family: var(--serif); font-size: 1rem; }
+  .corporate-brand small { margin-top: .2rem; color: var(--color-text-muted); font-size: .63rem; }
+  .corporate-mark { display: flex; width: 2.35rem; height: 2.35rem; align-items: end; justify-content: center; gap: .17rem; padding: .45rem; border-radius: .55rem; background: var(--corporate-accent); }
+  .corporate-mark i { width: .28rem; border: 1px solid var(--corporate-accent-contrast); border-bottom: 0; opacity: .9; }
+  .corporate-mark i:nth-child(1) { height: .65rem; }
+  .corporate-mark i:nth-child(2) { height: 1rem; }
+  .corporate-mark i:nth-child(3) { height: 1.3rem; }
+  .corporate-header nav { display: flex; flex: 1; justify-content: center; gap: clamp(.55rem,1.55vw,1.25rem); }
+  .corporate-header nav a, .corporate-footer nav a { color: var(--color-text-muted); font-size: .71rem; text-decoration: none; }
+  .corporate-header nav a:hover, .corporate-footer nav a:hover { color: var(--color-text); text-decoration: underline; text-decoration-color: var(--corporate-accent); text-underline-offset: .25em; }
+  .corporate-header-cta { display: inline-flex; min-height: 2.7rem; flex: none; align-items: center; gap: .4rem; color: var(--color-text); font-size: .72rem; font-weight: 700; text-decoration: none; }
+  .corporate-demo-label { display: flex; min-height: 2rem; align-items: center; gap: .45rem; padding-inline: clamp(1rem,3.4vw,2.75rem); color: var(--color-text-muted); background: var(--color-surface-elevated); font-size: .67rem; letter-spacing: .04em; }
+  .corporate-demo-label span { color: var(--corporate-accent); font-size: .55rem; }
+  .corporate-eyebrow { display: inline-flex; align-items: center; gap: .5rem; margin-bottom: .8rem; color: var(--color-text-muted); font-size: .63rem; font-weight: 760; letter-spacing: .13em; text-transform: uppercase; }
+  .corporate-eyebrow::before { width: 1.7rem; height: 2px; background: var(--corporate-accent); content: ""; }
+  .corporate-hero { display: grid; min-height: 30rem; grid-template-columns: 1fr .95fr; align-items: stretch; background: var(--color-surface); }
+  .corporate-hero-copy { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: clamp(2.5rem,6vw,5rem) clamp(1.3rem,6vw,5.3rem); }
+  .corporate-hero h2 { max-width: 12ch; font-family: var(--serif); font-size: clamp(2.8rem,5.4vw,5rem); font-weight: 440; line-height: .98; letter-spacing: -.055em; }
+  .corporate-hero h2 em, .corporate-method h3 em, .corporate-contact h3 em { color: var(--color-text); font-weight: 400; text-decoration: underline; text-decoration-color: var(--corporate-accent); text-decoration-thickness: .07em; text-underline-offset: .13em; }
+  .corporate-hero-copy > p { max-width: 31rem; margin-top: 1rem; color: var(--color-text-muted); font-size: .95rem; }
+  .corporate-hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1.2rem; margin-top: 1.35rem; }
+  .corporate-button { display: inline-flex; min-height: 2.9rem; align-items: center; justify-content: center; gap: .55rem; padding: .7rem 1.05rem; border: 1px solid var(--corporate-accent); border-radius: .35rem; color: var(--corporate-accent-contrast); background: var(--corporate-accent); font-size: .76rem; font-weight: 720; text-decoration: none; }
+  .corporate-button:hover { filter: brightness(1.1); }
+  .corporate-text-link { min-height: 2.75rem; display: inline-flex; align-items: center; color: var(--color-text); font-size: .75rem; font-weight: 680; text-decoration-color: var(--corporate-accent); text-underline-offset: .22em; }
+  .corporate-hero-copy > small { margin-top: .75rem; color: var(--color-text-muted); font-size: .64rem; }
+  .corporate-hero-visual { position: relative; min-height: 27rem; overflow: hidden; background: linear-gradient(140deg,color-mix(in srgb,var(--corporate-accent) 13%,var(--color-surface-elevated)),var(--color-bg)); }
+  .corporate-blueprint-grid { position: absolute; inset: 0; opacity: .6; background-image: linear-gradient(color-mix(in srgb,var(--corporate-accent) 13%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--corporate-accent) 13%,transparent) 1px,transparent 1px); background-size: 2.4rem 2.4rem; mask-image: linear-gradient(140deg,#000,transparent 90%); }
+  .corporate-blueprint-frame { position: absolute; inset: 14% 13% 13% 16%; border: 1px solid color-mix(in srgb,var(--corporate-accent) 50%,var(--color-border)); transform: skewY(-7deg); }
+  .corporate-blueprint-frame::before, .corporate-blueprint-frame::after { position: absolute; content: ""; background: color-mix(in srgb,var(--corporate-accent) 50%,var(--color-border)); }
+  .corporate-blueprint-frame::before { top: 18%; bottom: 14%; left: 35%; width: 1px; }
+  .corporate-blueprint-frame::after { right: 12%; bottom: 34%; left: 0; height: 1px; }
+  .corporate-blueprint-frame > span { position: absolute; top: 1rem; left: 1rem; color: var(--color-text-muted); font-size: .52rem; letter-spacing: .13em; }
+  .corporate-blueprint-frame > i { position: absolute; right: 15%; top: 28%; width: 35%; height: 38%; border: 1px solid var(--corporate-accent); background: color-mix(in srgb,var(--corporate-accent) 8%,transparent); }
+  .corporate-blueprint-frame > b { position: absolute; bottom: 14%; left: 12%; width: 20%; height: 31%; border: 1px solid color-mix(in srgb,var(--corporate-accent) 45%,var(--color-border)); }
+  .corporate-blueprint-frame > em { position: absolute; top: 20%; left: 13%; width: 10%; aspect-ratio: 1; border: 1px solid var(--corporate-accent); border-radius: 50%; }
+  .corporate-hero-index { position: absolute; bottom: 16%; left: 8%; display: flex; align-items: center; gap: .6rem; padding: .7rem .85rem; border: 1px solid var(--color-border); background: var(--color-surface); }
+  .corporate-hero-index strong { color: var(--corporate-accent); font-family: var(--serif); font-size: 1.7rem; font-weight: 450; }
+  .corporate-hero-index span { color: var(--color-text-muted); font-size: .5rem; font-weight: 720; letter-spacing: .1em; line-height: 1.35; }
+  .corporate-hero-caption { position: absolute; right: 7%; bottom: 8%; color: var(--color-text-muted); font-size: .48rem; letter-spacing: .09em; }
+  .corporate-hero-caption b { padding-inline: .35rem; color: var(--corporate-accent); }
+  .corporate-proof-strip { display: flex; min-height: 4rem; flex-wrap: wrap; align-items: center; justify-content: space-around; gap: .6rem 1rem; padding: .8rem 1.5rem; border-block: 1px solid var(--color-border); color: var(--color-text-muted); background: var(--color-bg); font-size: .57rem; font-weight: 750; letter-spacing: .12em; }
+  .corporate-proof-strip i { width: .35rem; height: .35rem; border: 1px solid var(--corporate-accent); transform: rotate(45deg); }
+  .corporate-company { display: grid; grid-template-columns: .55fr 1fr 1fr; gap: 1.5rem; padding: clamp(3rem,7vw,5.5rem) clamp(1.3rem,6vw,5.3rem); background: var(--color-bg); }
+  .corporate-section-index { display: flex; align-items: center; gap: .65rem; margin-bottom: 1.4rem; color: var(--color-text-muted); font-size: .59rem; font-weight: 760; letter-spacing: .13em; }
+  .corporate-section-index > span:first-child { color: var(--corporate-accent); font-size: .72rem; }
+  .corporate-company-heading h3, .corporate-section-heading h3, .corporate-method h3, .corporate-contact h3 { font-family: var(--serif); font-size: clamp(2rem,4vw,3.4rem); font-weight: 440; line-height: 1.02; letter-spacing: -.04em; }
+  .corporate-company-copy { align-self: end; }
+  .corporate-company-copy > p, .corporate-method-heading > p, .corporate-section-heading > p, .corporate-contact-copy > p { color: var(--color-text-muted); font-size: .86rem; }
+  .corporate-company-copy > p + p { margin-top: .75rem; font-size: .72rem; }
+  .corporate-company-copy > a { margin-top: .45rem; }
+  .corporate-services { padding: clamp(3rem,7vw,5.5rem) clamp(1.3rem,6vw,5.3rem); background: var(--color-surface); }
+  .corporate-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 2rem; }
+  .corporate-section-heading .corporate-section-index { margin-bottom: 1.2rem; }
+  .corporate-section-heading h3 { max-width: 12ch; }
+  .corporate-section-heading > p { max-width: 27rem; }
+  .corporate-service-list { border-top: 1px solid var(--color-border); }
+  .corporate-service { display: grid; grid-template-columns: 3.5rem 1fr 1fr; align-items: start; gap: 1rem; padding: 1.2rem .2rem; border-bottom: 1px solid var(--color-border); }
+  .corporate-service-number { color: var(--corporate-accent); font-family: var(--serif); font-size: 1.25rem; }
+  .corporate-service h4 { font-family: var(--serif); font-size: 1.25rem; font-weight: 520; }
+  .corporate-service > div > p { margin-top: .35rem; color: var(--color-text-muted); font-size: .75rem; }
+  .corporate-service details { justify-self: end; width: min(100%,19rem); }
+  .corporate-service summary, .corporate-case summary { min-height: 2.75rem; color: var(--color-text); font-size: .7rem; font-weight: 690; text-decoration: underline; text-decoration-color: var(--corporate-accent); text-underline-offset: .2em; cursor: pointer; }
+  .corporate-service details > p, .corporate-case details > p { padding-bottom: .45rem; color: var(--color-text-muted); font-size: .7rem; }
+  .corporate-demo-note { margin-top: 1rem; color: var(--color-text-muted); font-size: .66rem; }
+  .corporate-method { position: relative; display: grid; grid-template-columns: .8fr 1.2fr; column-gap: clamp(2rem,8vw,7rem); padding: clamp(3rem,7vw,5.5rem) clamp(1.3rem,6vw,5.3rem); background: var(--color-bg); }
+  .corporate-method-heading .corporate-section-index { margin-bottom: 1.2rem; }
+  .corporate-method h3 { margin-bottom: .8rem; }
+  .corporate-method-heading > p { max-width: 24rem; }
+  .corporate-method-steps { display: grid; align-self: center; list-style: none; }
+  .corporate-method-steps li { display: grid; grid-template-columns: 3.2rem 1fr; gap: .7rem; padding: 1rem .2rem; border-bottom: 1px solid var(--color-border); }
+  .corporate-method-steps li:first-child { border-top: 1px solid var(--color-border); }
+  .corporate-method-steps li > span { color: var(--corporate-accent); font-family: var(--serif); font-size: 1.3rem; }
+  .corporate-method-steps h4 { font-family: var(--serif); font-size: 1.1rem; font-weight: 540; }
+  .corporate-method-steps p { margin-top: .2rem; color: var(--color-text-muted); font-size: .74rem; }
+  .corporate-method-foot { display: flex; grid-column: 2; justify-content: space-between; margin-top: .65rem; color: var(--color-text-muted); font-size: .52rem; letter-spacing: .12em; }
+  .corporate-cases { padding: clamp(3rem,7vw,5.5rem) clamp(1.3rem,6vw,5.3rem); background: var(--color-surface); }
+  .corporate-case-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+  .corporate-case { min-width: 0; border: 1px solid var(--color-border); background: var(--color-bg); }
+  .corporate-case-visual { position: relative; display: grid; min-height: 9.5rem; place-items: center; overflow: hidden; background: color-mix(in srgb,var(--corporate-accent) 8%,var(--color-surface-elevated)); }
+  .corporate-case-visual::before { position: absolute; inset: 0; background: linear-gradient(140deg,transparent 48%,color-mix(in srgb,var(--corporate-accent) 15%,transparent) 49% 50%,transparent 51%),linear-gradient(40deg,transparent 48%,color-mix(in srgb,var(--corporate-accent) 12%,transparent) 49% 50%,transparent 51%); content: ""; }
+  .corporate-case-visual > span { position: absolute; top: .7rem; left: .8rem; color: var(--color-text-muted); font-family: var(--serif); font-size: .9rem; }
+  .corporate-case-visual > i { position: relative; width: 56%; height: 3.8rem; border: 1px solid color-mix(in srgb,var(--corporate-accent) 55%,var(--color-border)); transform: skewY(-8deg); }
+  .corporate-case-visual > b { position: absolute; width: 30%; height: 2.4rem; border: 1px solid var(--corporate-accent); background: color-mix(in srgb,var(--corporate-accent) 8%,transparent); transform: translate(30%,-10%) skewY(-8deg); }
+  .case-coordination > i { width: 45%; height: 5rem; border-inline: 1px solid var(--corporate-accent); transform: skewY(0); }
+  .case-coordination > b { width: 64%; height: 1px; border: 0; background: var(--corporate-accent); transform: none; }
+  .case-continuity > i { width: 60%; height: 2.5rem; border-radius: 50%; transform: rotate(-18deg); }
+  .case-continuity > b { width: 22%; height: 4.5rem; transform: translateY(-12%) rotate(18deg); }
+  .corporate-case-copy { padding: 1rem; }
+  .corporate-case-copy > span { color: var(--corporate-accent); font-size: .53rem; font-weight: 760; letter-spacing: .1em; }
+  .corporate-case-copy h4 { min-height: 2.8rem; margin-top: .5rem; font-family: var(--serif); font-size: 1.15rem; font-weight: 520; }
+  .corporate-case-copy > p { margin-top: .4rem; color: var(--color-text-muted); font-size: .72rem; }
+  .corporate-case details { margin-top: .55rem; border-top: 1px solid var(--color-border); }
+  .corporate-case summary { padding-top: .65rem; }
+  .corporate-contact { display: grid; grid-template-columns: .6fr 1.1fr 1fr; gap: 1.5rem; align-items: center; padding: clamp(3rem,7vw,5.5rem) clamp(1.3rem,6vw,5.3rem); background: var(--color-surface-elevated); }
+  .corporate-contact-index { display: flex; align-self: stretch; flex-direction: column; justify-content: space-between; color: var(--color-text-muted); font-size: .59rem; font-weight: 740; letter-spacing: .12em; }
+  .corporate-contact-index > span:last-child { color: var(--corporate-accent); font-size: 2rem; }
+  .corporate-contact h3 { margin-bottom: .7rem; }
+  .corporate-contact-card { display: grid; gap: .55rem; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-bg); }
+  .corporate-contact-card > span { color: var(--corporate-accent); font-size: .54rem; font-weight: 760; letter-spacing: .12em; }
+  .corporate-contact-card strong { font-family: var(--serif); font-size: 1rem; font-weight: 540; }
+  .corporate-contact-card p { color: var(--color-text-muted); font-size: .7rem; }
+  .corporate-contact-card .corporate-button { justify-self: start; margin-top: .3rem; }
+  .corporate-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.2rem clamp(1rem,3.4vw,2.75rem); border-top: 1px solid var(--color-border); background: var(--color-bg); }
+  .corporate-footer > p { max-width: 18rem; color: var(--color-text-muted); font-size: .63rem; text-align: center; }
+  .corporate-footer nav { display: flex; flex-wrap: wrap; gap: .8rem; }
+  @media (max-width: 980px) {
+    .corporate-header { gap: .7rem; }
+    .corporate-header nav { gap: .6rem; }
+    .corporate-header nav a { font-size: .65rem; }
+    .corporate-company { grid-template-columns: .45fr 1fr 1.1fr; gap: 1rem; }
+    .corporate-contact { grid-template-columns: .4fr 1fr 1fr; }
+  }
+  @media (max-width: 760px) {
+    .corporate-header { flex-wrap: wrap; }
+    .corporate-header nav { order: 3; flex-basis: 100%; justify-content: space-between; gap: .35rem; padding-top: .45rem; border-top: 1px solid var(--color-border); }
+    .corporate-header nav a { min-height: 2.75rem; display: inline-flex; align-items: center; font-size: .67rem; }
+    .corporate-header-cta { margin-left: auto; }
+    .corporate-hero { grid-template-columns: 1fr 1fr; min-height: auto; }
+    .corporate-hero-copy { padding: 2.4rem 1.2rem; }
+    .corporate-hero-visual { min-height: 23rem; }
+    .corporate-company { grid-template-columns: .55fr 1fr; }
+    .corporate-company > .corporate-section-index { grid-column: 1 / -1; margin-bottom: 0; }
+    .corporate-company-copy { grid-column: 2; }
+    .corporate-case-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .corporate-case:last-child { grid-column: 1 / -1; display: grid; grid-template-columns: .8fr 1.2fr; }
+    .corporate-case:last-child .corporate-case-visual { min-height: 100%; }
+    .corporate-contact { grid-template-columns: .35fr 1fr 1fr; gap: 1rem; }
+    .corporate-footer { flex-wrap: wrap; }
+    .corporate-footer > p { order: 3; flex-basis: 100%; text-align: left; }
+  }
+  @media (max-width: 520px) {
+    .corporate-header { padding-inline: .85rem; }
+    .corporate-brand strong { font-size: .91rem; }
+    .corporate-brand small { font-size: .56rem; }
+    .corporate-header nav { flex-wrap: wrap; justify-content: flex-start; column-gap: 1rem; }
+    .corporate-header nav a { font-size: .64rem; }
+    .corporate-hero { grid-template-columns: 1fr; }
+    .corporate-hero-copy { padding: 2.3rem 1.2rem 1.8rem; }
+    .corporate-hero h2 { font-size: clamp(2.7rem,11vw,4rem); }
+    .corporate-hero-visual { min-height: 16rem; }
+    .corporate-hero-caption { right: 4%; font-size: .42rem; }
+    .corporate-proof-strip { justify-content: flex-start; gap: .55rem .8rem; font-size: .49rem; }
+    .corporate-proof-strip i { display: none; }
+    .corporate-company { grid-template-columns: 1fr; gap: .75rem; }
+    .corporate-company > .corporate-section-index, .corporate-company-copy { grid-column: 1; }
+    .corporate-section-index { margin-bottom: .9rem; }
+    .corporate-section-heading { align-items: flex-start; flex-direction: column; gap: .65rem; }
+    .corporate-service { grid-template-columns: 2rem 1fr; gap: .4rem .7rem; }
+    .corporate-service details { grid-column: 2; justify-self: stretch; width: 100%; }
+    .corporate-method { grid-template-columns: 1fr; row-gap: 1.4rem; }
+    .corporate-method-foot { grid-column: 1; }
+    .corporate-case-grid { grid-template-columns: 1fr; }
+    .corporate-case:last-child { grid-column: auto; display: block; }
+    .corporate-case:last-child .corporate-case-visual { min-height: 9.5rem; }
+    .corporate-contact { grid-template-columns: 1fr; gap: 1rem; }
+    .corporate-contact-index { flex-direction: row; align-items: center; }
+    .corporate-contact-index > span:last-child { font-size: 1.4rem; }
+    .corporate-contact-card .corporate-button { width: 100%; }
+    .corporate-footer { align-items: flex-start; flex-direction: column; }
+    .corporate-footer > p { order: initial; text-align: left; }
+  }
+  @media (max-width: 370px) { .corporate-header nav { column-gap: .7rem; } .corporate-header nav a { font-size: .61rem; } .corporate-contact h3 { font-size: 1.9rem; } }
+  @media (prefers-reduced-motion: reduce) { .corporate-demo *, .corporate-demo *::before, .corporate-demo *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+</style>
