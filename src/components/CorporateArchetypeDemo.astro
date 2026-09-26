@@ -45,7 +45,7 @@ const cases = [
     <a class="corporate-header-cta" href="#corp-contacto">Conversemos <span aria-hidden="true">↗</span></a>
   </header>
 
-  <div class="corporate-demo-label"><span aria-hidden="true">●</span> Contenido demostrativo · empresa y casos ficticios</div>
+  <div class="corporate-demo-label"><span aria-hidden="true">●</span> Contenido demostrativo · estructura de referencia</div>
 
   <section class="corporate-hero" aria-labelledby="corp-hero-title">
     <div class="corporate-hero-copy">
@@ -150,7 +150,7 @@ const cases = [
   .corporate-demo { --corporate-accent: var(--project-accent,#224A36); --corporate-accent-contrast: var(--project-accent-contrast,#fff); width: 100%; overflow: hidden; border: 1px solid var(--color-border); border-radius: 1.35rem; color: var(--color-text); background: var(--color-bg); box-shadow: 0 1.5rem 4rem var(--color-overlay); }
   .corporate-demo a:focus-visible, .corporate-demo summary:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
   .corporate-header { display: flex; min-height: 5.3rem; align-items: center; gap: 1.1rem; padding: .8rem clamp(1rem,3.4vw,2.75rem); border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
-  .corporate-brand { display: inline-flex; flex: none; align-items: center; gap: .65rem; color: var(--color-text); text-decoration: none; }
+  .corporate-brand { display: inline-flex; min-height: 2.75rem; flex: none; align-items: center; gap: .65rem; color: var(--color-text); text-decoration: none; }
   .corporate-brand > span:last-child { display: grid; line-height: 1.15; }
   .corporate-brand strong { font-family: var(--serif); font-size: 1rem; }
   .corporate-brand small { margin-top: .2rem; color: var(--color-text-muted); font-size: .63rem; }
@@ -160,7 +160,7 @@ const cases = [
   .corporate-mark i:nth-child(2) { height: 1rem; }
   .corporate-mark i:nth-child(3) { height: 1.3rem; }
   .corporate-header nav { display: flex; flex: 1; justify-content: center; gap: clamp(.55rem,1.55vw,1.25rem); }
-  .corporate-header nav a, .corporate-footer nav a { color: var(--color-text-muted); font-size: .71rem; text-decoration: none; }
+  .corporate-header nav a, .corporate-footer nav a { display: inline-flex; min-height: 2.75rem; align-items: center; color: var(--color-text-muted); font-size: .71rem; text-decoration: none; }
   .corporate-header nav a:hover, .corporate-footer nav a:hover { color: var(--color-text); text-decoration: underline; text-decoration-color: var(--corporate-accent); text-underline-offset: .25em; }
   .corporate-header-cta { display: inline-flex; min-height: 2.7rem; flex: none; align-items: center; gap: .4rem; color: var(--color-text); font-size: .72rem; font-weight: 700; text-decoration: none; }
   .corporate-demo-label { display: flex; min-height: 2rem; align-items: center; gap: .45rem; padding-inline: clamp(1rem,3.4vw,2.75rem); color: var(--color-text-muted); background: var(--color-surface-elevated); font-size: .67rem; letter-spacing: .04em; }
