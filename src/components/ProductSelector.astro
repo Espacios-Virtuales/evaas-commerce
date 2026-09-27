@@ -103,7 +103,7 @@ import { products } from '../data/products';
         const product = products.find((item) => item.slug === slug);
         selector.querySelector('[data-result-name]').textContent = product.name;
         selector.querySelector('[data-result-copy]').textContent = product.purpose;
-        selector.querySelector('[data-result-price]').textContent = `$${new Intl.NumberFormat('es-CL').format(product.finalPrice)} precio final`;
+        selector.querySelector('[data-result-price]').textContent = `$${new Intl.NumberFormat('es-CL').format(product.finalPrice)} IVA incluido`;
         const link = selector.querySelector('[data-result-link]');
         link.href = `/activar/${product.slug}`;
         link.dataset.product = product.slug;

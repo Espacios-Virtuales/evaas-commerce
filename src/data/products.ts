@@ -12,6 +12,8 @@ export type Product = {
   scope: string;
   includes: string[];
   excludes: string[];
+  clientInputs: string[];
+  additionalInputs: string[];
   demoName: string;
   demoCategory: string;
   demoDescription: string;
@@ -20,52 +22,67 @@ export type Product = {
 export const products: Product[] = [
   {
     slug: 'landing',
-    name: 'Landing',
-    eyebrow: 'Presencia directa',
-    netPrice: 49900,
-    finalPrice: 59381,
-    purpose: 'Una página enfocada en presentar tu propuesta y llevar a una acción clara.',
-    shortPurpose: 'Una oferta. Una acción principal.',
+    name: 'Landing Comercial',
+    eyebrow: 'Una propuesta principal',
+    netPrice: 99000,
+    finalPrice: 117810,
+    purpose: 'Una página enfocada en una propuesta principal y una acción clara.',
+    shortPurpose: 'Una página. Una acción principal.',
     bestFor: 'Profesionales, emprendimientos y campañas con una oferta principal.',
     scope: '1 página · hasta 6 secciones · 1 revisión consolidada',
-    includes: ['Branding básico', 'Estructura comercial', 'CTA y contacto', 'Diseño responsive', 'Publicación inicial en Vercel', 'Conexión de dominio'],
+    includes: ['Aplicación básica de tu identidad disponible', 'Estructura comercial', 'CTA y contacto', 'Diseño responsive', 'Publicación inicial en Vercel', 'Conexión de dominio'],
     excludes: ['Tienda o carrito', 'Pasarela de pago', 'Agenda o integraciones', 'Producción fotográfica'],
+    clientInputs: ['Oferta principal', 'Acción o CTA deseado', 'Datos de contacto', 'Textos dentro del alcance contratado'],
+    additionalInputs: ['Imágenes o referencias visuales disponibles'],
     demoName: 'Grano Claro',
     demoCategory: 'Cafetería de especialidad',
-    demoDescription: 'Una cafetería de ejemplo para recorrer su propuesta, su carta y su contacto.'
+    demoDescription: 'Una página para presentar una propuesta principal y facilitar el contacto.'
   },
   {
     slug: 'catalogo',
-    name: 'Catálogo',
-    eyebrow: 'Oferta organizada',
-    netPrice: 79900,
-    finalPrice: 95081,
-    purpose: 'Una vitrina ordenada para recorrer productos o servicios y consultar por ellos.',
+    name: 'Catálogo de Productos',
+    eyebrow: 'Una oferta organizada',
+    netPrice: 129000,
+    finalPrice: 153510,
+    purpose: 'Una vitrina organizada para presentar productos o servicios y facilitar consultas, sin ecommerce.',
     shortPurpose: 'Varias opciones. Sin ecommerce.',
     bestFor: 'Negocios con una oferta amplia que venden por contacto o cotización.',
     scope: '1 catálogo · hasta 12 ítems · 1 revisión consolidada',
-    includes: ['Branding básico', 'Categorías simples', 'Fichas o bloques', 'CTA y contacto', 'Publicación inicial en Vercel', 'Conexión de dominio'],
+    includes: ['Aplicación básica de tu identidad disponible', 'Categorías simples', 'Fichas o bloques', 'CTA y contacto', 'Publicación inicial en Vercel', 'Conexión de dominio'],
     excludes: ['Carrito o stock', 'Pago en línea', 'Carga masiva', 'Integración con ERP'],
+    clientInputs: ['Lista de productos o servicios', 'Categorías', 'Nombres y descripciones', 'Imágenes disponibles', 'Datos o canal de consulta'],
+    additionalInputs: [],
     demoName: 'Taller de Objetos',
     demoCategory: 'Diseño y hogar',
-    demoDescription: 'Una colección visual que permite explorar, filtrar y consultar.'
+    demoDescription: 'Una vitrina organizada para recorrer productos o servicios y facilitar consultas.'
   },
   {
     slug: 'corporativa',
     name: 'Web Corporativa',
-    eyebrow: 'Empresa completa',
-    netPrice: 119900,
-    finalPrice: 142681,
-    purpose: 'Una presencia institucional con áreas claras para empresa, servicios y contacto.',
+    eyebrow: 'Una presencia institucional',
+    netPrice: 149000,
+    finalPrice: 177310,
+    purpose: 'Una presencia institucional con áreas para empresa, servicios, metodología y contacto.',
     shortPurpose: 'Más contexto. Varias áreas.',
     bestFor: 'Pequeñas empresas y organizaciones que necesitan respaldo institucional.',
     scope: '4 áreas · Inicio, Empresa, Servicios y Contacto · 1 revisión consolidada',
-    includes: ['Branding básico', 'Navegación completa', '4 áreas principales', 'CTA y contacto', 'Publicación inicial en Vercel', 'Conexión de dominio'],
+    includes: ['Aplicación básica de tu identidad disponible', 'Navegación completa', '4 áreas principales', 'CTA y contacto', 'Publicación inicial en Vercel', 'Conexión de dominio'],
     excludes: ['Ecommerce', 'Área privada', 'Redacción extensa', 'Integraciones empresariales'],
+    clientInputs: ['Descripción de la empresa', 'Servicios', 'Forma de trabajo', 'Datos de contacto', 'Material institucional disponible'],
+    additionalInputs: ['Imágenes disponibles'],
     demoName: 'Arista Ingeniería',
-    demoCategory: 'Servicios técnicos',
-    demoDescription: 'Una presencia sobria que explica experiencia, servicios y forma de trabajo.'
+    demoCategory: 'Servicios técnicos e ingeniería',
+    demoDescription: 'Una presencia institucional para presentar empresa, servicios, forma de trabajo y contacto.'
   }
+];
+
+export const commonClientInputs = [
+  'Identidad o logo disponible, si ya los tienes',
+  'Textos e información del negocio',
+  'Propuesta de valor definida, si ya existe',
+  'Datos de contacto',
+  'Imágenes o material visual disponible',
+  'Dominio, si ya existe'
 ];
 
 export const productBySlug = Object.fromEntries(products.map((product) => [product.slug, product])) as Record<ProductSlug, Product>;

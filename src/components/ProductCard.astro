@@ -12,17 +12,17 @@ const { product, featured = false } = Astro.props;
   <h3>{product.name}</h3>
   <p class="product-purpose">{product.purpose}</p>
   <div class="product-price">
-    <strong>{formatCLP(product.finalPrice)}</strong>
-    <span>precio final · incluye IVA</span>
+    <strong>Valor · {formatCLP(product.finalPrice)} IVA incluido</strong>
+    <span>Neto {formatCLP(product.netPrice)} + IVA</span>
   </div>
   <ul class="product-includes">
     <li>{product.scope}</li>
-    <li>Branding básico y responsive</li>
+    <li>Aplicación básica de tu identidad disponible</li>
     <li>Publicación y conexión de dominio</li>
     <li>Sin ecommerce</li>
   </ul>
   <div class="card-actions">
     <a class:list={['button', !featured && 'button-light']} href={`/activar/${product.slug}`} data-track="product_selected" data-product={product.slug}>Elegir {product.name}</a>
-    <a class="text-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Explorar demo</a>
+    <a class="text-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Ver demo</a>
   </div>
 </article>

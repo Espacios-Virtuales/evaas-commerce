@@ -16,10 +16,10 @@ const { product } = Astro.props;
       <span class="eyebrow">Tu selección</span>
       <h1>{product.name}</h1>
       <span class="summary-price">{formatCLP(product.finalPrice)}</span>
-      <span class="muted">precio final · incluye IVA</span>
+      <span class="muted">Valor · IVA incluido · neto {formatCLP(product.netPrice)} + IVA</span>
       <ul>
         <li>{product.scope}</li>
-        <li>Branding básico y responsive</li>
+        <li>Aplicación básica de tu identidad disponible y responsive</li>
         <li>Publicación inicial en Vercel*</li>
         <li>Conexión de tu dominio</li>
         <li>Sin ecommerce</li>

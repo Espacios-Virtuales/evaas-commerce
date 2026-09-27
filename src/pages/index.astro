@@ -4,6 +4,7 @@ import DemoPreview from '../components/DemoPreview.astro';
 import ProductCard from '../components/ProductCard.astro';
 import ProductSelector from '../components/ProductSelector.astro';
 import HeroVideo from '../components/HeroVideo.astro';
+import ProductArchetypeIcon from '../components/ProductArchetypeIcon.astro';
 import { products, formatCLP } from '../data/products';
 
 export const prerender = true;
@@ -22,11 +23,11 @@ export const prerender = true;
           <a class="button button-secondary" href="#elegir">Encontrar mi opción</a>
         </div>
         <div class="hero-price">
-          <strong>Desde {formatCLP(products[0].finalPrice)}</strong>
-          <span>Precio final con IVA. Sin costos escondidos en la activación.</span>
+          <strong>Desde {formatCLP(products[0].finalPrice)} IVA incluido</strong>
+          <span>Sin costos escondidos en la activación.</span>
         </div>
       </div>
-      <div class="hero-stage" aria-label="Vista previa de una presencia digital">
+      <a class="hero-stage" href="#precios" aria-label="Ver productos y precios">
         <div class="stage-window">
           <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="stage-site">
@@ -39,8 +40,9 @@ export const prerender = true;
         <div class="stage-note">
           <small>Base incluida</small>
           <strong>Responsive, publicada y conectada a tu dominio.</strong>
+          <span class="stage-price-link">Ver precios →</span>
         </div>
-      </div>
+      </a>
     </div>
   </section>
 
@@ -50,7 +52,7 @@ export const prerender = true;
         <a href={`#producto-${product.slug}`} data-track="product_viewed" data-product={product.slug}>
           <small>0{index + 1} · {product.eyebrow}</small>
           <strong>{product.name}</strong>
-          <span>{formatCLP(product.finalPrice)} final →</span>
+          <span>{formatCLP(product.finalPrice)} IVA incluido →</span>
         </a>
       ))}
     </div>
@@ -70,10 +72,11 @@ export const prerender = true;
           <article class="demo-card">
             <div class="demo-card-preview"><DemoPreview type={product.slug} /></div>
             <div class="demo-card-body">
-              <div class="demo-card-meta"><span>{product.demoCategory}</span><span>Demo</span></div>
-              <h3>{product.demoName}</h3>
+              <ProductArchetypeIcon type={product.slug} />
+              <div class="demo-card-meta"><span>Producto EVAAS</span><span>Demo</span></div>
+              <h3>{product.name}</h3>
               <p>{product.demoDescription}</p>
-              <a class="text-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Explorar en detalle</a>
+              <a class="text-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Explorar demo →</a>
             </div>
           </article>
         ))}
@@ -87,7 +90,7 @@ export const prerender = true;
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="precios">
     <div class="container">
       <div class="section-heading">
         <div>
@@ -117,11 +120,11 @@ export const prerender = true;
         <div class="compare-grid">
           <div class="compare-row compare-head">
             <span></span>
-            {products.map((product) => <div><strong>{product.name}</strong><span>{formatCLP(product.finalPrice)} final</span></div>)}
+            {products.map((product) => <div><strong>{product.name}</strong><span>{formatCLP(product.finalPrice)} IVA incluido</span></div>)}
           </div>
           <div class="compare-row"><span class="compare-label">Ideal para</span><span class="compare-value">Una propuesta principal</span><span class="compare-value">Varios productos o servicios</span><span class="compare-value">Una empresa u organización</span></div>
           <div class="compare-row"><span class="compare-label">Estructura</span><span class="compare-value">1 página · hasta 6 secciones</span><span class="compare-value">Hasta 12 ítems</span><span class="compare-value">4 áreas principales</span></div>
-          <div class="compare-row"><span class="compare-label">Branding básico</span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span></div>
+          <div class="compare-row"><span class="compare-label">Aplicación de identidad existente</span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span></div>
           <div class="compare-row"><span class="compare-label">Responsive</span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span></div>
           <div class="compare-row"><span class="compare-label">Dominio propio</span><span class="compare-value">Se conecta</span><span class="compare-value">Se conecta</span><span class="compare-value">Se conecta</span></div>
           <div class="compare-row"><span class="compare-label">Vercel</span><span class="compare-value">Publicación inicial*</span><span class="compare-value">Publicación inicial*</span><span class="compare-value">Publicación inicial*</span></div>

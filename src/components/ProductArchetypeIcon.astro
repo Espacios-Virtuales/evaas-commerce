@@ -1,0 +1,24 @@
+---
+import type { ProductSlug } from '../data/products';
+
+interface Props { type: ProductSlug; }
+const { type } = Astro.props;
+---
+
+<svg class="product-archetype-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true" focusable="false">
+  {type === 'landing' ? <>
+    <rect x="7" y="8" width="34" height="32" rx="4" />
+    <path d="M7 16h34M13 12h.01M17 12h.01M13 23h10M13 28h22M13 33h16" />
+  </> : type === 'catalogo' ? <>
+    <rect x="7" y="8" width="15" height="14" rx="2" />
+    <rect x="26" y="8" width="15" height="14" rx="2" />
+    <rect x="7" y="26" width="15" height="14" rx="2" />
+    <rect x="26" y="26" width="15" height="14" rx="2" />
+  </> : <>
+    <path d="M8 40V12l16-6 16 6v28M5 40h38M18 18h12M18 24h12M18 30h12M21 40V35h6v5" />
+  </>}
+</svg>
+
+<style>
+  .product-archetype-icon { display: block; width: 3rem; height: 3rem; color: var(--color-brand); stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+</style>
