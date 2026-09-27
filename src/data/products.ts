@@ -14,9 +14,7 @@ export type Product = {
   excludes: string[];
   clientInputs: string[];
   additionalInputs: string[];
-  demoName: string;
   demoCategory: string;
-  demoDescription: string;
 };
 
 export const products: Product[] = [
@@ -34,9 +32,7 @@ export const products: Product[] = [
     excludes: ['Tienda o carrito', 'Pasarela de pago', 'Agenda o integraciones', 'Producción fotográfica'],
     clientInputs: ['Oferta principal', 'Acción o CTA deseado', 'Datos de contacto', 'Textos dentro del alcance contratado'],
     additionalInputs: ['Imágenes o referencias visuales disponibles'],
-    demoName: 'Grano Claro',
-    demoCategory: 'Cafetería de especialidad',
-    demoDescription: 'Una página para presentar una propuesta principal y facilitar el contacto.'
+    demoCategory: 'Cafetería de especialidad'
   },
   {
     slug: 'catalogo',
@@ -52,9 +48,7 @@ export const products: Product[] = [
     excludes: ['Carrito o stock', 'Pago en línea', 'Carga masiva', 'Integración con ERP'],
     clientInputs: ['Lista de productos o servicios', 'Categorías', 'Nombres y descripciones', 'Imágenes disponibles', 'Datos o canal de consulta'],
     additionalInputs: [],
-    demoName: 'Taller de Objetos',
-    demoCategory: 'Diseño y hogar',
-    demoDescription: 'Una vitrina organizada para recorrer productos o servicios y facilitar consultas.'
+    demoCategory: 'Diseño y hogar'
   },
   {
     slug: 'corporativa',
@@ -70,9 +64,7 @@ export const products: Product[] = [
     excludes: ['Ecommerce', 'Área privada', 'Redacción extensa', 'Integraciones empresariales'],
     clientInputs: ['Descripción de la empresa', 'Servicios', 'Forma de trabajo', 'Datos de contacto', 'Material institucional disponible'],
     additionalInputs: ['Imágenes disponibles'],
-    demoName: 'Arista Ingeniería',
-    demoCategory: 'Servicios técnicos e ingeniería',
-    demoDescription: 'Una presencia institucional para presentar empresa, servicios, forma de trabajo y contacto.'
+    demoCategory: 'Servicios técnicos e ingeniería'
   }
 ];
 
