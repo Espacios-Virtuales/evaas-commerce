@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import AosController from '../components/AosController.astro';
+import CommercialContextController from '../components/CommercialContextController.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -58,96 +59,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
     </main>
     <Footer />
     <AosController />
+    <CommercialContextController />
     <script is:inline>
       (() => {
-        const allowedEvents = new Set([
-          'product_viewed', 'demo_opened', 'demo_completed', 'plan_compared',
-          'product_selected', 'activation_started', 'activation_submitted', 'activation_completed',
-          'activation_error', 'selector_completed'
-        ]);
-        const params = new URLSearchParams(location.search);
-        const attribution = {
-          source: params.get('utm_source') || sessionStorage.getItem('evaas_source') || 'direct',
-          campaign: params.get('utm_campaign') || sessionStorage.getItem('evaas_campaign') || '',
-          medium: params.get('utm_medium') || sessionStorage.getItem('evaas_medium') || ''
-        };
-        Object.entries(attribution).forEach(([key, value]) => {
-          if (value) sessionStorage.setItem(`evaas_${key}`, value);
-        });
-        window.evaasAttribution = attribution;
-        window.evaasTrack = (name, detail = {}) => {
-          if (!allowedEvents.has(name)) return;
-          const payload = { event: name, ...attribution, ...detail, path: location.pathname, device: innerWidth < 768 ? 'mobile' : 'desktop' };
-          window.dataLayer = window.dataLayer || [];
-          window.dataLayer.push(payload);
-          window.dispatchEvent(new CustomEvent('evaas:track', { detail: payload }));
-        };
-        document.addEventListener('click', (event) => {
-          const target = event.target.closest('[data-track]');
-          if (!target) return;
-          const detail = {};
-          if (target.dataset.product) detail.product = target.dataset.product;
-          if (target.dataset.demo) detail.demo = target.dataset.demo;
-          window.evaasTrack(target.dataset.track, detail);
-          if (target.dataset.product) sessionStorage.setItem('evaas_selected_product', target.dataset.product);
-        });
-      })();
-    </script>
-    <script is:inline>
-      (() => {
-        const context = document.modelContext;
-        if (!context?.registerTool) return;
-        const products = {
-          landing: { name: 'Landing', path: '/activar/landing', reason: 'Una propuesta principal en un recorrido directo.' },
-          catalogo: { name: 'Catálogo', path: '/activar/catalogo', reason: 'Varias opciones organizadas para explorar y consultar.' },
-          corporativa: { name: 'Web Corporativa', path: '/activar/corporativa', reason: 'Una empresa con varias áreas e información institucional.' }
-        };
-        const validProduct = (value) => {
-          if (!Object.prototype.hasOwnProperty.call(products, value)) throw new Error('Configuración no válida.');
-          return value;
-        };
-        const controller = new AbortController();
-        Promise.resolve(context.registerTool({
-          name: 'recommend_station_configuration',
-          title: 'Recomendar configuración',
-          description: 'Recomienda Landing, Catálogo o Web Corporativa según lo que se necesita presentar. No solicita datos personales ni inicia una compra.',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              need: { type: 'string', enum: ['one_offer', 'multiple_offers', 'organization'] },
-              ecommerce: { type: 'boolean' }
-            },
-            required: ['need', 'ecommerce'],
-            additionalProperties: false
-          },
-          annotations: { readOnlyHint: true, untrustedContentHint: false },
-          execute(input) {
-            if (!input || typeof input !== 'object') throw new Error('Entrada no válida.');
-            if (input.ecommerce === true) return { inScope: false, reason: 'EVAAS Station no incluye ecommerce.' };
-            const map = { one_offer: 'landing', multiple_offers: 'catalogo', organization: 'corporativa' };
-            const slug = map[input.need];
-            if (!slug) throw new Error('Necesidad no válida.');
-            return { inScope: true, slug, ...products[slug] };
-          }
-        }, { signal: controller.signal })).catch(() => {});
-        Promise.resolve(context.registerTool({
-          name: 'start_station_activation',
-          title: 'Comenzar activación',
-          description: 'Abre el formulario visible para la configuración elegida. No envía información ni realiza un pago.',
-          inputSchema: {
-            type: 'object',
-            properties: { product: { type: 'string', enum: ['landing', 'catalogo', 'corporativa'] } },
-            required: ['product'],
-            additionalProperties: false
-          },
-          annotations: { readOnlyHint: false, untrustedContentHint: false },
-          execute(input) {
-            const slug = validProduct(input?.product);
-            sessionStorage.setItem('evaas_selected_product', slug);
-            location.assign(products[slug].path);
-            return { started: true, product: slug };
-          }
-        }, { signal: controller.signal })).catch(() => {});
+        window.__evaasTrackQueue = window.__evaasTrackQueue || [];
+        window.evaasTrack = (name, detail = {}) => window.__evaasTrackQueue.push([name, detail]);
       })();
     </script>
   </body>

@@ -1,0 +1,293 @@
+---
+---
+
+<script>
+  // @ts-nocheck -- the controller only writes an allowlisted runtime model to the session.
+  import {
+    COMMERCIAL_CONTEXT_KEY,
+    createCommercialContext,
+    isCanonicalUuid,
+    isProductSlug,
+    isProjectColor,
+    sanitizeAttribution,
+    sanitizeContextText,
+    sanitizeCommercialContext,
+    toPersistedCommercialContext
+  } from '../lib/commercial-context';
+  import { PROJECT_COLOR_OPTIONS } from '../data/project-colors';
+
+  const legacyKeys = ['evaas_selected_product', 'evaas_source', 'evaas_medium', 'evaas_campaign'];
+  const emptyAttribution = { source: 'direct', medium: '', campaign: '' };
+  const runtimeWindow = window;
+
+  const readSessionValue = (key) => {
+    try { return sessionStorage.getItem(key); } catch { return null; }
+  };
+  const removeLegacyKeys = () => {
+    try { legacyKeys.forEach((key) => sessionStorage.removeItem(key)); } catch { /* Storage can be disabled. */ }
+  };
+
+  let saved = null;
+  const raw = readSessionValue(COMMERCIAL_CONTEXT_KEY);
+  if (raw) {
+    try { saved = sanitizeCommercialContext(JSON.parse(raw)); } catch { saved = null; }
+  }
+
+  const legacy = raw && saved ? null : {
+    product: readSessionValue('evaas_selected_product'),
+    attribution: {
+      source: readSessionValue('evaas_source'),
+      medium: readSessionValue('evaas_medium'),
+      campaign: readSessionValue('evaas_campaign')
+    }
+  };
+  const currentUrl = new URL(location.href);
+  const currentPathProduct = (url) => {
+    const match = url.pathname.match(/^\/(?:productos|demos|activar)\/([^/]+)\/?$/);
+    if (match) {
+      try {
+        const candidate = decodeURIComponent(match[1]);
+        return isProductSlug(candidate) ? candidate : null;
+      } catch { return null; }
+    }
+    if (url.pathname === '/confirmacion') {
+      const candidate = url.searchParams.get('producto');
+      return isProductSlug(candidate) ? candidate : null;
+    }
+    return null;
+  };
+  const urlAttribution = { ...(saved?.attribution ?? legacy?.attribution ?? emptyAttribution) };
+  for (const key of ['source', 'medium', 'campaign']) {
+    const value = sanitizeContextText(currentUrl.searchParams.get(`utm_${key}`), 100);
+    if (value) urlAttribution[key] = value;
+  }
+
+  const routeProduct = currentPathProduct(currentUrl);
+  const rawColor = currentUrl.searchParams.get('color');
+  let initialColor = saved?.projectColor ?? null;
+  if (currentUrl.searchParams.has('color')) {
+    if (isProjectColor(rawColor)) initialColor = rawColor;
+    else {
+      currentUrl.searchParams.delete('color');
+      history.replaceState(history.state, '', `${currentUrl.pathname}${currentUrl.search}${currentUrl.hash}`);
+    }
+  }
+
+  let state = createCommercialContext({
+    product: routeProduct ?? saved?.product ?? legacy?.product,
+    projectColor: initialColor,
+    reference: saved?.reference ?? new URL(location.href).searchParams.get('id'),
+    attribution: sanitizeAttribution(urlAttribution)
+  });
+  removeLegacyKeys();
+
+  const get = () => createCommercialContext(state);
+  const persist = () => {
+    runtimeWindow.evaasAttribution = { ...state.attribution };
+    try {
+      sessionStorage.setItem(COMMERCIAL_CONTEXT_KEY, JSON.stringify(toPersistedCommercialContext(get())));
+    } catch { /* Keep the in-memory context when session storage is unavailable. */ }
+  };
+
+  const isContextualPath = (pathname) => pathname === '/'
+    || /^\/(?:productos|demos|activar)\/(?:landing|catalogo|corporativa)\/?$/.test(pathname)
+    || pathname === '/confirmacion';
+
+  const contextualizeUrl = (value) => {
+    try {
+      const url = new URL(value, location.href);
+      if (url.origin !== location.origin || !isContextualPath(url.pathname)) return value;
+      if (state.projectColor) url.searchParams.set('color', state.projectColor);
+      else url.searchParams.delete('color');
+      return `${url.pathname}${url.search}${url.hash}`;
+    } catch { return value; }
+  };
+
+  const syncProjectColorUi = () => {
+    const previewColor = state.projectColor ?? PROJECT_COLOR_OPTIONS[0].id;
+    const option = PROJECT_COLOR_OPTIONS.find((item) => item.id === previewColor);
+    document.querySelectorAll('[data-project-color-selector]').forEach((selector) => {
+      const radio = selector.querySelector(`input[type="radio"][value="${previewColor}"]`);
+      if (radio) radio.checked = true;
+      const previewTarget = selector.dataset.previewTarget;
+      const preview = previewTarget ? document.querySelector(previewTarget) : null;
+      if (preview && option) {
+        preview.dataset.projectColor = option.id;
+        preview.style.setProperty('--project-accent', option.cssValue);
+        preview.style.setProperty('--project-accent-contrast', option.textColor);
+      }
+    });
+
+    const label = state.projectColor
+      ? PROJECT_COLOR_OPTIONS.find((item) => item.id === state.projectColor)?.label
+      : 'Por definir';
+    document.querySelectorAll('[data-commercial-project-color]').forEach((node) => {
+      node.textContent = `Color del proyecto · ${label}`;
+    });
+    document.querySelectorAll('input[name="projectColor"]').forEach((input) => {
+      input.value = state.projectColor ?? '';
+    });
+  };
+
+  const updateCurrentColorUrl = () => {
+    if (!isContextualPath(location.pathname)) return;
+    const url = new URL(location.href);
+    if (state.projectColor) url.searchParams.set('color', state.projectColor);
+    else url.searchParams.delete('color');
+    history.replaceState(history.state, '', `${url.pathname}${url.search}${url.hash}`);
+  };
+
+  const setProduct = (value) => {
+    if (value !== null && !isProductSlug(value)) return false;
+    state = createCommercialContext({ ...state, product: value });
+    persist();
+    return true;
+  };
+
+  const setProjectColor = (value) => {
+    if (value !== null && !isProjectColor(value)) return false;
+    state = createCommercialContext({ ...state, projectColor: value });
+    persist();
+    syncProjectColorUi();
+    updateCurrentColorUrl();
+    return true;
+  };
+
+  const setReference = (value) => {
+    if (value !== null && !isCanonicalUuid(value)) return false;
+    state = createCommercialContext({ ...state, reference: value });
+    persist();
+    return true;
+  };
+
+  const api = Object.freeze({ get, setProduct, setProjectColor, setReference, contextualizeUrl });
+  runtimeWindow.evaasCommercial = api;
+
+  const initialReference = new URL(location.href).searchParams.get('id');
+  if (location.pathname === '/confirmacion' && isCanonicalUuid(initialReference)
+      && (state.reference === null || state.reference === initialReference.toLowerCase())) {
+    setReference(initialReference.toLowerCase());
+  } else {
+    persist();
+  }
+  syncProjectColorUi();
+
+  document.addEventListener('evaas:project-color-change', (event) => {
+    const value = event.detail?.projectColor;
+    if (isProjectColor(value)) setProjectColor(value);
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const anchor = target?.closest('a[href]');
+    if (!anchor) return;
+
+    const declaredProduct = anchor.dataset.product;
+    if (isProductSlug(declaredProduct)) setProduct(declaredProduct);
+    try {
+      const url = new URL(anchor.href, location.href);
+      const targetProduct = currentPathProduct(url);
+      if (targetProduct) setProduct(targetProduct);
+      anchor.href = contextualizeUrl(url.href);
+    } catch { /* Leave malformed or non-URL links untouched. */ }
+  }, true);
+
+  window.addEventListener('popstate', () => {
+    const url = new URL(location.href);
+    const routeProduct = currentPathProduct(url);
+    if (routeProduct) setProduct(routeProduct);
+    if (url.searchParams.has('color')) {
+      const color = url.searchParams.get('color');
+      if (isProjectColor(color)) setProjectColor(color);
+      else {
+        url.searchParams.delete('color');
+        history.replaceState(history.state, '', `${url.pathname}${url.search}${url.hash}`);
+        syncProjectColorUi();
+      }
+    } else {
+      syncProjectColorUi();
+    }
+  });
+
+  const allowedEvents = new Set([
+    'product_viewed', 'demo_opened', 'demo_completed', 'plan_compared',
+    'product_selected', 'activation_started', 'activation_submitted', 'activation_completed',
+    'activation_error', 'selector_completed'
+  ]);
+  const track = (name, detail = {}) => {
+    if (!allowedEvents.has(name)) return;
+    const safeDetail = {};
+    for (const key of ['product', 'demo', 'method', 'outcome', 'request_id']) {
+      const value = detail[key];
+      if (key === 'product' && (isProductSlug(value) || value === 'unknown')) safeDetail[key] = value;
+      if (key === 'demo' && isProductSlug(value)) safeDetail[key] = value;
+      if (key === 'method' && value === 'interaction') safeDetail[key] = value;
+      if (key === 'outcome' && (isProductSlug(value) || value === 'ecommerce_out_of_scope')) safeDetail[key] = value;
+      if (key === 'request_id' && isCanonicalUuid(value)) safeDetail[key] = value.toLowerCase();
+    }
+    const payload = {
+      event: name,
+      ...state.attribution,
+      ...safeDetail,
+      path: location.pathname,
+      device: innerWidth < 768 ? 'mobile' : 'desktop'
+    };
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(payload);
+    window.dispatchEvent(new CustomEvent('evaas:track', { detail: payload }));
+  };
+
+  runtimeWindow.evaasTrack = track;
+  for (const [name, detail] of runtimeWindow.__evaasTrackQueue ?? []) track(name, detail);
+  runtimeWindow.__evaasTrackQueue = [];
+  document.addEventListener('click', (event) => {
+    const target = event.target instanceof Element ? event.target.closest('[data-track]') : null;
+    if (!target) return;
+    const detail = {};
+    if (isProductSlug(target.dataset.product)) detail.product = target.dataset.product;
+    if (target.dataset.demo && ['landing', 'catalogo', 'corporativa'].includes(target.dataset.demo)) detail.demo = target.dataset.demo;
+    track(target.dataset.track, detail);
+  });
+
+  const modelContext = document.modelContext;
+  if (modelContext?.registerTool) {
+    const products = {
+      landing: { name: 'Landing', path: '/activar/landing', reason: 'Una propuesta principal en un recorrido directo.' },
+      catalogo: { name: 'Catálogo', path: '/activar/catalogo', reason: 'Varias opciones organizadas para explorar y consultar.' },
+      corporativa: { name: 'Web Corporativa', path: '/activar/corporativa', reason: 'Una empresa con varias áreas e información institucional.' }
+    };
+    const controller = new AbortController();
+    Promise.resolve(modelContext.registerTool({
+      name: 'recommend_station_configuration',
+      title: 'Recomendar configuración',
+      description: 'Recomienda Landing, Catálogo o Web Corporativa según lo que se necesita presentar. No solicita datos personales ni inicia una compra.',
+      inputSchema: {
+        type: 'object', properties: { need: { type: 'string', enum: ['one_offer', 'multiple_offers', 'organization'] }, ecommerce: { type: 'boolean' } },
+        required: ['need', 'ecommerce'], additionalProperties: false
+      },
+      annotations: { readOnlyHint: true, untrustedContentHint: false },
+      execute(input) {
+        if (!input || typeof input !== 'object') throw new Error('Entrada no válida.');
+        if (input.ecommerce === true) return { inScope: false, reason: 'EVAAS Station no incluye ecommerce.' };
+        const map = { one_offer: 'landing', multiple_offers: 'catalogo', organization: 'corporativa' };
+        const slug = map[input.need];
+        if (!slug) throw new Error('Necesidad no válida.');
+        return { inScope: true, slug, ...products[slug] };
+      }
+    }, { signal: controller.signal })).catch(() => {});
+    Promise.resolve(modelContext.registerTool({
+      name: 'start_station_activation',
+      title: 'Comenzar activación',
+      description: 'Abre el formulario visible para la configuración elegida. No envía información ni realiza un pago.',
+      inputSchema: { type: 'object', properties: { product: { type: 'string', enum: ['landing', 'catalogo', 'corporativa'] } }, required: ['product'], additionalProperties: false },
+      annotations: { readOnlyHint: false, untrustedContentHint: false },
+      execute(input) {
+        if (!isProductSlug(input?.product)) throw new Error('Configuración no válida.');
+        setProduct(input.product);
+        const url = contextualizeUrl(products[input.product].path);
+        location.assign(url);
+        return { started: true, product: input.product };
+      }
+    }, { signal: controller.signal })).catch(() => {});
+  }
+</script>

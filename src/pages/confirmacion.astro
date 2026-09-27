@@ -19,7 +19,8 @@ export const prerender = true;
     const reference = params.get('id');
     const product = params.get('producto');
     const referenceNode = document.querySelector('[data-request-reference]');
-    if (reference && referenceNode) referenceNode.textContent = `Referencia: ${reference.slice(0, 8).toUpperCase()}`;
-    window.evaasTrack?.('activation_completed', { product: product || 'unknown', request_id: reference || '' });
+    const validReference = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(reference || '');
+    if (validReference && referenceNode) referenceNode.textContent = `Referencia: ${reference!.slice(0, 8).toUpperCase()}`;
+    window.evaasTrack?.('activation_completed', { product: product || 'unknown', request_id: validReference ? reference : '' });
   </script>
 </BaseLayout>
