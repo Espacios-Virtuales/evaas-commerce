@@ -33,12 +33,13 @@ const { product } = Astro.props;
       <p>Tus respuestas preparan la solicitud. No te pediremos textos finales ni accesos en esta etapa.</p>
       <div class="form-progress" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
 
-      <form data-activation-form novalidate>
+      <form method="post" action="/api/activation" data-activation-form>
         <input type="hidden" name="product" value={product.slug} />
         <input type="hidden" name="formStartedAt" value="" />
         <div class="honeypot" aria-hidden="true"><label>Empresa web <input name="website" tabindex="-1" autocomplete="off" /></label></div>
 
         <div class="form-step active" data-form-step="1">
+          <h3>1. Sobre tu proyecto</h3>
           <div class="field-grid">
             <div class="field field-full">
               <label for="project">Nombre del proyecto o negocio</label>
@@ -59,28 +60,29 @@ const { product } = Astro.props;
               <small>Una frase es suficiente. Podrás completar la información después.</small>
             </div>
           </div>
-          <div class="form-actions"><span></span><button class="button button-dark" type="button" data-next>Continuar</button></div>
+          <div class="form-actions"><span></span><button class="button button-dark" type="button" data-enhanced-control data-next>Continuar</button></div>
         </div>
 
         <div class="form-step" data-form-step="2">
+          <h3>2. Tus datos de contacto</h3>
           <div class="field-grid">
             <div class="field"><label for="name">Tu nombre</label><input id="name" name="name" required maxlength="80" autocomplete="name" /></div>
             <div class="field"><label for="email">Correo</label><input id="email" name="email" required type="email" maxlength="160" autocomplete="email" /></div>
             <div class="field field-full"><label for="whatsapp">WhatsApp <span class="muted">(opcional)</span></label><input id="whatsapp" name="whatsapp" type="tel" maxlength="30" autocomplete="tel" placeholder="+56 9…" /></div>
           </div>
-          <div class="form-actions"><button class="button-plain" type="button" data-back>Volver</button><button class="button button-dark" type="button" data-next>Revisar solicitud</button></div>
+          <div class="form-actions"><button class="button-plain" type="button" data-enhanced-control data-back>Volver</button><button class="button button-dark" type="button" data-enhanced-control data-next>Revisar solicitud</button></div>
         </div>
 
         <div class="form-step" data-form-step="3">
-          <h3>Confirma antes de enviar</h3>
+          <h3>3. Consentimiento y envío</h3>
           <p class="muted" style="margin-top:.6rem">Verifica el punto de partida. El alcance definitivo se mantiene en la configuración elegida.</p>
-          <div class="review-box" data-review></div>
+          <div class="review-box" data-review hidden></div>
           <div class="checkbox">
             <input id="consent" name="consent" type="checkbox" required />
             <label for="consent">Acepto que Espacios Virtuales use estos datos para gestionar esta solicitud. Leí el <a href="/privacidad" target="_blank">aviso de privacidad</a> y el <a href="/terminos" target="_blank">alcance de la activación</a>.</label>
           </div>
           <div class="form-status" data-form-status role="status" aria-live="polite"></div>
-          <div class="form-actions"><button class="button-plain" type="button" data-back>Volver</button><button class="button button-dark" type="submit">Enviar y continuar</button></div>
+          <div class="form-actions"><button class="button-plain" type="button" data-enhanced-control data-back>Volver</button><button class="button button-dark" type="submit">Enviar y continuar</button></div>
         </div>
       </form>
     </section>
@@ -94,6 +96,7 @@ const { product } = Astro.props;
       const steps = [...form.querySelectorAll('[data-form-step]')];
       const progress = [...page.querySelectorAll('.form-progress span')];
       const status = form.querySelector('[data-form-status]');
+      const review = form.querySelector('[data-review]');
       let current = 0;
       form.elements.formStartedAt.value = String(Date.now());
       window.evaasTrack?.('activation_started', { product: productSlug });
@@ -133,6 +136,7 @@ const { product } = Astro.props;
           row.append(key, content);
           return row;
         }));
+        box.hidden = false;
       };
 
       form.querySelectorAll('[data-next]').forEach((button) => button.addEventListener('click', () => {
@@ -174,6 +178,10 @@ const { product } = Astro.props;
           window.evaasTrack?.('activation_error', { product: productSlug });
         }
       });
+
+      // Keep the complete native form available unless every wizard listener is ready.
+      form.classList.add('is-enhanced');
+      if (review) review.hidden = true;
     }
   </script>
 </BaseLayout>

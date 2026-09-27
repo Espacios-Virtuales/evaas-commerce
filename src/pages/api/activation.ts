@@ -5,31 +5,64 @@ export const prerender = false;
 const allowedProducts = new Set(['landing', 'catalogo', 'corporativa']);
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export const POST: APIRoute = async ({ request }) => {
-  if (!request.headers.get('content-type')?.includes('application/json')) {
-    return Response.json({ message: 'Formato de solicitud no válido.' }, { status: 415 });
-  }
+type RequestMode = 'json' | 'form';
 
+function escapeHtml(value: string) {
+  return value.replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]!);
+}
+
+function errorResponse(mode: RequestMode, message: string, status: number, product = '') {
+  if (mode === 'json') return Response.json({ message }, { status });
+  const safeProduct = allowedProducts.has(product) ? product : '';
+  const returnHref = safeProduct ? `/activar/${safeProduct}` : '/';
+  return new Response(`<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>No se pudo enviar la solicitud</title><main><h1>No se pudo enviar la solicitud</h1><p>${escapeHtml(message)}</p><p><a href="${returnHref}">Volver al formulario de activación</a></p></main></html>`, {
+    status,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
+  });
+}
+
+function nativeSuccessResponse(requestUrl: string, product: string, requestId: string, checkoutUrl: string | null = null) {
+  const destination = checkoutUrl || `/confirmacion?producto=${encodeURIComponent(product)}&id=${encodeURIComponent(requestId)}`;
+  return new Response(null, { status: 303, headers: { Location: new URL(destination, requestUrl).toString() } });
+}
+
+export const POST: APIRoute = async ({ request }) => {
+  const contentType = request.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase() || '';
+  const mode: RequestMode = contentType === 'application/json' ? 'json' : 'form';
   let input: Record<string, any>;
   try {
-    input = await request.json();
+    if (contentType === 'application/json') {
+      input = await request.json();
+    } else if (contentType === 'application/x-www-form-urlencoded' || contentType === 'multipart/form-data') {
+      input = Object.fromEntries(await request.formData());
+    } else {
+      return errorResponse(mode, 'Formato de solicitud no válido.', 415);
+    }
   } catch {
-    return Response.json({ message: 'No fue posible leer la solicitud.' }, { status: 400 });
-  }
-
-  if (input.website) return Response.json({ ok: true, requestId: crypto.randomUUID() });
-  const elapsed = Date.now() - Number(input.formStartedAt || 0);
-  if (!Number.isFinite(elapsed) || elapsed < 1200 || elapsed > 86_400_000) {
-    return Response.json({ message: 'La sesión expiró. Actualiza la página e intenta nuevamente.' }, { status: 400 });
+    return errorResponse(mode, 'No fue posible leer la solicitud.', 400);
   }
 
   const product = String(input.product || '');
+  if (input.website) {
+    const requestId = crypto.randomUUID();
+    return mode === 'json' ? Response.json({ ok: true, requestId }) : nativeSuccessResponse(request.url, product, requestId);
+  }
+
+  if (mode === 'json') {
+    const elapsed = Date.now() - Number(input.formStartedAt || 0);
+    if (!Number.isFinite(elapsed) || elapsed < 1200 || elapsed > 86_400_000) {
+      return errorResponse(mode, 'La sesión expiró. Actualiza la página e intenta nuevamente.', 400);
+    }
+  }
+
   const name = String(input.name || '').trim().slice(0, 80);
   const email = String(input.email || '').trim().toLowerCase().slice(0, 160);
   const project = String(input.project || '').trim().slice(0, 100);
   const domainStatus = String(input.domainStatus || '');
   if (!allowedProducts.has(product) || !name || !project || !emailPattern.test(email) || !['owned', 'needed', 'unsure'].includes(domainStatus) || input.consent !== 'on') {
-    return Response.json({ message: 'Revisa los datos obligatorios antes de continuar.' }, { status: 400 });
+    return errorResponse(mode, 'Revisa los datos obligatorios antes de continuar.', 400, product);
   }
 
   const requestId = crypto.randomUUID();
@@ -53,8 +86,12 @@ export const POST: APIRoute = async ({ request }) => {
 
   const webhookUrl = import.meta.env.ACTIVATION_WEBHOOK_URL;
   if (!webhookUrl) {
-    if (import.meta.env.DEV) return Response.json({ ok: true, requestId, preview: true });
-    return Response.json({ message: 'El canal de activación aún no está conectado. No se enviaron tus datos.' }, { status: 503 });
+    if (import.meta.env.DEV) {
+      return mode === 'json'
+        ? Response.json({ ok: true, requestId, preview: true })
+        : nativeSuccessResponse(request.url, product, requestId);
+    }
+    return errorResponse(mode, 'El canal de activación aún no está conectado. No se enviaron tus datos.', 503, product);
   }
 
   try {
@@ -66,7 +103,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
     if (!forwarded.ok) throw new Error(`Webhook ${forwarded.status}`);
   } catch {
-    return Response.json({ message: 'No pudimos registrar la solicitud. Tus datos no quedaron confirmados; intenta nuevamente.' }, { status: 502 });
+    return errorResponse(mode, 'No pudimos registrar la solicitud. Tus datos no quedaron confirmados; intenta nuevamente.', 502, product);
   }
 
   const checkoutUrls: Record<string, string | undefined> = {
@@ -74,5 +111,8 @@ export const POST: APIRoute = async ({ request }) => {
     catalogo: import.meta.env.CHECKOUT_URL_CATALOGO,
     corporativa: import.meta.env.CHECKOUT_URL_CORPORATIVA
   };
-  return Response.json({ ok: true, requestId, checkoutUrl: checkoutUrls[product] || null });
+  const checkoutUrl = checkoutUrls[product] || null;
+  return mode === 'json'
+    ? Response.json({ ok: true, requestId, checkoutUrl })
+    : nativeSuccessResponse(request.url, product, requestId, checkoutUrl);
 };
