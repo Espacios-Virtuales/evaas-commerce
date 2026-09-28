@@ -27,7 +27,8 @@ export const prerender = true;
     </section>
   </div>
   <script>
-    import { buildPostFormMessage, buildWhatsAppUrl } from '../lib/whatsapp';
+    import { readActivationHandoff } from '../lib/activation-handoff';
+    import { buildActivationHandoffMessage, buildPostFormMessage, buildWhatsAppUrl } from '../lib/whatsapp';
 
     const params = new URLSearchParams(location.search);
     const reference = params.get('id');
@@ -40,9 +41,12 @@ export const prerender = true;
       if (!postFormLink) return;
       const context = window.evaasCommercial?.get();
       const canonicalReference = validReference ? reference!.toLowerCase() : null;
-      const message = context && canonicalReference && context.reference === canonicalReference
-        ? buildPostFormMessage(context)
-        : null;
+      const handoff = canonicalReference ? readActivationHandoff(canonicalReference, product) : null;
+      const matchingContext = context && canonicalReference && context.reference === canonicalReference
+        && context.product === product;
+      const message = handoff && matchingContext && handoff.product === context.product
+        ? buildActivationHandoffMessage(handoff)
+        : matchingContext ? buildPostFormMessage(context) : null;
       const url = message ? buildWhatsAppUrl(postFormLink.dataset.whatsappNumber, message) : null;
       if (!url || !context?.product || !context.pricing) {
         postFormLink.hidden = true;

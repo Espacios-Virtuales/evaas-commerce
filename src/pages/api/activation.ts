@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { isProductSlug, isProjectColor, resolveContractualPricing, sanitizeAttribution } from '../../lib/commercial-context';
+import { createActivationHandoff, sanitizeHandoffText, type ActivationDomainStatus } from '../../lib/activation-handoff';
 import type { ProductSlug } from '../../data/products';
 import type { ProjectColor } from '../../data/project-colors';
 
@@ -25,9 +26,9 @@ function errorResponse(mode: RequestMode, message: string, status: number, produ
   });
 }
 
-function nativeSuccessResponse(requestUrl: string, product: string, requestId: string, checkoutUrl: string | null = null) {
+function nativeSuccessResponse(requestUrl: string, product: string, requestId: string) {
   const query = requestId ? `&id=${encodeURIComponent(requestId)}` : '';
-  const destination = checkoutUrl || (product ? `/confirmacion?producto=${encodeURIComponent(product)}${query}` : '/');
+  const destination = product ? `/confirmacion?producto=${encodeURIComponent(product)}${query}` : '/';
   return new Response(null, { status: 303, headers: { Location: new URL(destination, requestUrl).toString() } });
 }
 
@@ -63,8 +64,9 @@ export const POST: APIRoute = async ({ request }) => {
 
   const name = String(input.name || '').trim().slice(0, 80);
   const email = String(input.email || '').trim().toLowerCase().slice(0, 160);
-  const project = String(input.project || '').trim().slice(0, 100);
+  const project = sanitizeHandoffText(input.project, 100);
   const domainStatus = String(input.domainStatus || '');
+  const context = sanitizeHandoffText(input.context, 600);
   const submittedColor = input.projectColor == null ? '' : typeof input.projectColor === 'string' ? input.projectColor : '\0invalid';
   if (!isProductSlug(product) || !name || !project || !emailPattern.test(email) || !['owned', 'needed', 'unsure'].includes(domainStatus) || input.consent !== 'on' || (submittedColor !== '' && !isProjectColor(submittedColor))) {
     return errorResponse(mode, 'Revisa los datos obligatorios antes de continuar.', 400, product);
@@ -86,15 +88,24 @@ export const POST: APIRoute = async ({ request }) => {
     project,
     domainStatus,
     whatsapp: String(input.whatsapp || '').trim().slice(0, 30),
-    context: String(input.context || '').trim().slice(0, 600),
+    context,
     attribution
   };
+  const handoff = createActivationHandoff({
+    reference: requestId,
+    product: canonicalProduct,
+    projectColor,
+    project,
+    domainStatus: domainStatus as ActivationDomainStatus,
+    context,
+    createdAt: payload.createdAt
+  });
 
   const webhookUrl = import.meta.env.ACTIVATION_WEBHOOK_URL;
   if (!webhookUrl) {
     if (import.meta.env.DEV) {
       return mode === 'json'
-        ? Response.json({ ok: true, requestId, preview: true })
+        ? Response.json({ ok: true, requestId, handoff, preview: true })
         : nativeSuccessResponse(request.url, product, requestId);
     }
     return errorResponse(mode, 'El canal de activación aún no está conectado. No se enviaron tus datos.', 503, product);
@@ -112,13 +123,7 @@ export const POST: APIRoute = async ({ request }) => {
     return errorResponse(mode, 'No pudimos registrar la solicitud. Tus datos no quedaron confirmados; intenta nuevamente.', 502, product);
   }
 
-  const checkoutUrls: Record<string, string | undefined> = {
-    landing: import.meta.env.CHECKOUT_URL_LANDING,
-    catalogo: import.meta.env.CHECKOUT_URL_CATALOGO,
-    corporativa: import.meta.env.CHECKOUT_URL_CORPORATIVA
-  };
-  const checkoutUrl = checkoutUrls[canonicalProduct] || null;
   return mode === 'json'
-    ? Response.json({ ok: true, requestId, checkoutUrl })
-    : nativeSuccessResponse(request.url, canonicalProduct, requestId, checkoutUrl);
+    ? Response.json({ ok: true, requestId, handoff })
+    : nativeSuccessResponse(request.url, canonicalProduct, requestId);
 };

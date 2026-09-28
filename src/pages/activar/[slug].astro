@@ -11,7 +11,7 @@ const { product } = Astro.props;
 ---
 
 <BaseLayout title={`Activar ${product.name} · EVAAS Station`} description={`Comienza tu activación digital ${product.name}.`} noindex>
-  <div class="container activation-layout" data-activation-page data-product={product.slug}>
+  <div class="container activation-layout" data-activation-page data-product={product.slug} data-product-name={product.name}>
     <aside class="activation-summary">
       <span class="eyebrow">Tu selección</span>
       <h1>{product.name}</h1>
@@ -90,11 +90,15 @@ const { product } = Astro.props;
     </section>
   </div>
 
-  <script define:vars={{ productName: product.name, productSlug: product.slug }}>
-    // @ts-nocheck -- form controls and Astro serialized variables are runtime DOM values.
+  <script>
+    // @ts-nocheck -- form controls and Astro serialized values are runtime DOM values.
+    import { storeActivationHandoff } from '../../lib/activation-handoff';
+
     const page = document.querySelector('[data-activation-page]');
     const form = page?.querySelector('[data-activation-form]');
     if (form) {
+      const productName = page.dataset.productName;
+      const productSlug = page.dataset.product;
       const steps = [...form.querySelectorAll('[data-form-step]')];
       const progress = [...page.querySelectorAll('.form-progress span')];
       const status = form.querySelector('[data-form-status]');
@@ -168,13 +172,10 @@ const { product } = Astro.props;
           const result = await response.json();
           if (!response.ok) throw new Error(result.message || 'No fue posible enviar la solicitud.');
           if (result.requestId) window.evaasCommercial?.setReference(result.requestId);
+          if (result.requestId && result.handoff) storeActivationHandoff(result.handoff, result.requestId);
           window.evaasTrack?.('activation_submitted', { product: productSlug, request_id: result.requestId || '' });
-          if (result.checkoutUrl) {
-            location.assign(result.checkoutUrl);
-          } else {
-            const referenceQuery = result.requestId ? `&id=${encodeURIComponent(result.requestId)}` : '';
-            location.assign(`/confirmacion?producto=${encodeURIComponent(productSlug)}${referenceQuery}`);
-          }
+          const referenceQuery = result.requestId ? `&id=${encodeURIComponent(result.requestId)}` : '';
+          location.assign(`/confirmacion?producto=${encodeURIComponent(productSlug)}${referenceQuery}`);
         } catch (error) {
           status.textContent = error.message || 'No fue posible enviar. Intenta nuevamente.';
           status.className = 'form-status error';

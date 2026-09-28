@@ -1,9 +1,16 @@
 import type { CommercialContextV1 } from './commercial-context';
 import { isCanonicalUuid, isProductSlug, isProjectColor } from './commercial-context';
+import { sanitizeActivationHandoff } from './activation-handoff';
 
 const PRODUCT_LABELS = {
   landing: 'Landing',
   catalogo: 'Catálogo',
+  corporativa: 'Web Corporativa'
+} as const;
+
+const HANDOFF_PRODUCT_LABELS = {
+  landing: 'Landing Comercial',
+  catalogo: 'Catálogo de Productos',
   corporativa: 'Web Corporativa'
 } as const;
 
@@ -13,7 +20,8 @@ const COLOR_LABELS = {
   ocean: 'Azul profundo'
 } as const;
 
-export const WHATSAPP_MESSAGE_PII = false as const;
+export const WHATSAPP_INQUIRY_HAS_USER_DATA = false as const;
+export const WHATSAPP_POST_FORM_HANDOFF_HAS_USER_DATA = true as const;
 
 export function normalizeWhatsAppNumber(value: unknown): string | null {
   if (typeof value !== 'string') return null;
@@ -77,6 +85,29 @@ export function buildPostFormMessage(context?: unknown): string | null {
     `Color del proyecto: ${safe.projectColor && isProjectColor(safe.projectColor) ? COLOR_LABELS[safe.projectColor] : 'Por definir'}`,
     `Referencia: ${safe.reference}`
   ].join('\n');
+}
+
+const DOMAIN_LABELS = {
+  owned: 'Ya tengo dominio',
+  needed: 'Necesito comprar dominio',
+  unsure: 'Necesito orientación'
+} as const;
+
+export function buildActivationHandoffMessage(value: unknown): string | null {
+  const handoff = sanitizeActivationHandoff(value);
+  if (!handoff) return null;
+  const lines = [
+    'Hola, quiero continuar con mi activación EVAAS Station.',
+    '',
+    `Producto: ${HANDOFF_PRODUCT_LABELS[handoff.product]}`,
+    `Valor: ${clp(handoff.pricing.total)} IVA incluido`,
+    `Color del proyecto: ${handoff.projectColor ? COLOR_LABELS[handoff.projectColor] : 'Por definir'}`,
+    `Proyecto: ${handoff.project}`,
+    `Dominio: ${DOMAIN_LABELS[handoff.domainStatus]}`
+  ];
+  if (handoff.context) lines.push(`Objetivo: ${handoff.context}`);
+  lines.push('', `Referencia: ${handoff.reference}`, '', 'Ya completé el formulario de activación.');
+  return lines.join('\n');
 }
 
 export function buildWhatsAppUrl(number: unknown, message: string): string | null {
