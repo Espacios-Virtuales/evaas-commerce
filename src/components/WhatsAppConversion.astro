@@ -1,0 +1,69 @@
+---
+import { getSalesEmail, getWhatsAppConfig, buildInquiryMessage, buildWhatsAppUrl } from '../lib/whatsapp';
+
+const whatsapp = getWhatsAppConfig();
+const salesEmail = getSalesEmail();
+const initialHref = whatsapp ? buildWhatsAppUrl(whatsapp.number, buildInquiryMessage()) : null;
+const floatingSuppressed = Astro.url.pathname.replace(/\/$/, '') === '/confirmacion'
+  || Astro.url.pathname.replace(/\/$/, '').startsWith('/activar/');
+---
+
+{whatsapp && initialHref ? (
+  <a
+    class="whatsapp-conversion"
+    href={initialHref}
+    data-whatsapp-conversion
+    data-whatsapp-number={whatsapp.number}
+    data-track="whatsapp_opened"
+    hidden={floatingSuppressed}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Consultar por WhatsApp"
+  >
+    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M20.5 11.8a8.5 8.5 0 0 1-12.6 7.4L3 20.5l1.4-4.7a8.5 8.5 0 1 1 16.1-4Zm-8.5-7a7 7 0 0 0-6 10.6l.2.4-.8 2.6 2.7-.8.4.2a7 7 0 1 0 3.5-13Zm3.9 10.1c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.1-.5.1l-.6.7c-.1.2-.3.2-.5.1a5.7 5.7 0 0 1-1.7-1.1 6.5 6.5 0 0 1-1.2-1.5c-.1-.2 0-.3.1-.4l.4-.5.2-.4v-.4l-.7-1.6c-.2-.4-.4-.4-.5-.4h-.4c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.5 3.9 3.4 1.4.6 1.9.6 2.6.5.4-.1 1.2-.5 1.4-1 .2-.5.2-.9.1-1-.1-.1-.3-.2-.5-.3Z"/></svg>
+    <span>WhatsApp</span>
+  </a>
+) : (
+  <aside class="whatsapp-fallback" aria-live="polite" data-whatsapp-fallback hidden={floatingSuppressed}>
+    {salesEmail
+      ? <>WhatsApp no está disponible temporalmente. <a href={`mailto:${salesEmail}`}>Puedes escribirnos a {salesEmail}.</a></>
+      : 'El canal directo no está disponible temporalmente.'}
+  </aside>
+)}
+
+<script>
+  import { buildInquiryMessage, buildWhatsAppUrl } from '../lib/whatsapp';
+
+  const floatingLink = document.querySelector<HTMLAnchorElement>('[data-whatsapp-conversion]');
+  const fallback = document.querySelector<HTMLElement>('[data-whatsapp-fallback]');
+  const hideRouteElements = () => {
+    const pathname = location.pathname.replace(/\/$/, '') || '/';
+    const suppressed = pathname.startsWith('/activar/') || pathname === '/confirmacion';
+    if (floatingLink) floatingLink.hidden = suppressed;
+    if (fallback) fallback.hidden = suppressed;
+  };
+  hideRouteElements();
+  window.addEventListener('popstate', hideRouteElements);
+  if (floatingLink) {
+    const refreshHref = () => {
+      const context = window.evaasCommercial?.get();
+      const url = buildWhatsAppUrl(floatingLink.dataset.whatsappNumber, buildInquiryMessage(context));
+      if (url) floatingLink.href = url;
+      if (context?.product) floatingLink.dataset.product = context.product;
+      else delete floatingLink.dataset.product;
+    };
+    refreshHref();
+    document.addEventListener('evaas:commercial-context-change', refreshHref);
+    window.addEventListener('popstate', refreshHref);
+    floatingLink.addEventListener('focus', refreshHref);
+    floatingLink.addEventListener('click', refreshHref, true);
+
+    const footer = document.querySelector('.site-footer');
+    if (footer && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(([entry]) => {
+        floatingLink.classList.toggle('is-footer-adjacent', entry.isIntersecting);
+      }, { rootMargin: '0px 0px 20px 0px' });
+      observer.observe(footer);
+    }
+  }
+</script>

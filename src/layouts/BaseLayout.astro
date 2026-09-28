@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import AosController from '../components/AosController.astro';
 import CommercialContextController from '../components/CommercialContextController.astro';
+import WhatsAppConversion from '../components/WhatsAppConversion.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -60,6 +61,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
     <Footer />
     <AosController />
     <CommercialContextController />
+    <WhatsAppConversion />
     <script is:inline>
       (() => {
         window.__evaasTrackQueue = window.__evaasTrackQueue || [];

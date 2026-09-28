@@ -1,5 +1,10 @@
 /// <reference types="astro/client" />
 
+interface ImportMetaEnv {
+  readonly PUBLIC_EV_WHATSAPP?: string;
+  readonly PUBLIC_EV_SALES_EMAIL?: string;
+}
+
 interface Window {
   dataLayer: Record<string, unknown>[];
   evaasAttribution: { source: string; campaign: string; medium: string };

@@ -87,6 +87,7 @@
     try {
       sessionStorage.setItem(COMMERCIAL_CONTEXT_KEY, JSON.stringify(toPersistedCommercialContext(get())));
     } catch { /* Keep the in-memory context when session storage is unavailable. */ }
+    document.dispatchEvent(new CustomEvent('evaas:commercial-context-change', { detail: get() }));
   };
 
   const isContextualPath = (pathname) => pathname === '/'
@@ -212,7 +213,7 @@
   const allowedEvents = new Set([
     'product_viewed', 'demo_opened', 'demo_completed', 'plan_compared',
     'product_selected', 'activation_started', 'activation_submitted', 'activation_completed',
-    'activation_error', 'selector_completed'
+    'activation_error', 'selector_completed', 'whatsapp_opened', 'whatsapp_post_form_opened'
   ]);
   const track = (name, detail = {}) => {
     if (!allowedEvents.has(name)) return;
@@ -227,7 +228,7 @@
     }
     const payload = {
       event: name,
-      ...state.attribution,
+      ...(name === 'whatsapp_opened' || name === 'whatsapp_post_form_opened' ? {} : state.attribution),
       ...safeDetail,
       path: location.pathname,
       device: innerWidth < 768 ? 'mobile' : 'desktop'

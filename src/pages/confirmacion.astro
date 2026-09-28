@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSalesEmail, getWhatsAppConfig } from '../lib/whatsapp';
+
+const whatsapp = getWhatsAppConfig();
+const salesEmail = getSalesEmail();
 export const prerender = true;
 ---
 
@@ -10,17 +14,49 @@ export const prerender = true;
       <span class="eyebrow">Solicitud registrada</span>
       <h1>Ya tenemos tu punto de partida.</h1>
       <p>Revisaremos la información y continuaremos por el canal informado. No compres dominio ni contrates servicios adicionales hasta confirmar los siguientes pasos.</p>
+      <div class="confirmation-contact">
+        {whatsapp && <p>Tu solicitud ya tiene referencia. Si quieres continuar la conversación ahora, puedes abrir WhatsApp con los datos de esta activación.</p>}
+        {whatsapp
+          ? <a class="button button-secondary" data-post-form-whatsapp data-whatsapp-number={whatsapp.number} data-track="whatsapp_post_form_opened" target="_blank" rel="noopener noreferrer" hidden>Continuar por WhatsApp</a>
+          : salesEmail
+            ? <p class="muted">WhatsApp no está disponible temporalmente. <a href={`mailto:${salesEmail}`}>Puedes escribirnos a {salesEmail}.</a></p>
+            : <p class="muted">El canal directo no está disponible temporalmente.</p>}
+      </div>
       <p class="muted" data-request-reference></p>
       <a class="button" href="/">Volver al showroom</a>
     </section>
   </div>
   <script>
+    import { buildPostFormMessage, buildWhatsAppUrl } from '../lib/whatsapp';
+
     const params = new URLSearchParams(location.search);
     const reference = params.get('id');
     const product = params.get('producto');
     const referenceNode = document.querySelector('[data-request-reference]');
     const validReference = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(reference || '');
     if (validReference && referenceNode) referenceNode.textContent = `Referencia: ${reference!.slice(0, 8).toUpperCase()}`;
+    const postFormLink = document.querySelector<HTMLAnchorElement>('[data-post-form-whatsapp]');
+    const refreshPostFormLink = () => {
+      if (!postFormLink) return;
+      const context = window.evaasCommercial?.get();
+      const canonicalReference = validReference ? reference!.toLowerCase() : null;
+      const message = context && canonicalReference && context.reference === canonicalReference
+        ? buildPostFormMessage(context)
+        : null;
+      const url = message ? buildWhatsAppUrl(postFormLink.dataset.whatsappNumber, message) : null;
+      if (!url || !context?.product || !context.pricing) {
+        postFormLink.hidden = true;
+        postFormLink.removeAttribute('href');
+        return;
+      }
+      postFormLink.href = url;
+      postFormLink.dataset.product = context.product;
+      postFormLink.hidden = false;
+    };
+    refreshPostFormLink();
+    document.addEventListener('evaas:commercial-context-change', refreshPostFormLink);
+    postFormLink?.addEventListener('focus', refreshPostFormLink);
+    postFormLink?.addEventListener('click', refreshPostFormLink, true);
     window.evaasTrack?.('activation_completed', { product: product || 'unknown', request_id: validReference ? reference : '' });
   </script>
 </BaseLayout>

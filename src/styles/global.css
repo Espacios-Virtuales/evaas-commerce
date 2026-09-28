@@ -550,6 +550,16 @@
   .success-card h1 { margin-top: 1.5rem; font-size: clamp(2.4rem,6vw,5rem); }
   .success-card p { max-width: 34rem; margin: 1rem auto 0; color: var(--muted); }
   .success-card .button { margin-top: 2rem; }
+  .confirmation-contact { display: grid; justify-items: center; gap: .25rem; margin-top: 1.5rem; }
+  .confirmation-contact .button { margin-top: .75rem; }
+  .whatsapp-conversion { position: fixed; z-index: 30; right: max(1.25rem, env(safe-area-inset-right)); bottom: max(1.25rem, env(safe-area-inset-bottom)); display: inline-flex; align-items: center; gap: .55rem; min-height: 2.75rem; padding: .65rem .9rem; border: 1px solid var(--line); border-radius: 999px; color: var(--color-text); background: var(--color-bg); box-shadow: 0 8px 28px rgb(0 0 0 / 18%); font-size: .82rem; font-weight: 650; text-decoration: none; transition: transform .18s ease, opacity .18s ease; }
+  .whatsapp-conversion svg { width: 1.15rem; height: 1.15rem; fill: currentColor; }
+  .whatsapp-conversion:hover { transform: translateY(-2px); }
+  .whatsapp-conversion:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 3px; }
+  .whatsapp-conversion[hidden], .whatsapp-conversion.is-footer-adjacent { display: none; }
+  .whatsapp-fallback { box-sizing: border-box; width: min(44rem, calc(100% - 2rem)); margin: 1rem auto; padding: .8rem 1rem; border: 1px solid var(--line); border-radius: .8rem; color: var(--color-text); background: var(--color-bg); font-size: .78rem; overflow-wrap: anywhere; }
+  .whatsapp-fallback[hidden] { display: none; }
+  .whatsapp-fallback a { color: var(--color-commercial-action); }
 
   @keyframes reveal { from { opacity: 0; transform: translateY(.5rem); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
@@ -586,6 +596,10 @@
   .theme-switcher button { flex: 1; }
   .radio-grid { grid-template-columns: 1fr; }
   .activation-summary h1 { font-size: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .whatsapp-conversion { right: max(.75rem, env(safe-area-inset-right)); bottom: max(.75rem, env(safe-area-inset-bottom)); }
 }
 
 @media (max-width: 700px) {
