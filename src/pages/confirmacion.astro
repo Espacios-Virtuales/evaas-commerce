@@ -7,19 +7,19 @@ const salesEmail = getSalesEmail();
 export const prerender = true;
 ---
 
-<BaseLayout title="Solicitud recibida · EVAAS Station" noindex>
+<BaseLayout title="Solicitud preparada · EVAAS Station" noindex>
   <div class="container">
     <section class="success-card">
       <span class="success-mark" aria-hidden="true">✓</span>
-      <span class="eyebrow">Solicitud registrada</span>
-      <h1>Ya tenemos tu punto de partida.</h1>
-      <p>Revisaremos la información y continuaremos por el canal informado. No compres dominio ni contrates servicios adicionales hasta confirmar los siguientes pasos.</p>
+      <span class="eyebrow">Solicitud preparada</span>
+      <h1>Tu punto de partida está listo.</h1>
+      <p>Continúa por WhatsApp para enviarnos este punto de partida y coordinar los siguientes pasos. No compres dominio ni contrates servicios adicionales hasta confirmarlos con una persona.</p>
       <div class="confirmation-contact">
-        {whatsapp && <p>Tu solicitud ya tiene referencia. Si quieres continuar la conversación ahora, puedes abrir WhatsApp con los datos de esta activación.</p>}
+        {whatsapp && <p>Al pulsar el botón abrirás WhatsApp con el brief listo. Revisa el mensaje y pulsa Enviar para compartirlo.</p>}
         {whatsapp
           ? <a class="button button-secondary" data-post-form-whatsapp data-whatsapp-number={whatsapp.number} data-track="whatsapp_post_form_opened" target="_blank" rel="noopener noreferrer" hidden>Continuar por WhatsApp</a>
           : salesEmail
-            ? <p class="muted">WhatsApp no está disponible temporalmente. <a href={`mailto:${salesEmail}`}>Puedes escribirnos a {salesEmail}.</a></p>
+            ? <p class="muted">El canal de WhatsApp no está disponible temporalmente. <a href={`mailto:${salesEmail}`}>Puedes contactarnos por correo: {salesEmail}.</a></p>
             : <p class="muted">El canal directo no está disponible temporalmente.</p>}
       </div>
       <p class="muted" data-request-reference></p>

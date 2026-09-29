@@ -495,13 +495,14 @@
   .activation-summary { align-self: start; min-width: 0; padding: 1.7rem; border: 1px solid var(--line); border-radius: 1.2rem; background: var(--ink-soft); }
   .activation-summary h1 { font-size: 1.8rem; }
   .activation-summary .summary-price { display: block; margin-top: 1.2rem; font-size: 1.8rem; font-weight: 740; }
+  .activation-summary > .muted { display: block; }
   .activation-summary ul { display: grid; gap: .7rem; margin-top: 1.6rem; list-style: none; }
   .activation-summary li { color: var(--muted); font-size: .84rem; }
   .activation-summary a { display: inline-block; margin-top: 1.5rem; color: var(--cyan); font-size: .82rem; }
   .activation-panel { padding: clamp(1.5rem,4vw,3rem); border-radius: 1.4rem; color: var(--color-panel-text); background: var(--color-panel-bg); }
   .activation-panel h2 { font-size: clamp(2rem,4vw,3.3rem); }
   .activation-panel > p { margin-top: .8rem; color: var(--color-panel-muted); }
-  .form-progress { display: none; grid-template-columns: repeat(3,1fr); gap: .5rem; margin-block: 2rem; }
+  .form-progress { display: none; grid-template-columns: repeat(2,1fr); gap: .5rem; margin-block: 2rem; }
   .is-enhanced .form-progress { display: grid; }
   .form-progress span { height: 3px; background: var(--color-panel-border); }
   .form-progress span.active { background: var(--color-brand); }
