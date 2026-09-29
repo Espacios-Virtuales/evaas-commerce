@@ -1,6 +1,14 @@
 /// <reference types="astro/client" />
 
 interface ImportMetaEnv {
+  readonly PUBLIC_EV_SITE_URL?: string;
+  readonly PUBLIC_EV_LINKEDIN_URL?: string;
+  readonly PUBLIC_EV_INSTAGRAM_URL?: string;
+  readonly PUBLIC_EV_FACEBOOK_URL?: string;
+  readonly PUBLIC_EV_YOUTUBE_CHANNEL_URL?: string;
+  readonly PUBLIC_EV_LINKEDIN_ENABLED?: string;
+  readonly PUBLIC_EV_INSTAGRAM_ENABLED?: string;
+  readonly PUBLIC_EV_FACEBOOK_ENABLED?: string;
   readonly PUBLIC_EV_WHATSAPP?: string;
   readonly PUBLIC_EV_SALES_EMAIL?: string;
 }

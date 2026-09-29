@@ -414,12 +414,16 @@
   .final-cta p { max-width: 38rem; margin-top: 1.2rem; color: var(--color-cta-muted); }
 
   .site-footer { padding-block: 4rem 2rem; border-top: 1px solid var(--line); background: var(--color-footer-bg); }
-  .footer-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 3rem; }
-  .footer-grid > div:first-child p { margin-top: 1rem; color: var(--muted); font-size: .85rem; }
-  .footer-belief { font-family: var(--serif); font-size: 1.4rem; font-style: italic; }
-  .footer-grid nav { display: grid; align-content: start; gap: .5rem; }
-  .footer-grid nav a { color: var(--muted); font-size: .85rem; text-decoration: none; }
-  .footer-grid nav a:hover { color: var(--color-text); }
+  .footer-grid { display: grid; grid-template-columns: 1.25fr 1.05fr 1.25fr .9fr; gap: 2rem; }
+  .footer-description { margin-top: 1rem; color: var(--muted); font-size: .85rem; line-height: 1.6; }
+  .footer-description span { display: block; margin-top: .25rem; }
+  .footer-belief { margin-top: 1.2rem; font-family: var(--serif); font-size: 1.3rem; font-style: italic; }
+  .footer-nav { display: grid; align-content: start; gap: .35rem; min-width: 0; }
+  .footer-nav h2 { margin: 0 0 .35rem; color: var(--color-text); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+  .footer-nav a { display: inline-flex; min-height: 2.75rem; width: fit-content; max-width: 100%; align-items: center; gap: .55rem; color: var(--muted); font-size: .85rem; line-height: 1.35; overflow-wrap: anywhere; text-decoration: none; text-underline-offset: .2em; }
+  .footer-nav a:hover { color: var(--color-text); text-decoration: underline; }
+  .footer-nav a:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+  .footer-social svg { width: 1.1rem; height: 1.1rem; flex: 0 0 1.1rem; fill: currentColor; }
   .footer-base { display: flex; justify-content: space-between; margin-top: 4rem; padding-top: 1.4rem; border-top: 1px solid var(--line); color: var(--color-text-muted); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
 
   .page-hero { padding-block: clamp(5rem,9vw,8rem) 4rem; }
@@ -590,6 +594,7 @@
   .steps { grid-template-columns: repeat(2,1fr); }
   .step { border-right: 1px solid var(--line); }
   .sticky-purchase { position: static; }
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
 }
 
 @media (max-width: 480px) {
