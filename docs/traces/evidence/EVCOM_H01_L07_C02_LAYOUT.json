@@ -1,0 +1,2546 @@
+{
+  "anchors": [
+    {
+      "id": "showroom",
+      "hash": "#showroom",
+      "exists": true,
+      "targetTop": 128.359375,
+      "headerBottom": 119.75,
+      "scrollMarginTop": "128px",
+      "pass": true
+    },
+    {
+      "id": "elegir",
+      "hash": "#elegir",
+      "exists": true,
+      "targetTop": 127.96875,
+      "headerBottom": 119.75,
+      "scrollMarginTop": "128px",
+      "pass": true
+    },
+    {
+      "id": "precios",
+      "hash": "#precios",
+      "exists": true,
+      "targetTop": 127.578125,
+      "headerBottom": 119.75,
+      "scrollMarginTop": "128px",
+      "pass": true
+    },
+    {
+      "id": "comparar",
+      "hash": "#comparar",
+      "exists": true,
+      "targetTop": 127.875,
+      "headerBottom": 119.75,
+      "scrollMarginTop": "128px",
+      "pass": true
+    },
+    {
+      "id": "como-funciona",
+      "hash": "#como-funciona",
+      "exists": true,
+      "targetTop": 128,
+      "headerBottom": 119.75,
+      "scrollMarginTop": "128px",
+      "pass": true
+    }
+  ],
+  "menu": [
+    {
+      "initial": {
+        "scrollY": 0,
+        "overflow": "visible"
+      },
+      "open": {
+        "open": true,
+        "links": [
+          {
+            "left": 55.40625,
+            "right": 303,
+            "width": 247.59375,
+            "height": 58.59375
+          },
+          {
+            "left": 55.40625,
+            "right": 303,
+            "width": 247.59375,
+            "height": 58.59375
+          },
+          {
+            "left": 55.40625,
+            "right": 303,
+            "width": 247.59375,
+            "height": 58.59375
+          },
+          {
+            "left": 55.40625,
+            "right": 303,
+            "width": 247.59375,
+            "height": 58.59375
+          }
+        ]
+      },
+      "closed": {
+        "open": false,
+        "scrollY": 0,
+        "overflow": "visible"
+      },
+      "pass": true
+    }
+  ],
+  "whatsapp": [
+    {
+      "route": "/",
+      "w": 320,
+      "visible": true,
+      "rect": {
+        "left": 190.28125,
+        "right": 316,
+        "top": 512,
+        "bottom": 556
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 390,
+      "visible": true,
+      "rect": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 320,
+      "visible": true,
+      "rect": {
+        "left": 190.28125,
+        "right": 316,
+        "top": 512,
+        "bottom": 556
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 390,
+      "visible": true,
+      "rect": {
+        "left": 260.28125,
+        "right": 386,
+        "top": 788,
+        "bottom": 832
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 320,
+      "visible": true,
+      "rect": {
+        "left": 190.28125,
+        "right": 316,
+        "top": 512,
+        "bottom": 556
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 390,
+      "visible": true,
+      "rect": {
+        "left": 260.28125,
+        "right": 386,
+        "top": 788,
+        "bottom": 832
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 320,
+      "visible": false,
+      "rect": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 390,
+      "visible": false,
+      "rect": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 320,
+      "visible": false,
+      "rect": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 390,
+      "visible": false,
+      "rect": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 320,
+      "visible": true,
+      "rect": {
+        "left": 190.28125,
+        "right": 316,
+        "top": 512,
+        "bottom": 556
+      },
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 390,
+      "visible": true,
+      "rect": {
+        "left": 260.28125,
+        "right": 386,
+        "top": 788,
+        "bottom": 832
+      },
+      "overlaps": [],
+      "pass": true
+    }
+  ],
+  "floatingSweep": [
+    {
+      "route": "/",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 320,
+      "y": 3093,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 320,
+      "y": 6186,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 320,
+      "y": 9279,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 320,
+      "y": 12372,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 390,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 390,
+      "y": 2796,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 390,
+      "y": 5593,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 390,
+      "y": 8389,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 390,
+      "y": 11185,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 1440,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 1440,
+      "y": 1715,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 1440,
+      "y": 3430,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 1440,
+      "y": 5145,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/",
+      "w": 1440,
+      "y": 6860,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 320,
+      "y": 1175,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 320,
+      "y": 2350,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 320,
+      "y": 3525,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 320,
+      "y": 4700,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 390,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 390,
+      "y": 1001,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 390,
+      "y": 2001,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 390,
+      "y": 3002,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 390,
+      "y": 4002,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 1440,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 1440,
+      "y": 537,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 1440,
+      "y": 1074,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 1440,
+      "y": 1610,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "w": 1440,
+      "y": 2147,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 320,
+      "y": 1188,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 320,
+      "y": 2376,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 320,
+      "y": 3564,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 320,
+      "y": 4752,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 390,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 390,
+      "y": 996,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 390,
+      "y": 1992,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 390,
+      "y": 2988,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 390,
+      "y": 3984,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 1440,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 1440,
+      "y": 536,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 1440,
+      "y": 1072,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 1440,
+      "y": 1608,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "w": 1440,
+      "y": 2144,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 320,
+      "y": 1204,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 320,
+      "y": 2408,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 320,
+      "y": 3612,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 320,
+      "y": 4816,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 390,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 390,
+      "y": 1006,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 390,
+      "y": 2011,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 390,
+      "y": 3017,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 390,
+      "y": 4022,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 1440,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 1440,
+      "y": 554,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 1440,
+      "y": 1107,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 1440,
+      "y": 1661,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "w": 1440,
+      "y": 2214,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 320,
+      "y": 2176,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 320,
+      "y": 4353,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 320,
+      "y": 6529,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 320,
+      "y": 8705,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 390,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 390,
+      "y": 1901,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 390,
+      "y": 3801,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 390,
+      "y": 5702,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 390,
+      "y": 7602,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 1440,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 1440,
+      "y": 1202,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 1440,
+      "y": 2403,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 1440,
+      "y": 3605,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "w": 1440,
+      "y": 4806,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 320,
+      "y": 2443,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 320,
+      "y": 4886,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 320,
+      "y": 7329,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 320,
+      "y": 9772,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 390,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 390,
+      "y": 2199,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 390,
+      "y": 4399,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 390,
+      "y": 6598,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 390,
+      "y": 8797,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 1440,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 1440,
+      "y": 1385,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 1440,
+      "y": 2769,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 1440,
+      "y": 4154,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "w": 1440,
+      "y": 5538,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 320,
+      "y": 2562,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 320,
+      "y": 5124,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 320,
+      "y": 7685,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 320,
+      "y": 10247,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 390,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 390,
+      "y": 2264,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 390,
+      "y": 4529,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 390,
+      "y": 6793,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 390,
+      "y": 9057,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 1440,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": true,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 1440,
+      "y": 1446,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 1440,
+      "y": 2891,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 1440,
+      "y": 4337,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "w": 1440,
+      "y": 5782,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 320,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 320,
+      "y": 601,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 320,
+      "y": 1202,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 320,
+      "y": 1802,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 320,
+      "y": 2403,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 390,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 390,
+      "y": 525,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 390,
+      "y": 1051,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 390,
+      "y": 1576,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 390,
+      "y": 2101,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 1440,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 1440,
+      "y": 141,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 1440,
+      "y": 281,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 1440,
+      "y": 422,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "w": 1440,
+      "y": 562,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 320,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 320,
+      "y": 607,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 320,
+      "y": 1214,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 320,
+      "y": 1821,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 320,
+      "y": 2428,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 390,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 390,
+      "y": 525,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 390,
+      "y": 1051,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 390,
+      "y": 1576,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 390,
+      "y": 2101,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 1440,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 1440,
+      "y": 141,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 1440,
+      "y": 281,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 1440,
+      "y": 422,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "w": 1440,
+      "y": 562,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 320,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 320,
+      "y": 601,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 320,
+      "y": 1202,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 320,
+      "y": 1802,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 320,
+      "y": 2403,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 390,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 390,
+      "y": 525,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 390,
+      "y": 1051,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 390,
+      "y": 1576,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 390,
+      "y": 2101,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 1440,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 1440,
+      "y": 141,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 1440,
+      "y": 281,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 1440,
+      "y": 422,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "w": 1440,
+      "y": 562,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 320,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 320,
+      "y": 447,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 320,
+      "y": 895,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 320,
+      "y": 1342,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 320,
+      "y": 1789,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 390,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 390,
+      "y": 358,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 390,
+      "y": 715,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 390,
+      "y": 1073,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 390,
+      "y": 1430,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 1440,
+      "y": 0,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 1440,
+      "y": 204,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 1440,
+      "y": 408,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 1440,
+      "y": 612,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/confirmacion",
+      "w": 1440,
+      "y": 816,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 320,
+      "y": 888,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 320,
+      "y": 1775,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 320,
+      "y": 2663,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 320,
+      "y": 3550,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 390,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 390,
+      "y": 717,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 390,
+      "y": 1433,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 390,
+      "y": 2150,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 390,
+      "y": 2866,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 1440,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 1440,
+      "y": 386,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 1440,
+      "y": 771,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 1440,
+      "y": 1157,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "w": 1440,
+      "y": 1542,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 320,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 320,
+      "y": 782,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 320,
+      "y": 1564,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 320,
+      "y": 2346,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 320,
+      "y": 3128,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 390,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 390,
+      "y": 633,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 390,
+      "y": 1266,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 390,
+      "y": 1899,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 390,
+      "y": 2532,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 1440,
+      "y": 0,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 1440,
+      "y": 293,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 1440,
+      "y": 586,
+      "visible": true,
+      "controlAdjacent": false,
+      "footerAdjacent": false,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 1440,
+      "y": 878,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "w": 1440,
+      "y": 1171,
+      "visible": false,
+      "controlAdjacent": false,
+      "footerAdjacent": true,
+      "overlaps": [],
+      "pass": true
+    }
+  ],
+  "themeIsolation": [
+    {
+      "route": "/",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/productos/landing",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/productos/catalogo",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/productos/corporativa",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/demos/landing",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/demos/catalogo",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/demos/corporativa",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/activar/landing",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/activar/catalogo",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/activar/corporativa",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/confirmacion?producto=landing&id=123e4567-e89b-12d3-a456-426614174000",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/confirmacion?producto=landing&id=123e4567-e89b-12d3-a456-426614174000",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/terminos",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "from": "dark",
+      "to": "light",
+      "pass": true
+    },
+    {
+      "route": "/privacidad",
+      "from": "light",
+      "to": "cyan",
+      "pass": true
+    }
+  ],
+  "footerAdjacent": {
+    "footerTop": 0.40625,
+    "footerAdjacent": true,
+    "hidden": false,
+    "display": "none",
+    "pass": true
+  },
+  "comparison": [
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "wrapWidth": 286,
+      "wrapScroll": 820,
+      "overflowX": "auto",
+      "scrollMoved": true,
+      "documentScrollWidthAfter": 320,
+      "pass": true
+    },
+    {
+      "width": 360,
+      "scrollWidth": 360,
+      "clientWidth": 360,
+      "wrapWidth": 326,
+      "wrapScroll": 820,
+      "overflowX": "auto",
+      "scrollMoved": true,
+      "documentScrollWidthAfter": 360,
+      "pass": true
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "wrapWidth": 356,
+      "wrapScroll": 820,
+      "overflowX": "auto",
+      "scrollMoved": true,
+      "documentScrollWidthAfter": 390,
+      "pass": true
+    }
+  ],
+  "demoStructures": [
+    {
+      "route": "/demos/landing",
+      "sections": [
+        {
+          "selector": ".landing-demo-label",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".landing-hero",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".landing-value",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".landing-menu",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".landing-origin",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".landing-visit",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".landing-contact",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".landing-site-footer",
+          "count": 1,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "route": "/demos/catalogo",
+      "sections": [
+        {
+          "selector": ".catalog-demo-label",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".catalog-hero",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".catalog-category-cards",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".catalog-products",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".catalog-product-card",
+          "count": 8,
+          "visible": true
+        },
+        {
+          "selector": ".catalog-story",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".catalog-contact",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".catalog-site-footer",
+          "count": 1,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "route": "/demos/corporativa",
+      "sections": [
+        {
+          "selector": ".corporate-demo-label",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".corporate-hero",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".corporate-company",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".corporate-services",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".corporate-method",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".corporate-cases",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".corporate-contact",
+          "count": 1,
+          "visible": true
+        },
+        {
+          "selector": ".corporate-footer",
+          "count": 1,
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "extraScreenshots": [
+    "360-footer-channels",
+    "1440-footer-productive",
+    "320-demo-landing-forest-preview",
+    "320-demo-catalog-garnet-preview",
+    "320-demo-corporate-ocean-preview"
+  ]
+}
