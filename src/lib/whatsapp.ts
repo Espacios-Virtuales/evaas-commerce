@@ -1,6 +1,7 @@
 import type { CommercialContextV1 } from './commercial-context';
 import { isCanonicalUuid, isProductSlug, isProjectColor } from './commercial-context';
 import { sanitizeActivationHandoff } from './activation-handoff';
+import { getProjectCategoryLabel } from '../data/project-categories';
 
 const PRODUCT_LABELS = {
   landing: 'Landing',
@@ -22,6 +23,20 @@ const COLOR_LABELS = {
 
 export const WHATSAPP_INQUIRY_HAS_USER_DATA = false as const;
 export const WHATSAPP_POST_FORM_HANDOFF_HAS_USER_DATA = true as const;
+
+export type AdvancedProjectNeed = 'ecommerce' | 'integration';
+
+export function buildAdvancedNeedMessage(need: AdvancedProjectNeed, product: 'landing' | 'catalogo' | 'corporativa'): string {
+  const needLabel = need === 'ecommerce' ? 'Ecommerce / pagos' : 'Integración';
+  return [
+    'Hola, quiero evaluar una solución con EVAAS Commerce.',
+    '',
+    `Necesidad: ${needLabel}`,
+    `Punto de partida identificado: ${HANDOFF_PRODUCT_LABELS[product]}`,
+    '',
+    'Necesito revisar el alcance antes de activar.'
+  ].join('\n');
+}
 
 export function normalizeWhatsAppNumber(value: unknown): string | null {
   if (typeof value !== 'string') return null;
@@ -103,6 +118,7 @@ export function buildActivationHandoffMessage(value: unknown): string | null {
     `Valor: ${clp(handoff.pricing.total)} IVA incluido`,
     `Color del proyecto: ${handoff.projectColor ? COLOR_LABELS[handoff.projectColor] : 'Por definir'}`,
     `Proyecto: ${handoff.project}`,
+    ...(handoff.projectCategory ? [`Categoría: ${getProjectCategoryLabel(handoff.projectCategory)}`] : []),
     `Dominio: ${DOMAIN_LABELS[handoff.domainStatus]}`
   ];
   if (handoff.context) lines.push(`Objetivo: ${handoff.context}`);

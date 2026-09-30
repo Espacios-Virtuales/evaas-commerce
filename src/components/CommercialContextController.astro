@@ -218,13 +218,14 @@
   const track = (name, detail = {}) => {
     if (!allowedEvents.has(name)) return;
     const safeDetail = {};
-    for (const key of ['product', 'demo', 'method', 'outcome', 'request_id']) {
+    for (const key of ['product', 'demo', 'method', 'outcome', 'request_id', 'mode']) {
       const value = detail[key];
       if (key === 'product' && (isProductSlug(value) || value === 'unknown')) safeDetail[key] = value;
       if (key === 'demo' && isProductSlug(value)) safeDetail[key] = value;
       if (key === 'method' && value === 'interaction') safeDetail[key] = value;
-      if (key === 'outcome' && (isProductSlug(value) || value === 'ecommerce_out_of_scope')) safeDetail[key] = value;
+      if (key === 'outcome' && (isProductSlug(value) || ['ecommerce_assisted', 'integration_assisted'].includes(value))) safeDetail[key] = value;
       if (key === 'request_id' && isCanonicalUuid(value)) safeDetail[key] = value.toLowerCase();
+      if (key === 'mode' && (name === 'whatsapp_post_form_opened') && (value === 'automatic' || value === 'fallback')) safeDetail[key] = value;
     }
     const payload = {
       event: name,

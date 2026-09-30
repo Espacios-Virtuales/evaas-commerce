@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { products, formatCLP, type Product } from '../../data/products';
+import { PROJECT_CATEGORIES } from '../../data/project-categories';
 
 export const prerender = true;
 export function getStaticPaths() {
@@ -47,6 +48,13 @@ const { product } = Astro.props;
               <label for="project">Nombre del proyecto o negocio</label>
               <input id="project" name="project" required maxlength="100" autocomplete="organization" placeholder="Ej. Mi negocio" />
             </div>
+            <div class="field field-full">
+              <label for="projectCategory">¿A qué se dedica principalmente tu proyecto?</label>
+              <select id="projectCategory" name="projectCategory" required>
+                <option value="">Selecciona una categoría</option>
+                {PROJECT_CATEGORIES.map((category) => <option value={category.id}>{category.label}</option>)}
+              </select>
+            </div>
             <fieldset class="field field-full" style="border:0;padding:0;margin:0">
               <legend>¿Ya tienes dominio?</legend>
               <div class="radio-grid">
@@ -71,7 +79,7 @@ const { product } = Astro.props;
           <div class="review-box" data-review hidden></div>
           <div class="checkbox">
             <input id="consent" name="consent" type="checkbox" required />
-            <label for="consent">Acepto que Espacios Virtuales use estos datos para preparar esta solicitud y continuarla por WhatsApp. Leí el <a href="/privacidad" target="_blank">aviso de privacidad</a> y los <a href="/terminos" target="_blank">términos de activación</a>.</label>
+            <label for="consent">Acepto que Espacios Virtuales use estos datos para preparar esta solicitud y abrir WhatsApp con el brief listo para que yo decida enviarlo. Leí el <a href="/privacidad" target="_blank">aviso de privacidad</a> y los <a href="/terminos" target="_blank">términos de activación</a>.</label>
           </div>
           <div class="form-status" data-form-status role="status" aria-live="polite"></div>
           <div class="form-actions"><button class="button-plain" type="button" data-enhanced-control data-back>Volver</button><button class="button button-dark" type="submit">Preparar solicitud</button></div>
@@ -82,7 +90,10 @@ const { product } = Astro.props;
 
   <script>
     // @ts-nocheck -- form controls and Astro serialized values are runtime DOM values.
-    import { storeActivationHandoff } from '../../lib/activation-handoff';
+    import { isCanonicalUuid } from '../../lib/commercial-context';
+    import { getProjectCategoryLabel, sanitizeActivationHandoff, storeActivationHandoff } from '../../lib/activation-handoff';
+    import { buildActivationHandoffMessage, buildWhatsAppUrl, getWhatsAppConfig } from '../../lib/whatsapp';
+    import type { ProjectCategory } from '../../data/project-categories';
 
     const page = document.querySelector('[data-activation-page]');
     const form = page?.querySelector('[data-activation-form]');
@@ -118,6 +129,7 @@ const { product } = Astro.props;
         const values = [
           ['Configuración', productName],
           ['Proyecto', data.get('project')],
+          ['Categoría', getProjectCategoryLabel(data.get('projectCategory') as ProjectCategory)],
           ['Dominio', domain]
         ];
         if (data.get('context')) values.push(['Objetivo', data.get('context')]);
@@ -144,10 +156,27 @@ const { product } = Astro.props;
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (!validateStep(1)) return;
+
+        // Keep the user gesture alive while opening a secondary context before the first await.
+        const whatsapp = getWhatsAppConfig();
+        let whatsappWindow: Window | null = null;
+        if (whatsapp) {
+          try {
+            whatsappWindow = window.open('about:blank', '_blank');
+            if (whatsappWindow) {
+              whatsappWindow.document.title = 'Preparando WhatsApp';
+              whatsappWindow.document.body.textContent = 'Preparando tu brief. Esta pestaña se cerrará si la solicitud no puede completarse.';
+              whatsappWindow.opener = null;
+            }
+          } catch {
+            whatsappWindow = null;
+          }
+        }
+
         status.className = 'form-status';
         const submit = form.querySelector('[type="submit"]');
         submit.disabled = true;
-        submit.textContent = 'Enviando…';
+        submit.textContent = 'Preparando…';
         const data = Object.fromEntries(new FormData(form).entries());
         const commercialContext = window.evaasCommercial?.get();
         data.projectColor = commercialContext?.projectColor || '';
@@ -160,12 +189,39 @@ const { product } = Astro.props;
           });
           const result = await response.json();
           if (!response.ok) throw new Error(result.message || 'No fue posible enviar la solicitud.');
-          if (result.requestId) window.evaasCommercial?.setReference(result.requestId);
-          if (result.requestId && result.handoff) storeActivationHandoff(result.handoff, result.requestId);
-          window.evaasTrack?.('activation_submitted', { product: productSlug, request_id: result.requestId || '' });
-          const referenceQuery = result.requestId ? `&id=${encodeURIComponent(result.requestId)}` : '';
-          location.assign(`/confirmacion?producto=${encodeURIComponent(productSlug)}${referenceQuery}`);
+          if (!isCanonicalUuid(result.requestId)) throw new Error('No fue posible validar la referencia. Intenta nuevamente.');
+
+          const requestId = result.requestId.toLowerCase();
+          const handoff = sanitizeActivationHandoff(result.handoff);
+          const validHandoff = handoff && handoff.reference === requestId && handoff.product === productSlug;
+          window.evaasCommercial?.setReference(requestId);
+          if (validHandoff) storeActivationHandoff(handoff, requestId);
+
+          const message = validHandoff ? buildActivationHandoffMessage(handoff) : null;
+          const whatsappUrl = whatsapp && message ? buildWhatsAppUrl(whatsapp.number, message) : null;
+          let whatsappState: 'opened' | 'blocked' | 'unavailable' = 'unavailable';
+          if (whatsappUrl && whatsappWindow) {
+            try {
+              whatsappWindow.location.replace(whatsappUrl);
+              whatsappState = 'opened';
+              window.evaasTrack?.('whatsapp_post_form_opened', { product: productSlug, mode: 'automatic' });
+            } catch {
+              try { whatsappWindow.close(); } catch { /* The browser may already have closed the popup. */ }
+              whatsappState = 'unavailable';
+            }
+          } else {
+            if (whatsappWindow) {
+              try { whatsappWindow.close(); } catch { /* The browser may already have closed the popup. */ }
+            }
+            whatsappState = !whatsapp ? 'unavailable' : !whatsappWindow ? 'blocked' : 'unavailable';
+          }
+
+          window.evaasTrack?.('activation_submitted', { product: productSlug, request_id: requestId });
+          location.assign(`/confirmacion?producto=${encodeURIComponent(productSlug)}&id=${encodeURIComponent(requestId)}&wa=${whatsappState}`);
         } catch (error) {
+          if (whatsappWindow) {
+            try { whatsappWindow.close(); } catch { /* The browser may already have closed the popup. */ }
+          }
           status.textContent = error.message || 'No fue posible enviar. Intenta nuevamente.';
           status.className = 'form-status error';
           submit.disabled = false;

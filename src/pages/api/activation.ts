@@ -3,6 +3,7 @@ import { isProductSlug, isProjectColor } from '../../lib/commercial-context';
 import { createActivationHandoff, sanitizeHandoffText, type ActivationDomainStatus } from '../../lib/activation-handoff';
 import type { ProductSlug } from '../../data/products';
 import type { ProjectColor } from '../../data/project-colors';
+import { isProjectCategory } from '../../data/project-categories';
 
 export const prerender = false;
 
@@ -67,8 +68,9 @@ export const POST: APIRoute = async ({ request }) => {
   const project = sanitizeHandoffText(input.project, 100);
   const domainStatus = typeof input.domainStatus === 'string' ? input.domainStatus : '';
   const context = sanitizeHandoffText(input.context, 600);
+  const projectCategory = input.projectCategory;
   const submittedColor = input.projectColor == null ? '' : typeof input.projectColor === 'string' ? input.projectColor : '\0invalid';
-  if (!isProductSlug(product) || !project || !['owned', 'needed', 'unsure'].includes(domainStatus) || input.consent !== 'on' || (submittedColor !== '' && !isProjectColor(submittedColor))) {
+  if (!isProductSlug(product) || !project || !isProjectCategory(projectCategory) || !['owned', 'needed', 'unsure'].includes(domainStatus) || input.consent !== 'on' || (submittedColor !== '' && !isProjectColor(submittedColor))) {
     return errorResponse(mode, 'Revisa los datos obligatorios antes de continuar.', 400, product);
   }
 
@@ -80,6 +82,7 @@ export const POST: APIRoute = async ({ request }) => {
     reference: requestId,
     product: canonicalProduct,
     projectColor,
+    projectCategory,
     project,
     domainStatus: domainStatus as ActivationDomainStatus,
     context,

@@ -7,6 +7,7 @@ import {
 } from './commercial-context';
 import type { ProductSlug } from '../data/products';
 import type { ProjectColor } from '../data/project-colors';
+import { getProjectCategoryLabel, isProjectCategory, type ProjectCategory } from '../data/project-categories';
 
 export const ACTIVATION_HANDOFF_KEY = 'evaas_activation_handoff_v1';
 export const ACTIVATION_HANDOFF_TTL_MS = 60 * 60 * 1000;
@@ -19,6 +20,7 @@ export type ActivationHandoffV1 = {
   product: ProductSlug;
   pricing: ContractualPricing;
   projectColor: ProjectColor | null;
+  projectCategory: ProjectCategory | null;
   project: string;
   domainStatus: ActivationDomainStatus;
   context: string;
@@ -45,6 +47,7 @@ export function createActivationHandoff(input: {
   reference: string;
   product: ProductSlug;
   projectColor: ProjectColor | null;
+  projectCategory: ProjectCategory;
   project: string;
   domainStatus: ActivationDomainStatus;
   context: string;
@@ -56,6 +59,7 @@ export function createActivationHandoff(input: {
     product: input.product,
     pricing: copyPricing(input.product),
     projectColor: input.projectColor,
+    projectCategory: input.projectCategory,
     project: sanitizeHandoffText(input.project, 100),
     domainStatus: input.domainStatus,
     context: sanitizeHandoffText(input.context, 600),
@@ -66,6 +70,8 @@ export function createActivationHandoff(input: {
 export function sanitizeActivationHandoff(value: unknown, now = Date.now()): ActivationHandoffV1 | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const input = value as Record<string, unknown>;
+  const hasProjectCategory = Object.hasOwn(input, 'projectCategory');
+  if (hasProjectCategory && !isProjectCategory(input.projectCategory)) return null;
   if (input.version !== 1 || !isCanonicalUuid(input.reference) || !isProductSlug(input.product)
       || (input.projectColor !== null && !isProjectColor(input.projectColor))
       || typeof input.project !== 'string' || typeof input.context !== 'string'
@@ -92,12 +98,15 @@ export function sanitizeActivationHandoff(value: unknown, now = Date.now()): Act
     product,
     pricing: expectedPricing,
     projectColor: input.projectColor as ProjectColor | null,
+    projectCategory: hasProjectCategory ? input.projectCategory as ProjectCategory : null,
     project,
     domainStatus: input.domainStatus as ActivationDomainStatus,
     context: sanitizeHandoffText(input.context, 600),
     createdAt: new Date(createdAtMs).toISOString()
   };
 }
+
+export { getProjectCategoryLabel };
 
 export function storeActivationHandoff(value: unknown, requestId: unknown): boolean {
   if (!isCanonicalUuid(requestId)) return false;
