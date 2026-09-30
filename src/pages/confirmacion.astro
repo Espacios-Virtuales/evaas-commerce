@@ -14,8 +14,10 @@ export const prerender = true;
       <span class="eyebrow">Solicitud preparada</span>
       <h1>Tu punto de partida está listo.</h1>
       <p data-whatsapp-status>Tu solicitud está preparada. Revisaremos el brief en WhatsApp cuando decidas abrirlo y enviarlo. No compres dominio ni contrates servicios adicionales hasta confirmarlos con una persona.</p>
+      <p data-whatsapp-invalid hidden>No pudimos validar el brief devuelto por el servidor. Conservamos tu referencia y no abriremos WhatsApp con un mensaje reconstruido.</p>
       <div class="confirmation-contact">
         {whatsapp && <p data-whatsapp-instructions>Revisa el mensaje y pulsa Enviar para compartirlo con Espacios Virtuales.</p>}
+        {salesEmail && <p data-whatsapp-invalid-contact hidden>Contacta a <a href={`mailto:${salesEmail}`}>{salesEmail}</a> para continuar con esta referencia.</p>}
         {whatsapp
           ? <a class="button button-secondary" data-post-form-whatsapp data-whatsapp-number={whatsapp.number} target="_blank" rel="noopener noreferrer" hidden>Abrir WhatsApp nuevamente</a>
           : salesEmail
@@ -37,16 +39,29 @@ export const prerender = true;
     const referenceNode = document.querySelector('[data-request-reference]');
     const statusNode = document.querySelector<HTMLElement>('[data-whatsapp-status]');
     const instructionsNode = document.querySelector<HTMLElement>('[data-whatsapp-instructions]');
+    const invalidNode = document.querySelector<HTMLElement>('[data-whatsapp-invalid]');
+    const invalidContactNode = document.querySelector<HTMLElement>('[data-whatsapp-invalid-contact]');
     const whatsappState = params.get('wa');
     if (statusNode && whatsappState === 'opened') statusNode.textContent = 'Abrimos WhatsApp con tu brief listo. EVAAS permanece aquí con tu referencia. Revisa el mensaje y pulsa Enviar para compartirlo con Espacios Virtuales.';
     if (statusNode && whatsappState === 'blocked') statusNode.textContent = 'Tu navegador no pudo abrir WhatsApp automáticamente. Tu brief está listo. Usa el botón de abajo para continuar.';
     if (statusNode && whatsappState === 'unavailable') statusNode.textContent = 'WhatsApp no está disponible ahora. Tu solicitud quedó preparada; puedes usar el canal de contacto disponible.';
     if (instructionsNode && whatsappState === 'opened') instructionsNode.textContent = 'Revisa el mensaje y pulsa Enviar para compartirlo. No se envía automáticamente.';
+    if (whatsappState === 'invalid') {
+      if (statusNode) statusNode.textContent = 'La referencia quedó conservada, pero el brief no pudo validarse. No abras WhatsApp con un mensaje incompleto.';
+      if (instructionsNode) instructionsNode.hidden = true;
+      if (invalidNode) invalidNode.hidden = false;
+      if (invalidContactNode) invalidContactNode.hidden = false;
+    }
     const validReference = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(reference || '');
     if (validReference && referenceNode) referenceNode.textContent = `Referencia: ${reference!.slice(0, 8).toUpperCase()}`;
     const postFormLink = document.querySelector<HTMLAnchorElement>('[data-post-form-whatsapp]');
     const refreshPostFormLink = () => {
       if (!postFormLink) return;
+      if (whatsappState === 'invalid') {
+        postFormLink.hidden = true;
+        postFormLink.removeAttribute('href');
+        return;
+      }
       const context = window.evaasCommercial?.get();
       const canonicalReference = validReference ? reference!.toLowerCase() : null;
       const handoff = canonicalReference ? readActivationHandoff(canonicalReference, product) : null;

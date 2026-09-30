@@ -105,6 +105,7 @@ const { product } = Astro.props;
       const status = form.querySelector('[data-form-status]');
       const review = form.querySelector('[data-review]');
       let current = 0;
+      let submitting = false;
       form.elements.formStartedAt.value = String(Date.now());
       window.evaasTrack?.('activation_started', { product: productSlug });
 
@@ -155,7 +156,8 @@ const { product } = Astro.props;
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        if (!validateStep(1)) return;
+        if (submitting || !validateStep(1)) return;
+        submitting = true;
 
         // Keep the user gesture alive while opening a secondary context before the first await.
         const whatsapp = getWhatsAppConfig();
@@ -199,7 +201,7 @@ const { product } = Astro.props;
 
           const message = validHandoff ? buildActivationHandoffMessage(handoff) : null;
           const whatsappUrl = whatsapp && message ? buildWhatsAppUrl(whatsapp.number, message) : null;
-          let whatsappState: 'opened' | 'blocked' | 'unavailable' = 'unavailable';
+          let whatsappState: 'opened' | 'blocked' | 'unavailable' | 'invalid' = validHandoff ? 'unavailable' : 'invalid';
           if (whatsappUrl && whatsappWindow) {
             try {
               whatsappWindow.location.replace(whatsappUrl);
@@ -213,10 +215,11 @@ const { product } = Astro.props;
             if (whatsappWindow) {
               try { whatsappWindow.close(); } catch { /* The browser may already have closed the popup. */ }
             }
-            whatsappState = !whatsapp ? 'unavailable' : !whatsappWindow ? 'blocked' : 'unavailable';
+            whatsappState = !validHandoff ? 'invalid' : !whatsapp ? 'unavailable' : !whatsappWindow ? 'blocked' : 'unavailable';
           }
 
-          window.evaasTrack?.('activation_submitted', { product: productSlug, request_id: requestId });
+          if (validHandoff) window.evaasTrack?.('activation_submitted', { product: productSlug, request_id: requestId });
+          else window.evaasTrack?.('activation_error', { product: productSlug });
           location.assign(`/confirmacion?producto=${encodeURIComponent(productSlug)}&id=${encodeURIComponent(requestId)}&wa=${whatsappState}`);
         } catch (error) {
           if (whatsappWindow) {
@@ -226,6 +229,7 @@ const { product } = Astro.props;
           status.className = 'form-status error';
           submit.disabled = false;
           submit.textContent = 'Preparar solicitud';
+          submitting = false;
           window.evaasTrack?.('activation_error', { product: productSlug });
         }
       });
