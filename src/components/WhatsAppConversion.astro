@@ -45,6 +45,43 @@ const floatingSuppressed = Astro.url.pathname.replace(/\/$/, '') === '/confirmac
   hideRouteElements();
   window.addEventListener('popstate', hideRouteElements);
   if (floatingLink) {
+    let floatingSize = { width: 0, height: 0 };
+    let overlapFrame = 0;
+    const updateControlOverlap = () => {
+      overlapFrame = 0;
+      if (floatingLink.hidden) return;
+
+      const box = floatingLink.getBoundingClientRect();
+      if (box.width && box.height) floatingSize = { width: box.width, height: box.height };
+      if (!floatingSize.width || !floatingSize.height) return;
+
+      const style = getComputedStyle(floatingLink);
+      const right = Number.parseFloat(style.right) || 0;
+      const bottom = Number.parseFloat(style.bottom) || 0;
+      const layoutWidth = document.documentElement.clientWidth || window.innerWidth;
+      const floatingBox = {
+        left: layoutWidth - right - floatingSize.width,
+        right: layoutWidth - right,
+        top: window.innerHeight - bottom - floatingSize.height,
+        bottom: window.innerHeight - bottom,
+      };
+      const overlapsControl = [...document.querySelectorAll<HTMLElement>(
+        'main a, main button, main input, main select, main textarea, main summary, main [role="button"]'
+      )].some((element) => {
+        if (element === floatingLink || element.closest('[aria-hidden="true"], .honeypot')) return false;
+        const elementStyle = getComputedStyle(element);
+        if (elementStyle.display === 'none' || elementStyle.visibility === 'hidden') return false;
+        const target = element.getBoundingClientRect();
+        return target.width > 0 && target.height > 0
+          && target.left < floatingBox.right && target.right > floatingBox.left
+          && target.top < floatingBox.bottom && target.bottom > floatingBox.top;
+      });
+      floatingLink.classList.toggle('is-control-adjacent', overlapsControl);
+    };
+    const scheduleOverlapCheck = () => {
+      if (!overlapFrame) overlapFrame = requestAnimationFrame(updateControlOverlap);
+    };
+
     const refreshHref = () => {
       const context = window.evaasCommercial?.get();
       const url = buildWhatsAppUrl(floatingLink.dataset.whatsappNumber, buildInquiryMessage(context));
@@ -57,6 +94,10 @@ const floatingSuppressed = Astro.url.pathname.replace(/\/$/, '') === '/confirmac
     window.addEventListener('popstate', refreshHref);
     floatingLink.addEventListener('focus', refreshHref);
     floatingLink.addEventListener('click', refreshHref, true);
+    window.addEventListener('scroll', scheduleOverlapCheck, { passive: true });
+    window.addEventListener('resize', scheduleOverlapCheck);
+    window.addEventListener('load', scheduleOverlapCheck, { once: true });
+    scheduleOverlapCheck();
 
     const footer = document.querySelector('.site-footer');
     if (footer && 'IntersectionObserver' in window) {
