@@ -86,13 +86,15 @@
 - `git diff --check`: PASS.
 - Fix funcional: commit `fix: close H01 assisted conversion E2E findings`.
 - Sin capturas temporales stageadas. Los `.c04-*.mjs` son harness temporal, no parte del diff.
-- Worktree principal preservado en `d79d9300eb0d16f473991b16fcc683133968d12c`. Cambios externos locales observados y preservados:
+- Worktree principal preservado en `d79d9300eb0d16f473991b16fcc683133968d12c`. El snapshot inicial de C04 mostró siete cambios externos; la comprobación final de solo lectura mostró nueve. Lista real final preservada:
+  - `public/favicon.svg`
   - `src/components/Footer.astro`
   - `src/components/Header.astro`
   - `src/components/ProductSelector.astro`
   - `src/layouts/BaseLayout.astro`
   - `src/pages/demos/[slug].astro`
   - `src/pages/index.astro`
+  - `src/pages/terminos.astro`
   - `src/styles/global.css`
 
 ## Pendiente
