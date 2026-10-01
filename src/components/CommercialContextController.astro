@@ -254,15 +254,15 @@
   const modelContext = document.modelContext;
   if (modelContext?.registerTool) {
     const products = {
-      landing: { name: 'Landing', path: '/activar/landing', reason: 'Una propuesta principal en un recorrido directo.' },
-      catalogo: { name: 'Catálogo', path: '/activar/catalogo', reason: 'Varias opciones organizadas para explorar y consultar.' },
+      landing: { name: 'Landing Comercial', path: '/activar/landing', reason: 'Una propuesta principal en un recorrido directo.' },
+      catalogo: { name: 'Catálogo de Productos', path: '/activar/catalogo', reason: 'Varias opciones organizadas para explorar y consultar.' },
       corporativa: { name: 'Web Corporativa', path: '/activar/corporativa', reason: 'Una empresa con varias áreas e información institucional.' }
     };
     const controller = new AbortController();
     Promise.resolve(modelContext.registerTool({
       name: 'recommend_station_configuration',
       title: 'Recomendar configuración',
-      description: 'Recomienda Landing, Catálogo o Web Corporativa según lo que se necesita presentar. No solicita datos personales ni inicia una compra.',
+      description: 'Recomienda Landing Comercial, Catálogo de Productos o Web Corporativa según lo que se necesita presentar. No solicita datos personales ni inicia una compra.',
       inputSchema: {
         type: 'object', properties: { need: { type: 'string', enum: ['one_offer', 'multiple_offers', 'organization'] }, ecommerce: { type: 'boolean' } },
         required: ['need', 'ecommerce'], additionalProperties: false

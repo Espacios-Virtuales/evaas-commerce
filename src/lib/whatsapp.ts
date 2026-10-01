@@ -4,12 +4,6 @@ import { sanitizeActivationHandoff } from './activation-handoff';
 import { getProjectCategoryLabel } from '../data/project-categories';
 
 const PRODUCT_LABELS = {
-  landing: 'Landing',
-  catalogo: 'Catálogo',
-  corporativa: 'Web Corporativa'
-} as const;
-
-const HANDOFF_PRODUCT_LABELS = {
   landing: 'Landing Comercial',
   catalogo: 'Catálogo de Productos',
   corporativa: 'Web Corporativa'
@@ -32,7 +26,7 @@ export function buildAdvancedNeedMessage(need: AdvancedProjectNeed, product: 'la
     'Hola, quiero evaluar una solución con EVAAS Commerce.',
     '',
     `Necesidad: ${needLabel}`,
-    `Punto de partida identificado: ${HANDOFF_PRODUCT_LABELS[product]}`,
+    `Punto de partida identificado: ${PRODUCT_LABELS[product]}`,
     '',
     'Necesito revisar el alcance antes de activar.'
   ].join('\n');
@@ -114,7 +108,7 @@ export function buildActivationHandoffMessage(value: unknown): string | null {
   const lines = [
     'Hola, quiero continuar con mi activación EVAAS Station.',
     '',
-    `Producto: ${HANDOFF_PRODUCT_LABELS[handoff.product]}`,
+    `Producto: ${PRODUCT_LABELS[handoff.product]}`,
     `Valor: ${clp(handoff.pricing.total)} IVA incluido`,
     `Color del proyecto: ${handoff.projectColor ? COLOR_LABELS[handoff.projectColor] : 'Por definir'}`,
     `Proyecto: ${handoff.project}`,
