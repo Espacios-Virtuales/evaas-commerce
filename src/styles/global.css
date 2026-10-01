@@ -339,6 +339,10 @@
   .text-link { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.2rem; color: var(--text); font-weight: 700; text-decoration: none; }
   .text-link::after { content: "→"; color: var(--cyan); transition: transform .2s; }
   .text-link:hover::after { transform: translateX(.25rem); }
+  .text-dark { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.2rem; color: var(--ink); font-weight: 700; text-decoration: none; }
+  .text-gold {color: var(--color-commercial-action) }
+  .text-brand {color: var(--color-brand) }
+
 
   .selector-shell { display: grid; grid-template-columns: .8fr 1.2fr; overflow: hidden; border: 1px solid var(--color-panel-border); border-radius: 1.5rem; background: var(--color-panel-bg); box-shadow: 0 2rem 6rem var(--color-overlay); }
   .selector-intro { padding: clamp(2rem, 5vw, 4rem); color: var(--color-selector-intro-text); background: var(--color-selector-intro-bg); }
@@ -404,7 +408,7 @@
 
   .trust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
   .trust-card { min-height: 16rem; padding: 2rem; border: 1px solid var(--line); border-radius: 1.2rem; background: var(--color-surface); }
-  .trust-card .trust-index { color: var(--color-text-muted); font-family: var(--serif); font-size: 1rem; font-style: italic; }
+  .trust-card .trust-index { color: var(--color-commercial-action); font-family: var(--serif); font-size: 1rem; font-style: italic; }
   .trust-card h3 { max-width: 19ch; margin-top: 2.4rem; }
   .trust-card p { max-width: 38rem; margin-top: .8rem; color: var(--muted); }
 
@@ -425,7 +429,7 @@
   .footer-nav a:hover { color: var(--color-text); text-decoration: underline; }
   .footer-nav a:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
   .footer-social svg { width: 1.1rem; height: 1.1rem; flex: 0 0 1.1rem; fill: currentColor; }
-  .footer-base { display: flex; justify-content: space-between; margin-top: 4rem; padding-top: 1.4rem; border-top: 1px solid var(--line); color: var(--color-text-muted); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
+  .footer-base { display: flex; justify-content: space-between; margin-top: 4rem; padding-top: 1.4rem; border-top: 1px solid var(--line); color: var(--color-commercial-action); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; }
 
   .page-hero { padding-block: clamp(5rem,9vw,8rem) 4rem; }
   .page-hero-grid { display: grid; grid-template-columns: 1fr .72fr; gap: 4rem; align-items: end; }
