@@ -16,8 +16,9 @@ const { product } = Astro.props;
     <aside class="activation-summary">
       <span class="eyebrow">Tu selección</span>
       <h1>{product.name}</h1>
-      <span class="summary-price">{formatCLP(product.finalPrice)}</span>
-      <span class="muted">Valor final · boleta o factura</span>
+      <span class="summary-price" data-commercial-price>{formatCLP(product.finalPrice)}</span>
+      <span class="muted" data-commercial-price-note>Valor final · boleta o factura</span>
+      <p class="campaign-preview" data-campaign-preview hidden></p>
       <span class="muted" data-commercial-project-color>Color del proyecto · Por definir</span>
       <ul>
         <li>{product.scope}</li>
@@ -65,6 +66,12 @@ const { product } = Astro.props;
               <small>El dominio lo compras y conservas tú. Te ayudamos a conectarlo.</small>
             </fieldset>
             <div class="field field-full">
+              <label for="campaignCode">Código promocional</label>
+              <input id="campaignCode" name="campaignCode" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="Ej. CIBERDAY" />
+              <small>Si tienes un código vigente, ingrésalo para previsualizar el valor final.</small>
+              <div class="campaign-status" data-campaign-status role="status" aria-live="polite"></div>
+            </div>
+            <div class="field field-full">
               <label for="context">¿Qué necesitas que una persona entienda o haga?</label>
               <textarea id="context" name="context" maxlength="600" placeholder="Ej. Conocer mis servicios y solicitar una hora."></textarea>
               <small>Una frase es suficiente. Podrás completar la información después.</small>
@@ -91,6 +98,7 @@ const { product } = Astro.props;
   <script>
     // @ts-nocheck -- form controls and Astro serialized values are runtime DOM values.
     import { isCanonicalUuid } from '../../lib/commercial-context';
+    import { normalizeCampaignCode, resolveCampaign, resolvePromotionalPricing } from '../../data/campaigns';
     import { getProjectCategoryLabel, sanitizeActivationHandoff, storeActivationHandoff } from '../../lib/activation-handoff';
     import { buildActivationHandoffMessage, buildWhatsAppUrl, getWhatsAppConfig } from '../../lib/whatsapp';
     import type { ProjectCategory } from '../../data/project-categories';
@@ -104,10 +112,61 @@ const { product } = Astro.props;
       const progress = [...page.querySelectorAll('.form-progress span')];
       const status = form.querySelector('[data-form-status]');
       const review = form.querySelector('[data-review]');
+      const campaignInput = form.elements.campaignCode;
+      const campaignStatus = form.querySelector('[data-campaign-status]');
+      const priceNode = page.querySelector('[data-commercial-price]');
+      const priceNote = page.querySelector('[data-commercial-price-note]');
+      const campaignPreview = page.querySelector('[data-campaign-preview]');
       let current = 0;
       let submitting = false;
       form.elements.formStartedAt.value = String(Date.now());
       window.evaasTrack?.('activation_started', { product: productSlug });
+
+      const formatPrice = (value) => `$${new Intl.NumberFormat('es-CL').format(value)}`;
+      const renderPricing = (pricing) => {
+        priceNode.textContent = formatPrice(pricing.total);
+        if (pricing.campaignCode) {
+          priceNote.textContent = `Valor final con ${pricing.campaignCode} · boleta o factura`;
+          campaignPreview.textContent = `${pricing.campaignCode} aplicado · 15% de descuento · Ahorras ${formatPrice(pricing.discountAmount)}.`;
+          campaignPreview.hidden = false;
+        } else {
+          priceNote.textContent = 'Valor final · boleta o factura';
+          campaignPreview.hidden = true;
+        }
+      };
+      const applyCampaign = () => {
+        const rawCode = campaignInput.value;
+        const normalizedCode = normalizeCampaignCode(rawCode);
+        campaignStatus.textContent = '';
+        campaignStatus.className = 'campaign-status';
+        campaignInput.removeAttribute('aria-invalid');
+        if (!normalizedCode) {
+          window.evaasCommercial?.setCampaignCode(null);
+          renderPricing(resolvePromotionalPricing(productSlug));
+          return true;
+        }
+        campaignInput.value = normalizedCode;
+        const campaign = resolveCampaign(normalizedCode);
+        if (!campaign) {
+          window.evaasCommercial?.setCampaignCode(null);
+          renderPricing(resolvePromotionalPricing(productSlug));
+          campaignInput.setAttribute('aria-invalid', 'true');
+          campaignStatus.className = 'campaign-status error';
+          campaignStatus.textContent = normalizedCode === 'CIBERDAY'
+            ? 'El código promocional no está vigente.'
+            : 'El código promocional no es válido.';
+          return false;
+        }
+        window.evaasCommercial?.setCampaignCode(campaign.code);
+        renderPricing(resolvePromotionalPricing(productSlug, campaign.code));
+        return true;
+      };
+      const urlCampaignCode = new URL(location.href).searchParams.get('campaignCode');
+      const contextCampaignCode = window.evaasCommercial?.get()?.campaignCode;
+      if (urlCampaignCode || contextCampaignCode) campaignInput.value = urlCampaignCode || contextCampaignCode;
+      applyCampaign();
+      campaignInput.addEventListener('change', applyCampaign);
+      campaignInput.addEventListener('blur', applyCampaign);
 
       const showStep = (index) => {
         current = index;
@@ -133,6 +192,8 @@ const { product } = Astro.props;
           ['Categoría', getProjectCategoryLabel(data.get('projectCategory') as ProjectCategory)],
           ['Dominio', domain]
         ];
+        const pricing = resolvePromotionalPricing(productSlug, campaignInput.value);
+        if (pricing.campaignCode) values.push(['Promoción', `${pricing.campaignCode} · ${formatPrice(pricing.total)}`]);
         if (data.get('context')) values.push(['Objetivo', data.get('context')]);
         const box = form.querySelector('[data-review]');
         box.replaceChildren(...values.map(([label, value]) => {
@@ -156,7 +217,7 @@ const { product } = Astro.props;
 
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        if (submitting || !validateStep(1)) return;
+        if (submitting || !validateStep(1) || !applyCampaign()) return;
         submitting = true;
 
         // Keep the user gesture alive while opening a secondary context before the first await.

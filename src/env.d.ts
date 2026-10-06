@@ -22,6 +22,7 @@ interface Window {
       version: 2;
       product: 'landing' | 'catalogo' | 'corporativa' | null;
       pricing: { currency: 'CLP'; basePrice: number; discountRate: number; discountAmount: number; total: number; campaignCode: string | null } | null;
+      campaignCode: string | null;
       projectColor: 'forest' | 'garnet' | 'ocean' | null;
       coupon: null;
       reference: string | null;
@@ -29,6 +30,7 @@ interface Window {
     };
     setProduct: (product: 'landing' | 'catalogo' | 'corporativa' | null) => boolean;
     setProjectColor: (color: 'forest' | 'garnet' | 'ocean' | null) => boolean;
+    setCampaignCode: (code: string | null) => boolean;
     setReference: (reference: string | null) => boolean;
     contextualizeUrl: (url: string) => string;
   };

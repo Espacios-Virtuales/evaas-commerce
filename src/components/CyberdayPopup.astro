@@ -1,0 +1,51 @@
+---
+import { CIBERDAY_CAMPAIGN, resolvePromotionalPricing } from '../data/campaigns';
+import { formatCLP } from '../data/products';
+
+const campaign = CIBERDAY_CAMPAIGN;
+const prices = [
+  ['Landing', resolvePromotionalPricing('landing', campaign.code).total],
+  ['Catálogo', resolvePromotionalPricing('catalogo', campaign.code).total],
+  ['Web Corporativa', resolvePromotionalPricing('corporativa', campaign.code).total]
+] as const;
+---
+
+<aside class="cyberday-popup" data-cyberday-popup role="dialog" aria-modal="true" aria-labelledby="cyberday-popup-title" hidden>
+  <div class="cyberday-popup__content">
+    <button class="cyberday-popup__close" type="button" data-cyberday-dismiss aria-label="Cerrar promoción CiberDay">×</button>
+    <span class="eyebrow">CiberDay</span>
+    <h2 id="cyberday-popup-title">15% de descuento</h2>
+    <p>Usa el código <strong>CIBERDAY</strong>.</p>
+    <ul aria-label="Valores promocionales CiberDay">
+      {prices.map(([name, price]) => <li><span>{name}</span><strong>{formatCLP(price)}</strong></li>)}
+    </ul>
+    <a class="button button-dark" href="/?campaignCode=CIBERDAY#precios" data-cyberday-cta>Usar CIBERDAY</a>
+  </div>
+</aside>
+
+<script>
+  import { resolveCampaign } from '../data/campaigns';
+
+  const dismissedKey = 'evaas_cyberday_popup_dismissed_v1';
+  const popup = document.querySelector<HTMLElement>('[data-cyberday-popup]');
+  if (popup && resolveCampaign('CIBERDAY')) {
+    let dismissed = false;
+    try { dismissed = sessionStorage.getItem(dismissedKey) === '1'; } catch { /* Keep the popup available when storage is blocked. */ }
+    if (!dismissed) {
+      const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      const close = popup.querySelector<HTMLButtonElement>('[data-cyberday-dismiss]');
+      const dismiss = () => {
+        popup.hidden = true;
+        try { sessionStorage.setItem(dismissedKey, '1'); } catch { /* The current view still remains closed. */ }
+        previouslyFocused?.focus();
+      };
+      popup.hidden = false;
+      close?.focus();
+      close?.addEventListener('click', dismiss);
+      popup.querySelector('[data-cyberday-cta]')?.addEventListener('click', dismiss);
+      popup.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') dismiss();
+      });
+    }
+  }
+</script>

@@ -42,6 +42,7 @@
     }
   };
   const currentUrl = new URL(location.href);
+  const urlCampaignCode = currentUrl.searchParams.get('campaignCode');
   const currentPathProduct = (url) => {
     const match = url.pathname.match(/^\/(?:productos|demos|activar)\/([^/]+)\/?$/);
     if (match) {
@@ -76,6 +77,7 @@
   let state = createCommercialContext({
     product: routeProduct ?? saved?.product ?? legacy?.product,
     projectColor: initialColor,
+    campaignCode: urlCampaignCode ?? saved?.campaignCode,
     reference: saved?.reference ?? new URL(location.href).searchParams.get('id'),
     attribution: sanitizeAttribution(urlAttribution)
   });
@@ -100,6 +102,8 @@
       if (url.origin !== location.origin || !isContextualPath(url.pathname)) return value;
       if (state.projectColor) url.searchParams.set('color', state.projectColor);
       else url.searchParams.delete('color');
+      if (state.campaignCode) url.searchParams.set('campaignCode', state.campaignCode);
+      else url.searchParams.delete('campaignCode');
       return `${url.pathname}${url.search}${url.hash}`;
     } catch { return value; }
   };
@@ -154,6 +158,12 @@
     return true;
   };
 
+  const setCampaignCode = (value) => {
+    state = createCommercialContext({ ...state, campaignCode: value });
+    persist();
+    return value === null || state.campaignCode !== null;
+  };
+
   const setReference = (value) => {
     if (value !== null && !isCanonicalUuid(value)) return false;
     state = createCommercialContext({ ...state, reference: value });
@@ -161,7 +171,7 @@
     return true;
   };
 
-  const api = Object.freeze({ get, setProduct, setProjectColor, setReference, contextualizeUrl });
+  const api = Object.freeze({ get, setProduct, setProjectColor, setCampaignCode, setReference, contextualizeUrl });
   runtimeWindow.evaasCommercial = api;
 
   const initialReference = new URL(location.href).searchParams.get('id');

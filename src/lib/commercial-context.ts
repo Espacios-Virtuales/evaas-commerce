@@ -1,5 +1,6 @@
 import { productBySlug, type ProductSlug } from '../data/products';
 import { PROJECT_COLOR_OPTIONS, type ProjectColor } from '../data/project-colors';
+import { normalizeCampaignCode, resolvePromotionalPricing } from '../data/campaigns';
 
 export const COMMERCIAL_CONTEXT_KEY = 'evaas_commercial_context_v2';
 export const COMMERCIAL_CONTEXT_VERSION = 2 as const;
@@ -23,6 +24,7 @@ export type CommercialContextV2 = {
   version: typeof COMMERCIAL_CONTEXT_VERSION;
   product: ProductSlug | null;
   pricing: CommercialPricing | null;
+  campaignCode: string | null;
   projectColor: ProjectColor | null;
   coupon: null;
   reference: string | null;
@@ -67,27 +69,26 @@ export function sanitizeAttribution(value: unknown): CommercialAttribution {
   };
 }
 
-export function resolveCommercialPricing(product: ProductSlug): CommercialPricing {
-  const configured = productBySlug[product];
-  const basePrice = configured.finalPrice;
-  const discountRate = 0;
-  const discountAmount = 0;
-  const total = basePrice;
-  return { currency: 'CLP', basePrice, discountRate, discountAmount, total, campaignCode: null };
+export function resolveCommercialPricing(product: ProductSlug, campaignCode?: unknown): CommercialPricing {
+  return resolvePromotionalPricing(product, campaignCode);
 }
 
 export function createCommercialContext(input: {
   product?: unknown;
   projectColor?: unknown;
+  campaignCode?: unknown;
   coupon?: unknown;
   reference?: unknown;
   attribution?: unknown;
 } = {}): CommercialContextV2 {
   const product = isProductSlug(input.product) ? input.product : null;
+  const campaignCode = normalizeCampaignCode(input.campaignCode);
+  const pricing = product ? resolveCommercialPricing(product, campaignCode) : null;
   return {
     version: COMMERCIAL_CONTEXT_VERSION,
     product,
-    pricing: product ? resolveCommercialPricing(product) : null,
+    pricing,
+    campaignCode: pricing?.campaignCode ?? null,
     projectColor: isProjectColor(input.projectColor) ? input.projectColor : null,
     coupon: null,
     reference: isCanonicalUuid(input.reference) ? input.reference.toLowerCase() : null,
@@ -106,6 +107,7 @@ export function toPersistedCommercialContext(context: CommercialContextV2): Pers
   return {
     version: COMMERCIAL_CONTEXT_VERSION,
     product: context.product,
+    campaignCode: context.campaignCode,
     projectColor: context.projectColor,
     coupon: null,
     reference: context.reference,
