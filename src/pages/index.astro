@@ -22,7 +22,7 @@ export const prerender = true;
           <a class="button button-secondary" href="#elegir">Encontrar mi opción</a>
         </div>
         <div class="hero-price">
-          <strong>Desde {formatCLP(products[0].finalPrice)} IVA incluido</strong>
+          <strong>Desde {formatCLP(products[0].finalPrice)} · Valor final · boleta o factura</strong>
           <span>Los costos externos, si corresponden, se informan antes.</span>
         </div>
       </div>
@@ -31,7 +31,7 @@ export const prerender = true;
         <ul class="hero-product-list">
           {products.map((product) => <li><ProductArchetypeIcon type={product.slug} /><span>{product.name}</span></li>)}
         </ul>
-        <div class="hero-panel-price"><small>Desde</small><strong>{formatCLP(products[0].finalPrice)} IVA incluido</strong></div>
+        <div class="hero-panel-price"><small>Desde · Valor final · boleta o factura</small><strong>{formatCLP(products[0].finalPrice)}</strong></div>
         <span class="stage-price-link">Ver productos y precios →</span>
       </a>
     </div>
@@ -43,7 +43,7 @@ export const prerender = true;
         <a href={`#producto-${product.slug}`} data-track="product_viewed" data-product={product.slug}>
           <small>0{index + 1} · {product.eyebrow}</small>
           <strong>{product.name}</strong>
-          <span>{formatCLP(product.finalPrice)} IVA incluido →</span>
+          <span>{formatCLP(product.finalPrice)} · Valor final →</span>
         </a>
       ))}
     </div>
@@ -110,7 +110,7 @@ export const prerender = true;
         <div class="compare-grid">
           <div class="compare-row compare-head">
             <span></span>
-            {products.map((product) => <div><strong>{product.name}</strong><span>{formatCLP(product.finalPrice)} IVA incluido</span></div>)}
+            {products.map((product) => <div><strong>{product.name}</strong><span>{formatCLP(product.finalPrice)} · Valor final</span></div>)}
           </div>
           <div class="compare-row"><span class="compare-label">Ideal para</span><span class="compare-value">Una propuesta principal</span><span class="compare-value">Varios productos o servicios</span><span class="compare-value">Una empresa u organización</span></div>
           <div class="compare-row"><span class="compare-label">Estructura</span><span class="compare-value">1 página · hasta 6 secciones</span><span class="compare-value">Hasta 12 ítems</span><span class="compare-value">4 áreas principales</span></div>

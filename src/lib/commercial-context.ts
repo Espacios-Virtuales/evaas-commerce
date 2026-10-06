@@ -1,16 +1,16 @@
 import { productBySlug, type ProductSlug } from '../data/products';
 import { PROJECT_COLOR_OPTIONS, type ProjectColor } from '../data/project-colors';
 
-export const COMMERCIAL_CONTEXT_KEY = 'evaas_commercial_context_v1';
-export const COMMERCIAL_CONTEXT_VERSION = 1 as const;
-export const CONTRACTUAL_VAT_RATE = 19 as const;
+export const COMMERCIAL_CONTEXT_KEY = 'evaas_commercial_context_v2';
+export const COMMERCIAL_CONTEXT_VERSION = 2 as const;
 
-export type ContractualPricing = {
+export type CommercialPricing = {
   currency: 'CLP';
-  net: number;
-  vatRate: typeof CONTRACTUAL_VAT_RATE;
-  vat: number;
+  basePrice: number;
+  discountRate: number;
+  discountAmount: number;
   total: number;
+  campaignCode: string | null;
 };
 
 export type CommercialAttribution = {
@@ -19,17 +19,17 @@ export type CommercialAttribution = {
   campaign: string;
 };
 
-export type CommercialContextV1 = {
+export type CommercialContextV2 = {
   version: typeof COMMERCIAL_CONTEXT_VERSION;
   product: ProductSlug | null;
-  pricing: ContractualPricing | null;
+  pricing: CommercialPricing | null;
   projectColor: ProjectColor | null;
   coupon: null;
   reference: string | null;
   attribution: CommercialAttribution;
 };
 
-export type PersistedCommercialContextV1 = Omit<CommercialContextV1, 'pricing'>;
+export type PersistedCommercialContextV2 = Omit<CommercialContextV2, 'pricing'>;
 
 const productSlugs = new Set(Object.keys(productBySlug));
 const projectColors = new Set<string>(PROJECT_COLOR_OPTIONS.map((option) => option.id));
@@ -67,13 +67,13 @@ export function sanitizeAttribution(value: unknown): CommercialAttribution {
   };
 }
 
-export function resolveContractualPricing(product: ProductSlug): ContractualPricing {
+export function resolveCommercialPricing(product: ProductSlug): CommercialPricing {
   const configured = productBySlug[product];
-  const net = configured.netPrice;
-  const vat = Math.round(net * CONTRACTUAL_VAT_RATE / 100);
-  const total = net + vat;
-  if (total !== configured.finalPrice) throw new Error(`Contractual pricing mismatch for ${product}`);
-  return { currency: 'CLP', net, vatRate: CONTRACTUAL_VAT_RATE, vat, total };
+  const basePrice = configured.finalPrice;
+  const discountRate = 0;
+  const discountAmount = 0;
+  const total = basePrice;
+  return { currency: 'CLP', basePrice, discountRate, discountAmount, total, campaignCode: null };
 }
 
 export function createCommercialContext(input: {
@@ -82,12 +82,12 @@ export function createCommercialContext(input: {
   coupon?: unknown;
   reference?: unknown;
   attribution?: unknown;
-} = {}): CommercialContextV1 {
+} = {}): CommercialContextV2 {
   const product = isProductSlug(input.product) ? input.product : null;
   return {
     version: COMMERCIAL_CONTEXT_VERSION,
     product,
-    pricing: product ? resolveContractualPricing(product) : null,
+    pricing: product ? resolveCommercialPricing(product) : null,
     projectColor: isProjectColor(input.projectColor) ? input.projectColor : null,
     coupon: null,
     reference: isCanonicalUuid(input.reference) ? input.reference.toLowerCase() : null,
@@ -95,14 +95,14 @@ export function createCommercialContext(input: {
   };
 }
 
-export function sanitizeCommercialContext(value: unknown): CommercialContextV1 | null {
+export function sanitizeCommercialContext(value: unknown): CommercialContextV2 | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const input = value as Record<string, unknown>;
   if (input.version !== COMMERCIAL_CONTEXT_VERSION) return null;
   return createCommercialContext(input);
 }
 
-export function toPersistedCommercialContext(context: CommercialContextV1): PersistedCommercialContextV1 {
+export function toPersistedCommercialContext(context: CommercialContextV2): PersistedCommercialContextV2 {
   return {
     version: COMMERCIAL_CONTEXT_VERSION,
     product: context.product,

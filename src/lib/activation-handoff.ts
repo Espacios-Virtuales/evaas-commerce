@@ -2,8 +2,8 @@ import {
   isCanonicalUuid,
   isProductSlug,
   isProjectColor,
-  resolveContractualPricing,
-  type ContractualPricing
+  resolveCommercialPricing,
+  type CommercialPricing
 } from './commercial-context';
 import type { ProductSlug } from '../data/products';
 import type { ProjectColor } from '../data/project-colors';
@@ -18,7 +18,7 @@ export type ActivationHandoffV1 = {
   version: 1;
   reference: string;
   product: ProductSlug;
-  pricing: ContractualPricing;
+  pricing: CommercialPricing;
   projectColor: ProjectColor | null;
   projectCategory: ProjectCategory | null;
   project: string;
@@ -38,9 +38,16 @@ export function sanitizeHandoffText(value: unknown, maxLength: number): string {
     .slice(0, maxLength);
 }
 
-function copyPricing(product: ProductSlug): ContractualPricing {
-  const pricing = resolveContractualPricing(product);
-  return { currency: pricing.currency, net: pricing.net, vatRate: pricing.vatRate, vat: pricing.vat, total: pricing.total };
+function copyPricing(product: ProductSlug): CommercialPricing {
+  const pricing = resolveCommercialPricing(product);
+  return {
+    currency: pricing.currency,
+    basePrice: pricing.basePrice,
+    discountRate: pricing.discountRate,
+    discountAmount: pricing.discountAmount,
+    total: pricing.total,
+    campaignCode: pricing.campaignCode
+  };
 }
 
 export function createActivationHandoff(input: {
@@ -86,9 +93,9 @@ export function sanitizeActivationHandoff(value: unknown, now = Date.now()): Act
   const pricing = input.pricing;
   if (!pricing || typeof pricing !== 'object') return null;
   const candidate = pricing as Record<string, unknown>;
-  if (candidate.currency !== expectedPricing.currency || candidate.net !== expectedPricing.net
-      || candidate.vatRate !== expectedPricing.vatRate || candidate.vat !== expectedPricing.vat
-      || candidate.total !== expectedPricing.total) return null;
+  if (candidate.currency !== expectedPricing.currency || candidate.basePrice !== expectedPricing.basePrice
+      || candidate.discountRate !== expectedPricing.discountRate || candidate.discountAmount !== expectedPricing.discountAmount
+      || candidate.total !== expectedPricing.total || candidate.campaignCode !== expectedPricing.campaignCode) return null;
 
   const project = sanitizeHandoffText(input.project, 100);
   if (!project) return null;

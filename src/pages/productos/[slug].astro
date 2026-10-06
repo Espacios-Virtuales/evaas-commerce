@@ -17,7 +17,7 @@ const { product } = Astro.props;
       <div class="breadcrumb"><a href="/">Inicio</a><span>/</span><span>Productos</span><span>/</span><strong>{product.name}</strong></div>
       <div class="page-hero-grid">
         <div><ProductArchetypeIcon type={product.slug} /><span class="eyebrow">{product.eyebrow}</span><h1>{product.name}</h1></div>
-        <div class="page-hero-copy"><p>{product.purpose}</p><span class="price-line">Valor · {formatCLP(product.finalPrice)} IVA incluido</span><small>Neto {formatCLP(product.netPrice)} + IVA</small></div>
+        <div class="page-hero-copy"><p>{product.purpose}</p><span class="price-line">{formatCLP(product.finalPrice)} · Valor final</span><small>Boleta o factura</small></div>
       </div>
     </div>
   </header>
@@ -50,7 +50,7 @@ const { product } = Astro.props;
         <span class="eyebrow eyebrow-dark">Producto EVAAS</span>
         <h2>{product.shortPurpose}</h2>
         <strong class="price-big">{formatCLP(product.finalPrice)}</strong>
-        <span class="tax-copy">Valor · IVA incluido · neto {formatCLP(product.netPrice)} + IVA</span>
+        <span class="tax-copy">Valor final · boleta o factura</span>
         <ul>
           <li>{product.scope}</li>
           <li>Tu contenido dentro del alcance</li>

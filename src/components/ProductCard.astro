@@ -12,8 +12,8 @@ const { product, featured = false } = Astro.props;
   <h3>{product.name}</h3>
   <p class="product-purpose">{product.purpose}</p>
   <div class="product-price">
-    <strong>Valor · {formatCLP(product.finalPrice)} IVA incluido</strong>
-    <span>Neto {formatCLP(product.netPrice)} + IVA</span>
+    <strong>{formatCLP(product.finalPrice)}</strong>
+    <span>Valor final · boleta o factura</span>
   </div>
   <ul class="product-includes">
     <li>{product.scope}</li>

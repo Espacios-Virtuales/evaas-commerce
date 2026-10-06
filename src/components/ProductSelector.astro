@@ -123,7 +123,7 @@
 
       selector.querySelector<HTMLElement>('[data-result-name]')!.textContent = product.name;
       selector.querySelector<HTMLElement>('[data-result-copy]')!.textContent = product.purpose;
-      selector.querySelector<HTMLElement>('[data-result-price]')!.textContent = `$${new Intl.NumberFormat('es-CL').format(product.finalPrice)} IVA incluido`;
+      selector.querySelector<HTMLElement>('[data-result-price]')!.textContent = `$${new Intl.NumberFormat('es-CL').format(product.finalPrice)} · Valor final · boleta o factura`;
       const link = selector.querySelector<HTMLAnchorElement>('[data-result-link]')!;
       link.href = `/activar/${product.slug}`;
       link.dataset.product = product.slug;

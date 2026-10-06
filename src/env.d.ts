@@ -19,9 +19,9 @@ interface Window {
   evaasTrack?: (name: string, detail?: Record<string, unknown>) => void;
   evaasCommercial?: {
     get: () => {
-      version: 1;
+      version: 2;
       product: 'landing' | 'catalogo' | 'corporativa' | null;
-      pricing: { currency: 'CLP'; net: number; vatRate: 19; vat: number; total: number } | null;
+      pricing: { currency: 'CLP'; basePrice: number; discountRate: number; discountAmount: number; total: number; campaignCode: string | null } | null;
       projectColor: 'forest' | 'garnet' | 'ocean' | null;
       coupon: null;
       reference: string | null;

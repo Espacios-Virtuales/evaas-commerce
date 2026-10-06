@@ -4,7 +4,6 @@ export type Product = {
   slug: ProductSlug;
   name: string;
   eyebrow: string;
-  netPrice: number;
   finalPrice: number;
   purpose: string;
   shortPurpose: string;
@@ -22,8 +21,7 @@ export const products: Product[] = [
     slug: 'landing',
     name: 'Landing Comercial',
     eyebrow: 'Una propuesta principal',
-    netPrice: 99000,
-    finalPrice: 117810,
+    finalPrice: 120000,
     purpose: 'Una página enfocada en una propuesta principal y una acción clara.',
     shortPurpose: 'Una página. Una acción principal.',
     bestFor: 'Profesionales, emprendimientos y campañas con una oferta principal.',
@@ -38,8 +36,7 @@ export const products: Product[] = [
     slug: 'catalogo',
     name: 'Catálogo de Productos',
     eyebrow: 'Una oferta organizada',
-    netPrice: 129000,
-    finalPrice: 153510,
+    finalPrice: 160000,
     purpose: 'Una vitrina organizada para presentar productos o servicios y facilitar consultas, sin ecommerce.',
     shortPurpose: 'Varias opciones. Sin ecommerce.',
     bestFor: 'Negocios con una oferta amplia que venden por contacto o cotización.',
@@ -54,8 +51,7 @@ export const products: Product[] = [
     slug: 'corporativa',
     name: 'Web Corporativa',
     eyebrow: 'Una presencia institucional',
-    netPrice: 149000,
-    finalPrice: 177310,
+    finalPrice: 180000,
     purpose: 'Una presencia institucional con áreas para empresa, servicios, metodología y contacto.',
     shortPurpose: 'Más contexto. Varias áreas.',
     bestFor: 'Pequeñas empresas y organizaciones que necesitan respaldo institucional.',

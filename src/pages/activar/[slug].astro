@@ -17,7 +17,7 @@ const { product } = Astro.props;
       <span class="eyebrow">Tu selección</span>
       <h1>{product.name}</h1>
       <span class="summary-price">{formatCLP(product.finalPrice)}</span>
-      <span class="muted">Valor · IVA incluido · neto {formatCLP(product.netPrice)} + IVA</span>
+      <span class="muted">Valor final · boleta o factura</span>
       <span class="muted" data-commercial-project-color>Color del proyecto · Por definir</span>
       <ul>
         <li>{product.scope}</li>

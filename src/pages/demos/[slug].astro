@@ -28,8 +28,8 @@ const isCatalog = product.slug === 'catalogo';
         </div>
         <div class="page-hero-copy">
           <p>{product.purpose}</p>
-          <span class="price-line">Valor · {formatCLP(product.finalPrice)} IVA incluido</span>
-          <small>Neto {formatCLP(product.netPrice)} + IVA</small>
+          <span class="price-line">{formatCLP(product.finalPrice)} · Valor final</span>
+          <small>Boleta o factura</small>
           <a class="button demo-hero-cta" href={`/activar/${product.slug}`} data-track="product_selected" data-product={product.slug}>Elegir {product.name}</a>
           <small>Ejemplo aplicado: {product.demoCategory.toLowerCase()}.</small>
         </div>
@@ -63,7 +63,7 @@ const isCatalog = product.slug === 'catalogo';
         <div>
           <span class="eyebrow">EVAAS · Producto</span><br>
           <strong>¿Quieres comenzar con {product.name}?</strong>
-          <p>Valor · {formatCLP(product.finalPrice)} IVA incluido. Revisa el alcance completo antes de activar.</p>
+          <p>Valor final: {formatCLP(product.finalPrice)} · boleta o factura. Revisa el alcance completo antes de activar.</p>
           <div class="demo-return-links"><a href={`/productos/${product.slug}`}>Revisar producto</a><a href="/#showroom">Volver al showroom</a></div>
         </div>
         <a class="button" href={`/activar/${product.slug}`} data-track="demo_completed" data-demo={product.slug} data-product={product.slug}>Elegir {product.name}</a>
