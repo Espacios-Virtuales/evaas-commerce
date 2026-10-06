@@ -1,6 +1,7 @@
-import type { CommercialContextV2 } from './commercial-context';
+import type { CommercialContextV2, CommercialPricing } from './commercial-context';
 import { isCanonicalUuid, isProductSlug, isProjectColor } from './commercial-context';
 import { sanitizeActivationHandoff } from './activation-handoff';
+import { resolvePromotionalPricing } from '../data/campaigns';
 import { getProjectCategoryLabel } from '../data/project-categories';
 
 const PRODUCT_LABELS = {
@@ -54,16 +55,24 @@ export function getSalesEmail(value: unknown = import.meta.env.PUBLIC_EV_SALES_E
 }
 
 const clp = (value: number) => `$${new Intl.NumberFormat('es-CL', { maximumFractionDigits: 0 }).format(value)}`;
+const pricingMessageLines = (pricing: CommercialPricing) => pricing.campaignCode === 'CIBERDAY'
+  ? [
+    `Valor normal: ${clp(pricing.basePrice)}`,
+    'Descuento CiberDay: 15%',
+    'Código: CIBERDAY',
+    `Valor final: ${clp(pricing.total)}`
+  ]
+  : [`Valor final: ${clp(pricing.total)}`];
 const validContext = (context: unknown): CommercialContextV2 | null => {
   if (!context || typeof context !== 'object') return null;
   const value = context as Partial<CommercialContextV2>;
   if (value.version !== 2 || !isProductSlug(value.product)) return null;
   const pricing = value.pricing;
-  if (!pricing || pricing.currency !== 'CLP' || !Number.isSafeInteger(pricing.basePrice)
-      || !Number.isSafeInteger(pricing.discountRate) || !Number.isSafeInteger(pricing.discountAmount)
-      || !Number.isSafeInteger(pricing.total) || pricing.campaignCode !== null
-      || pricing.basePrice < 0 || pricing.discountRate !== 0 || pricing.discountAmount !== 0
-      || pricing.total !== pricing.basePrice) return null;
+  if (!pricing || pricing.currency !== 'CLP') return null;
+  const expectedPricing = resolvePromotionalPricing(value.product, pricing.campaignCode);
+  if (pricing.basePrice !== expectedPricing.basePrice || pricing.discountRate !== expectedPricing.discountRate
+      || pricing.discountAmount !== expectedPricing.discountAmount || pricing.total !== expectedPricing.total
+      || pricing.campaignCode !== expectedPricing.campaignCode || value.campaignCode !== expectedPricing.campaignCode) return null;
   return value as CommercialContextV2;
 };
 
@@ -74,7 +83,7 @@ export function buildInquiryMessage(context?: unknown): string {
   lines.push(
     '',
     `Producto: ${PRODUCT_LABELS[safe.product!]}`,
-    `Valor final: ${clp(safe.pricing!.total)}`,
+    ...pricingMessageLines(safe.pricing!),
     'Documento: boleta o factura',
     `Color del proyecto: ${safe.projectColor && isProjectColor(safe.projectColor) ? COLOR_LABELS[safe.projectColor] : 'Por definir'}`
   );
@@ -88,7 +97,7 @@ export function buildPostFormMessage(context?: unknown): string | null {
     'Hola, quiero solicitar una activación de EVAAS Station.',
     '',
     `Producto: ${PRODUCT_LABELS[safe.product!]}`,
-    `Valor final: ${clp(safe.pricing!.total)}`,
+    ...pricingMessageLines(safe.pricing!),
     'Documento: boleta o factura',
     `Color del proyecto: ${safe.projectColor && isProjectColor(safe.projectColor) ? COLOR_LABELS[safe.projectColor] : 'Por definir'}`,
     `Referencia: ${safe.reference}`
@@ -108,7 +117,7 @@ export function buildActivationHandoffMessage(value: unknown): string | null {
     'Hola, quiero continuar con mi activación EVAAS Station.',
     '',
     `Producto: ${PRODUCT_LABELS[handoff.product]}`,
-    `Valor final: ${clp(handoff.pricing.total)}`,
+    ...pricingMessageLines(handoff.pricing),
     'Documento: boleta o factura',
     `Color del proyecto: ${handoff.projectColor ? COLOR_LABELS[handoff.projectColor] : 'Por definir'}`,
     `Proyecto: ${handoff.project}`,

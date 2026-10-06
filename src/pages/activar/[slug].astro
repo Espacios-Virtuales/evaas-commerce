@@ -257,6 +257,11 @@ const { product } = Astro.props;
           const requestId = result.requestId.toLowerCase();
           const handoff = sanitizeActivationHandoff(result.handoff);
           const validHandoff = handoff && handoff.reference === requestId && handoff.product === productSlug;
+          if (validHandoff) {
+            campaignInput.value = handoff.pricing.campaignCode || '';
+            window.evaasCommercial?.setCampaignCode(handoff.pricing.campaignCode);
+            renderPricing(handoff.pricing);
+          }
           window.evaasCommercial?.setReference(requestId);
           if (validHandoff) storeActivationHandoff(handoff, requestId);
 

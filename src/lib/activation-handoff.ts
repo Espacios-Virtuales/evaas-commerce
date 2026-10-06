@@ -2,20 +2,20 @@ import {
   isCanonicalUuid,
   isProductSlug,
   isProjectColor,
-  resolveCommercialPricing,
   type CommercialPricing
 } from './commercial-context';
+import { resolvePromotionalPricing } from '../data/campaigns';
 import type { ProductSlug } from '../data/products';
 import type { ProjectColor } from '../data/project-colors';
 import { getProjectCategoryLabel, isProjectCategory, type ProjectCategory } from '../data/project-categories';
 
-export const ACTIVATION_HANDOFF_KEY = 'evaas_activation_handoff_v1';
+export const ACTIVATION_HANDOFF_KEY = 'evaas_activation_handoff_v2';
 export const ACTIVATION_HANDOFF_TTL_MS = 60 * 60 * 1000;
 
 export type ActivationDomainStatus = 'owned' | 'needed' | 'unsure';
 
-export type ActivationHandoffV1 = {
-  version: 1;
+export type ActivationHandoffV2 = {
+  version: 2;
   reference: string;
   product: ProductSlug;
   pricing: CommercialPricing;
@@ -38,8 +38,8 @@ export function sanitizeHandoffText(value: unknown, maxLength: number): string {
     .slice(0, maxLength);
 }
 
-function copyPricing(product: ProductSlug): CommercialPricing {
-  const pricing = resolveCommercialPricing(product);
+function copyPricing(product: ProductSlug, campaignCode?: unknown, now?: number): CommercialPricing {
+  const pricing = resolvePromotionalPricing(product, campaignCode, now);
   return {
     currency: pricing.currency,
     basePrice: pricing.basePrice,
@@ -53,18 +53,19 @@ function copyPricing(product: ProductSlug): CommercialPricing {
 export function createActivationHandoff(input: {
   reference: string;
   product: ProductSlug;
+  campaignCode?: unknown;
   projectColor: ProjectColor | null;
   projectCategory: ProjectCategory;
   project: string;
   domainStatus: ActivationDomainStatus;
   context: string;
   createdAt: string;
-}): ActivationHandoffV1 {
+}): ActivationHandoffV2 {
   return {
-    version: 1,
+    version: 2,
     reference: input.reference.toLowerCase(),
     product: input.product,
-    pricing: copyPricing(input.product),
+    pricing: copyPricing(input.product, input.campaignCode),
     projectColor: input.projectColor,
     projectCategory: input.projectCategory,
     project: sanitizeHandoffText(input.project, 100),
@@ -74,12 +75,12 @@ export function createActivationHandoff(input: {
   };
 }
 
-export function sanitizeActivationHandoff(value: unknown, now = Date.now()): ActivationHandoffV1 | null {
+export function sanitizeActivationHandoff(value: unknown, now = Date.now()): ActivationHandoffV2 | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const input = value as Record<string, unknown>;
   const hasProjectCategory = Object.hasOwn(input, 'projectCategory');
   if (hasProjectCategory && !isProjectCategory(input.projectCategory)) return null;
-  if (input.version !== 1 || !isCanonicalUuid(input.reference) || !isProductSlug(input.product)
+  if (input.version !== 2 || !isCanonicalUuid(input.reference) || !isProductSlug(input.product)
       || (input.projectColor !== null && !isProjectColor(input.projectColor))
       || typeof input.project !== 'string' || typeof input.context !== 'string'
       || typeof input.createdAt !== 'string' || !domainStatuses.has(input.domainStatus as ActivationDomainStatus)) return null;
@@ -89,10 +90,10 @@ export function sanitizeActivationHandoff(value: unknown, now = Date.now()): Act
       || now - createdAtMs > ACTIVATION_HANDOFF_TTL_MS) return null;
 
   const product = input.product;
-  const expectedPricing = copyPricing(product);
   const pricing = input.pricing;
   if (!pricing || typeof pricing !== 'object') return null;
   const candidate = pricing as Record<string, unknown>;
+  const expectedPricing = copyPricing(product, candidate.campaignCode, createdAtMs);
   if (candidate.currency !== expectedPricing.currency || candidate.basePrice !== expectedPricing.basePrice
       || candidate.discountRate !== expectedPricing.discountRate || candidate.discountAmount !== expectedPricing.discountAmount
       || candidate.total !== expectedPricing.total || candidate.campaignCode !== expectedPricing.campaignCode) return null;
@@ -100,7 +101,7 @@ export function sanitizeActivationHandoff(value: unknown, now = Date.now()): Act
   const project = sanitizeHandoffText(input.project, 100);
   if (!project) return null;
   return {
-    version: 1,
+    version: 2,
     reference: input.reference.toLowerCase(),
     product,
     pricing: expectedPricing,
@@ -127,7 +128,7 @@ export function storeActivationHandoff(value: unknown, requestId: unknown): bool
   }
 }
 
-export function readActivationHandoff(reference: unknown, product: unknown, now = Date.now()): ActivationHandoffV1 | null {
+export function readActivationHandoff(reference: unknown, product: unknown, now = Date.now()): ActivationHandoffV2 | null {
   if (!isCanonicalUuid(reference) || !isProductSlug(product)) return null;
   let raw: string | null;
   try {

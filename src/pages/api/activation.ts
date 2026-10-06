@@ -4,6 +4,7 @@ import { createActivationHandoff, sanitizeHandoffText, type ActivationDomainStat
 import type { ProductSlug } from '../../data/products';
 import type { ProjectColor } from '../../data/project-colors';
 import { isProjectCategory } from '../../data/project-categories';
+import { normalizeCampaignCode, resolveCampaign } from '../../data/campaigns';
 
 export const prerender = false;
 
@@ -75,12 +76,26 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const canonicalProduct = product as ProductSlug;
+  const rawCampaignCode = input.campaignCode;
+  const normalizedCampaignCode = normalizeCampaignCode(rawCampaignCode);
+  const hasCampaignCode = typeof rawCampaignCode === 'string' && rawCampaignCode.trim().length > 0;
+  if (rawCampaignCode != null && typeof rawCampaignCode !== 'string') {
+    return errorResponse(mode, 'El código promocional no es válido.', 400, product);
+  }
+  const campaign = normalizedCampaignCode ? resolveCampaign(normalizedCampaignCode) : null;
+  if (hasCampaignCode && !campaign) {
+    const message = normalizedCampaignCode === 'CIBERDAY'
+      ? 'El código promocional no está vigente.'
+      : 'El código promocional no es válido.';
+    return errorResponse(mode, message, 400, product);
+  }
   const projectColor: ProjectColor | null = submittedColor ? submittedColor as ProjectColor : null;
   const requestId = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   const handoff = createActivationHandoff({
     reference: requestId,
     product: canonicalProduct,
+    campaignCode: campaign?.code,
     projectColor,
     projectCategory,
     project,
