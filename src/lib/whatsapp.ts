@@ -77,7 +77,7 @@ const validContext = (context: unknown): CommercialContextV2 | null => {
 };
 
 export function buildInquiryMessage(context?: unknown): string {
-  const lines = ['Hola, quiero información sobre EVAAS Station.'];
+  const lines = ['Hola, quiero información sobre EVAAS Commerce.'];
   const safe = validContext(context);
   if (!safe) return lines[0];
   lines.push(
@@ -94,7 +94,7 @@ export function buildPostFormMessage(context?: unknown): string | null {
   const safe = validContext(context);
   if (!safe || !isCanonicalUuid(safe.reference)) return null;
   return [
-    'Hola, quiero solicitar una activación de EVAAS Station.',
+    'Hola, quiero solicitar una activación de EVAAS Commerce.',
     '',
     `Producto: ${PRODUCT_LABELS[safe.product!]}`,
     ...pricingMessageLines(safe.pricing!),
@@ -114,7 +114,7 @@ export function buildActivationHandoffMessage(value: unknown): string | null {
   const handoff = sanitizeActivationHandoff(value);
   if (!handoff) return null;
   const lines = [
-    'Hola, quiero continuar con mi activación EVAAS Station.',
+    'Hola, quiero continuar con mi activación EVAAS Commerce.',
     '',
     `Producto: ${PRODUCT_LABELS[handoff.product]}`,
     ...pricingMessageLines(handoff.pricing),

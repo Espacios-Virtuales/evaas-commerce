@@ -280,7 +280,7 @@
       annotations: { readOnlyHint: true, untrustedContentHint: false },
       execute(input) {
         if (!input || typeof input !== 'object') throw new Error('Entrada no válida.');
-        if (input.ecommerce === true) return { inScope: false, reason: 'EVAAS Station no incluye ecommerce.' };
+        if (input.ecommerce === true) return { inScope: false, reason: 'EVAAS Commerce no incluye ecommerce.' };
         const map = { one_offer: 'landing', multiple_offers: 'catalogo', organization: 'corporativa' };
         const slug = map[input.need];
         if (!slug) throw new Error('Necesidad no válida.');
