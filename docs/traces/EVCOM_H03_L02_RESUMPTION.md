@@ -75,7 +75,36 @@ El modelo y los importes ya están aprobados; no se solicita una nueva aprobaci�
 - Fijar `termsVersion`, `commercialRulesVersion` y la fecha efectiva del release.
 - Aprobar el mecanismo de aceptación versionada antes de exponer la modalidad en el formulario o API.
 
-Hasta cerrar esos puntos no se programan importes hipotéticos, no se modifica `/terminos` v0.6 y no se crea una ruta de contratación H03 parcialmente válida.
+Hasta cerrar esos puntos no se publican precios ni se modifica `/terminos` v0.6 como oferta efectiva. La autorización comercial posterior del 2026-10-22 permite implementar y probar los precios aprobados en una fuente interna; no convierte las modalidades en oferta disponible.
+
+### Implementación técnica C03 (continuación)
+
+Estado: `IMPLEMENTED_AND_TESTED` para cálculo canónico en entorno de desarrollo; `PENDING_RELEASE_REVIEW` para publicación.
+
+- `src/data/commercial-rules.ts` define `EVCOM-H03-PILOT-2026-10-22`, los tres importes aprobados, los modos `none`, `monthly` y `annual_prepay`, redondeo determinista a pesos enteros y descuento anual exclusivo de continuidad. Incluye `termsVersion: 1.0-draft`, fecha efectiva nula y estado `DRAFT_NOT_FOR_PUBLICATION`.
+- `POST /api/commercial-pricing` recalcula en servidor y descarta importes enviados por el navegador. Rechaza productos, modalidades y códigos no válidos; no permite acumular campañas. Está cerrado con 404 salvo que `EVCOM_H03_PRICING_API_ENABLED=true` se establezca expresamente en un entorno de prueba/release.
+- La respuesta es una vista previa desglosada, no crea `requestId`, cotización durable, orden ni pago. No modifica el API de activación ni el handoff V2.
+- `tests/commercial-rules.test.mjs`: pruebas de reglas PASS, incluyendo las nueve combinaciones producto/modalidad, manipulación de importes, modalidad inválida y campaña activa/vencida/desconocida. Prueba HTTP opcional con `EVCOM_TEST_BASE_URL`.
+- Verificación del gate por defecto: `POST /api/commercial-pricing` devuelve 404 sin la bandera. En instancia local de prueba con la bandera habilitada, las 7 pruebas de integración pasaron.
+- Smoke de regresión `POST /api/activation`: PASS, conserva respuesta `handoff.version: 2` y precio legado del producto.
+- `npm run build`: PASS, Astro comprobó 39 archivos con 0 errores, advertencias o hints.
+
+### Términos H03 preparados
+
+`docs/contracts/commerce/ACTIVATION_CONTINUITY_PILOT_v0.2.md` es un borrador interno `DRAFT_NOT_FOR_PUBLICATION`. `/terminos` público sigue en v0.6, con los importes anuales y su fecha vigentes. El borrador separa activación, continuidad y adicionales, declara expresamente que la continuidad aún no está disponible porque no hay contraprestación operacional demostrada y enumera los gates legal, tributario, operacional, de dominio, versión/fecha efectiva y aceptación.
+
+La continuidad de $19.900/$24.900/$29.900 mensual y $214.920/$268.920/$322.920 anual está implementada como cálculo para pruebas internas. No se muestra en la oferta, no puede seleccionarse desde la interfaz pública y no se debe contratar hasta superar los gates documentados.
+
+### Gates de publicación aún pendientes
+
+1. `SERVICE_SCOPE`: definir contraprestación, responsable, límites, costos y pruebas de cada modalidad de continuidad.
+2. `DOMAIN_DELIVERY`: evidencia de publicación/conexión cliente, responsable, cuenta, criterios y costo; por ahora se mantiene «Preparación para publicación según la cotización».
+3. `LEGAL_REVIEW`: revisar cancelación, renovación, suspensión, devolución, propiedad intelectual, salida y aceptación.
+4. `TAX_REVIEW`: confirmar tratamiento tributario y documento de venta.
+5. `ACCEPTANCE_RECORD`: definir una aceptación versionada para una oferta futura; la solicitud y WhatsApp siguen siendo asistidos.
+6. `RELEASE_REVIEW`: fijar fecha efectiva y comprobar las superficies públicas en una cápsula de release separada.
+
+C03 queda técnicamente preparada para integración controlada. El gate `TERMS_AND_PRICING_PASS` para publicación permanece pendiente hasta completar estos puntos. C04 puede revisar integración de su solicitud/handoff solo manteniendo precios marcados como borrador y sin hacer disponibles las modalidades al público.
 
 ## C04 · Dependencia
 

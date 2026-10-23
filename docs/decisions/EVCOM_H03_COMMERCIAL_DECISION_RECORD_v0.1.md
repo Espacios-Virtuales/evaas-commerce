@@ -106,7 +106,7 @@ Permanecen abiertos:
 - OD-14, OD-16, OD-17 y OD-20 para revisión jurídica/técnica detallada;
 - OD-21 y OD-22 hasta completar la validación tributaria/jurídica previa a la entrada en vigor.
 
-No se crea aún `ACTIVATION_CONTINUITY_PILOT_v0.2.md`: el texto contractual ejecutable depende de las verificaciones y revisiones indicadas. Producción permanece sin cambios hasta un release separado.
+Se preparó `docs/contracts/commerce/ACTIVATION_CONTINUITY_PILOT_v0.2.md` como borrador interno `DRAFT_NOT_FOR_PUBLICATION`; no es texto contractual efectivo. La fuente canónica y la API de cálculo H03 pueden implementarse y probarse en la rama, con la API apagada por defecto. La oferta pública v0.6 y producción permanecen sin cambios hasta completar los gates y un release separado.
 
 ## 6. Fuentes leídas, no reemplazadas
 
