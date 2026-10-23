@@ -106,6 +106,14 @@ La continuidad de $19.900/$24.900/$29.900 mensual y $214.920/$268.920/$322.920 a
 
 C03 queda técnicamente preparada para integración controlada. El gate `TERMS_AND_PRICING_PASS` para publicación permanece pendiente hasta completar estos puntos. C04 puede revisar integración de su solicitud/handoff solo manteniendo precios marcados como borrador y sin hacer disponibles las modalidades al público.
 
-## C04 · Dependencia
+## C04 · Contrato interno compatible
 
-C04 permanece `BLOCKED_BY_C03`. El handoff V2 sigue vigente y no se modifica. No se crean `quote`, orden, pago, checkout, suscripción ni cuenta de usuario.
+Estado: `PARTIAL_INTERNAL_CONTRACT_ONLY`; no equivale a `ASSISTED_SELECTION_PASS` ni habilita selección pública de modalidades.
+
+- Se añadió `src/lib/commercial-request-v3.ts` como contrato V3 aislado del Handoff V2. Incluye referencia `requestId`, producto canónico, perfil de composición descriptivo (no SKU), proyecto, dominio, objetivo, modalidad, desglose recalculado desde reglas H03, versiones y TTL de una hora.
+- La sanitización vuelve a calcular el precio canónico y rechaza alteraciones, modalidad/producto inválidos, referencias inválidas, solicitudes expiradas y estados que no sean borrador. V2 guardado, vencido o de otro producto no se convierte ni se interpreta como V3; el código V2 permanece sin cambios.
+- `buildCommercialRequestV3Message` solo prepara texto; identifica importes como borrador interno y aclara que no constituye orden, pago ni aceptación. No abre ni envía WhatsApp automáticamente.
+- No se conectó V3 con `/api/activation`, el formulario, la confirmación ni el almacenamiento público. Las modalidades y precios H03 siguen fuera de la oferta; no se registra `acceptedTermsAt` porque los términos no tienen vigencia.
+- No se crea cotización durable, orden, pago, checkout, suscripción ni cuenta. La compatibilidad de runtime y el flujo UI/WhatsApp del V3 quedan pendientes para C04 tras la revisión de release correspondiente.
+
+Validación C04 parcial: `npm run test:commercial` PASS (10/10; modalidades, tampering, rechazo de solicitudes expiradas y brief preparado); `npm run build` PASS (40 archivos, 0 errores/advertencias/hints). No se marca smoke de rutas ni `ASSISTED_SELECTION_PASS`, pues V3 no se encuentra conectado a una ruta pública.

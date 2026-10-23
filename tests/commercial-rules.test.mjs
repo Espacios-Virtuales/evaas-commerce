@@ -5,6 +5,11 @@ import {
   CommercialRuleError,
   resolveH03Pricing
 } from '../src/data/commercial-rules.ts';
+import {
+  buildCommercialRequestV3Message,
+  createCommercialRequestV3,
+  sanitizeCommercialRequestV3
+} from '../src/lib/commercial-request-v3.ts';
 
 const expected = [
   ['landing', 120_000, 19_900, 214_920],
@@ -84,6 +89,53 @@ test('rules and terms are versioned as a non-public draft with no payment contra
   assert.equal(Object.hasOwn(pricing, 'requestId'), false);
   assert.equal(Object.hasOwn(pricing, 'orderId'), false);
   assert.equal(Object.hasOwn(pricing, 'paymentId'), false);
+});
+
+test('V3 request contract resolves prices on creation and treats profile as descriptive only', () => {
+  const request = createCommercialRequestV3({
+    requestId: '123e4567-e89b-42d3-a456-426614174000',
+    productSlug: 'catalogo',
+    compositionProfile: 'Editorial / artístico',
+    projectName: 'Proyecto de prueba',
+    domainStatus: 'owned',
+    projectObjective: 'Presentar el catálogo',
+    continuityMode: 'annual_prepay',
+    createdAt: '2026-10-22T12:00:00.000Z'
+  });
+  assert.equal(request.version, 3);
+  assert.equal(request.productSlug, 'catalogo');
+  assert.equal(request.compositionProfile, 'Editorial / artístico');
+  assert.equal(request.pricing.activation.amount, 160_000);
+  assert.equal(request.pricing.continuity.amount, 268_920);
+  assert.equal(request.offerStatus, 'DRAFT_NOT_FOR_PUBLICATION');
+  assert.equal(request.termsEffectiveDate, null);
+});
+
+test('V3 sanitizer rejects tampered server prices, unsupported modes, other products, and expired requests', () => {
+  const request = createCommercialRequestV3({
+    requestId: '123e4567-e89b-42d3-a456-426614174000',
+    productSlug: 'landing', projectName: 'Proyecto', domainStatus: 'unsure',
+    continuityMode: 'monthly', createdAt: '2026-10-22T12:00:00.000Z'
+  });
+  assert.equal(sanitizeCommercialRequestV3(request, Date.parse('2026-10-22T12:30:00.000Z'))?.pricing.continuity.amount, 19_900);
+  assert.equal(sanitizeCommercialRequestV3({ ...request, pricing: { ...request.pricing, activation: { amount: 1, cadence: 'one_time' } } }), null);
+  assert.equal(sanitizeCommercialRequestV3({ ...request, productSlug: 'corporativa' }), null);
+  assert.equal(sanitizeCommercialRequestV3({ ...request, continuityMode: 'lifetime' }), null);
+  assert.equal(sanitizeCommercialRequestV3(request, Date.parse('2026-10-22T13:00:01.000Z')), null);
+});
+
+test('V3 WhatsApp brief is prepared text, includes commercial references, and is not an order or payment', () => {
+  const request = createCommercialRequestV3({
+    requestId: '123e4567-e89b-42d3-a456-426614174000',
+    productSlug: 'corporativa', projectName: 'Proyecto', domainStatus: 'needed',
+    continuityMode: 'annual_prepay', createdAt: new Date().toISOString()
+  });
+  const message = buildCommercialRequestV3Message(request);
+  assert.match(message, /Activación única \(borrador interno\): \$180\.000/);
+  assert.match(message, /Continuidad anual prepagada \(borrador interno\): \$322\.920/);
+  assert.match(message, /no constituye orden, pago ni aceptación contractual/);
+  assert.equal(Object.hasOwn(request, 'orderId'), false);
+  assert.equal(Object.hasOwn(request, 'paymentId'), false);
 });
 
 if (process.env.EVCOM_TEST_BASE_URL) {
