@@ -54,7 +54,7 @@ const { product } = Astro.props;
         <ul>
           <li>{product.scope}</li>
           <li>Tu contenido dentro del alcance</li>
-          <li>Responsive y publicación inicial</li>
+          <li>Publicación inicial y conexión de dominio según el alcance contratado</li>
         </ul>
         <a class="button button-dark button-wide" href={`/activar/${product.slug}`} data-track="product_selected" data-product={product.slug}>Elegir {product.name}</a>
         <a class="text-link product-demo-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Ver demo →</a>
