@@ -114,6 +114,19 @@ Estado: `PARTIAL_INTERNAL_CONTRACT_ONLY`; no equivale a `ASSISTED_SELECTION_PASS
 - La sanitización vuelve a calcular el precio canónico y rechaza alteraciones, modalidad/producto inválidos, referencias inválidas, solicitudes expiradas y estados que no sean borrador. V2 guardado, vencido o de otro producto no se convierte ni se interpreta como V3; el código V2 permanece sin cambios.
 - `buildCommercialRequestV3Message` solo prepara texto; identifica importes como borrador interno y aclara que no constituye orden, pago ni aceptación. No abre ni envía WhatsApp automáticamente.
 - No se conectó V3 con `/api/activation`, el formulario, la confirmación ni el almacenamiento público. Las modalidades y precios H03 siguen fuera de la oferta; no se registra `acceptedTermsAt` porque los términos no tienen vigencia.
-- No se crea cotización durable, orden, pago, checkout, suscripción ni cuenta. La compatibilidad de runtime y el flujo UI/WhatsApp del V3 quedan pendientes para C04 tras la revisión de release correspondiente.
+- No se crea cotización durable, orden, pago, checkout, suscripción ni cuenta. La compatibilidad runtime quedó aislada para C04B; el flujo de UI continúa pendiente y sujeto a revisión de release.
 
 Validación C04 parcial: `npm run test:commercial` PASS (10/10; modalidades, tampering, rechazo de solicitudes expiradas y brief preparado); `npm run build` PASS (40 archivos, 0 errores/advertencias/hints). No se marca smoke de rutas ni `ASSISTED_SELECTION_PASS`, pues V3 no se encuentra conectado a una ruta pública.
+
+## C04B · Integración runtime controlada
+
+Estado: `V3_RUNTIME_PASS` para el endpoint interno; no equivale a `ASSISTED_SELECTION_PASS`.
+
+- `POST /api/internal/commercial-request-v3` reutiliza el contrato V3 y el cálculo canónico existente. Genera `requestId` en servidor; solo recibe selección y datos mínimos, ignora cualquier importe enviado y devuelve el desglose resuelto más un borrador textual de WhatsApp.
+- El endpoint devuelve 404 salvo `EVCOM_H03_V3_RUNTIME_ENABLED=true`; requiere además `EVCOM_H03_V3_RUNTIME_TOKEN` con al menos 32 caracteres y `Authorization: Bearer …`. Falta de secreto devuelve 503 y credencial ausente/incorrecta 401. Usa `Cache-Control: no-store`, limita el cuerpo a 16 KiB y no expone CORS.
+- Valida versión de contrato 3, versión de reglas, versión de términos `1.0-draft`, producto, modalidad y campaña. No admite registrar `acceptedTermsAt` porque el borrador no tiene vigencia. Recalcula precios en servidor, no persiste la solicitud y no crea orden/pago/membresía.
+- `/api/activation`, el flujo público y el Handoff V2 no cambiaron. Smoke local del V3: 401 sin credencial/credencial incorrecta; 200 con token, importes adulterados ignorados y texto `prepared-not-sent`; 400/409 para producto, modalidad, versiones, aceptación y campañas inválidas/vencidas. Regresión de `/api/activation`: `handoff.version: 2`, precio legado intacto.
+- `isV3RuntimeEnabled`: pruebas unitarias confirman cerrado si falta la bandera o su valor no es exactamente `true`. El smoke HTTP se ejecutó con el endpoint habilitado y autenticación válida; no se marca como smoke HTTP separado el 404 por defecto.
+- `npm run test:commercial:v3-runtime`: PASS (15/15 incluyendo unitarias y HTTP local); `npm run build`: PASS (41 archivos, 0 errores/advertencias/hints); `/terminos` permanece v0.6 y no muestra importes H03.
+
+Pendiente para la UI C04 posterior: añadir selección solo cuando la publicación esté autorizada; propagar versiones vigentes y modalidad al endpoint sin precios client-side; guardar/leer V3 con TTL y rechazo explícito de V2 vencido u otro producto; abrir WhatsApp únicamente tras revisión/acción del usuario; validar teclado/móvil, fallos API/storage/WhatsApp y smoke de rutas. No afirmar `ASSISTED_SELECTION_PASS` hasta probar ese recorrido completo.

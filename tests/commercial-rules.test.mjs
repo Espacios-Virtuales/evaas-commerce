@@ -8,7 +8,8 @@ import {
 import {
   buildCommercialRequestV3Message,
   createCommercialRequestV3,
-  sanitizeCommercialRequestV3
+  sanitizeCommercialRequestV3,
+  isV3RuntimeEnabled
 } from '../src/lib/commercial-request-v3.ts';
 
 const expected = [
@@ -120,6 +121,7 @@ test('V3 sanitizer rejects tampered server prices, unsupported modes, other prod
   assert.equal(sanitizeCommercialRequestV3(request, Date.parse('2026-10-22T12:30:00.000Z'))?.pricing.continuity.amount, 19_900);
   assert.equal(sanitizeCommercialRequestV3({ ...request, pricing: { ...request.pricing, activation: { amount: 1, cadence: 'one_time' } } }), null);
   assert.equal(sanitizeCommercialRequestV3({ ...request, productSlug: 'corporativa' }), null);
+  assert.equal(sanitizeCommercialRequestV3({ ...request, requestId: 'not-a-uuid' }), null);
   assert.equal(sanitizeCommercialRequestV3({ ...request, continuityMode: 'lifetime' }), null);
   assert.equal(sanitizeCommercialRequestV3(request, Date.parse('2026-10-22T13:00:01.000Z')), null);
 });
@@ -136,6 +138,13 @@ test('V3 WhatsApp brief is prepared text, includes commercial references, and is
   assert.match(message, /no constituye orden, pago ni aceptación contractual/);
   assert.equal(Object.hasOwn(request, 'orderId'), false);
   assert.equal(Object.hasOwn(request, 'paymentId'), false);
+});
+
+test('V3 runtime gate is closed unless explicitly enabled', () => {
+  assert.equal(isV3RuntimeEnabled(undefined), false);
+  assert.equal(isV3RuntimeEnabled('false'), false);
+  assert.equal(isV3RuntimeEnabled('TRUE'), false);
+  assert.equal(isV3RuntimeEnabled('true'), true);
 });
 
 if (process.env.EVCOM_TEST_BASE_URL) {
@@ -155,5 +164,89 @@ if (process.env.EVCOM_TEST_BASE_URL) {
     assert.equal(body.pricing.continuity.amount, 214_920);
     assert.equal(body.pricing.discountAmount, undefined);
     assert.equal(body.pricing.offerStatus, 'DRAFT_NOT_FOR_PUBLICATION');
+  });
+}
+
+if (process.env.EVCOM_TEST_V3_BASE_URL) {
+  const api = `${process.env.EVCOM_TEST_V3_BASE_URL}/api/internal/commercial-request-v3`;
+  const token = process.env.EVCOM_TEST_V3_TOKEN || '';
+  const payload = {
+    contractVersion: 3,
+    commercialRulesVersion: COMMERCIAL_RULES_VERSION,
+    termsVersion: '1.0-draft',
+    productSlug: 'catalogo',
+    continuityMode: 'annual_prepay',
+    compositionProfile: 'Editorial',
+    projectName: 'Proyecto interno',
+    domainStatus: 'owned',
+    projectObjective: 'Presentar el catálogo'
+  };
+
+  test('V3 runtime rejects missing and incorrect bearer credentials', async () => {
+    for (const authorization of ['', 'Bearer incorrect-token']) {
+      const response = await fetch(api, {
+        method: 'POST', headers: { 'content-type': 'application/json', ...(authorization ? { authorization } : {}) },
+        body: JSON.stringify(payload)
+      });
+      assert.equal(response.status, 401);
+      assert.equal((await response.json()).code, 'UNAUTHORIZED');
+    }
+  });
+
+  test('authenticated V3 runtime ignores submitted amounts and returns a draft-only request', async () => {
+    const response = await fetch(api, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+      body: JSON.stringify({ ...payload, activationAmount: 1, continuityAmount: 1, discountAmount: 0, total: 1 })
+    });
+    const body = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(body.request.version, 3);
+    assert.match(body.request.requestId, /^[0-9a-f-]{36}$/i);
+    assert.equal(body.request.pricing.activation.amount, 160_000);
+    assert.equal(body.request.pricing.continuity.amount, 268_920);
+    assert.equal(body.request.offerStatus, 'DRAFT_NOT_FOR_PUBLICATION');
+    assert.equal(body.request.termsEffectiveDate, null);
+    assert.equal(body.whatsappPreparedNotSent, true);
+    assert.match(body.whatsappDraft, /no constituye orden, pago ni aceptación contractual/);
+    assert.equal(Object.hasOwn(body.request, 'orderId'), false);
+    assert.equal(Object.hasOwn(body.request, 'paymentId'), false);
+  });
+
+  test('authenticated V3 runtime rejects invalid product, mode, versions, acceptance, and campaign', async () => {
+    const cases = [
+      [{ productSlug: 'unknown' }, 400, 'INVALID_PRODUCT'],
+      [{ continuityMode: 'lifetime' }, 400, 'INVALID_CONTINUITY_MODE'],
+      [{ contractVersion: 2 }, 409, 'CONTRACT_VERSION_MISMATCH'],
+      [{ commercialRulesVersion: 'stale' }, 409, 'RULES_VERSION_MISMATCH'],
+      [{ termsVersion: '0.6' }, 409, 'TERMS_VERSION_MISMATCH'],
+      [{ acceptedTermsAt: new Date().toISOString() }, 409, 'TERMS_NOT_EFFECTIVE'],
+      [{ campaignCode: 'CIBERDAY' }, 400, 'EXPIRED_CAMPAIGN'],
+      [{ campaignCode: 'NO-EXISTE' }, 400, 'INVALID_CAMPAIGN']
+    ];
+    for (const [overrides, status, code] of cases) {
+      const response = await fetch(api, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+        body: JSON.stringify({ ...payload, ...overrides })
+      });
+      assert.equal(response.status, status);
+      assert.equal((await response.json()).code, code);
+    }
+  });
+
+  test('existing public activation endpoint remains V2-compatible', async () => {
+    const response = await fetch(`${process.env.EVCOM_TEST_V3_BASE_URL}/api/activation`, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        product: 'landing', project: 'Prueba compatibilidad', projectCategory: 'other',
+        domainStatus: 'owned', context: '', consent: 'on', formStartedAt: Date.now() - 5_000
+      })
+    });
+    const body = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(body.handoff.version, 2);
+    assert.equal(body.handoff.pricing.total, 120_000);
+    assert.equal(Object.hasOwn(body.handoff, 'continuityMode'), false);
   });
 }

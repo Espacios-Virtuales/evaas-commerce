@@ -11,6 +11,10 @@ export const COMMERCIAL_REQUEST_V3_TTL_MS = 60 * 60 * 1000;
 export const COMMERCIAL_REQUEST_V3_VERSION = 3 as const;
 export const COMMERCIAL_REQUEST_V3_STATUS = 'DRAFT_NOT_FOR_PUBLICATION' as const;
 
+export function isV3RuntimeEnabled(value: unknown): boolean {
+  return value === 'true';
+}
+
 export type RequestDomainStatus = 'owned' | 'needed' | 'unsure';
 
 /** Internal request contract. It is intentionally separate from the public V2 handoff. */
