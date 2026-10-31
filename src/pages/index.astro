@@ -9,21 +9,21 @@ import { products, formatCLP } from '../data/products';
 export const prerender = true;
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="EVAAS Commerce · Presencia digital para tu proyecto"
+  description="Tres formas claras de presentar tu proyecto con EVAAS Commerce. Explora una landing, un catálogo o una web corporativa y prepara una solicitud asistida."
+>
   <section class="hero">
     <HeroVideo />
     <div class="container hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow">EVAAS Commerce · Activación Digital</span>
-        <h1>Presencia digital <span>profesional</span> desde el primer día.</h1>
-        <p>Elige una base, visualiza y activa fácil.</p>
+        <span class="eyebrow">EVAAS Commerce · una experiencia de Espacios Virtuales</span>
+        <h1>Una presencia digital <span>que puede crecer contigo.</span></h1>
+        <p>Presenta tu proyecto con claridad. Elige una landing, un catálogo o una web corporativa; conoce su alcance y prepara una solicitud asistida.</p>
+        <p class="hero-attributes">Claro · Simple · Evolutivo</p>
         <div class="hero-actions">
-          <a class="button" href="#showroom">Ver ejemplos</a>
+          <a class="button" href="#precios">Explorar productos</a>
           <a class="button button-secondary" href="#elegir">Encontrar mi opción</a>
-        </div>
-        <div class="hero-price">
-          <strong>Desde {formatCLP(products[0].finalPrice)} · Valor final · boleta o factura</strong>
-          <span>Los costos externos, si corresponden, se informan antes.</span>
         </div>
       </div>
       <a class="hero-stage" href="#precios" aria-label="Ver productos y precios">
@@ -129,27 +129,28 @@ export const prerender = true;
     <div class="container">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">Cómo funciona</span>
-          <h2>Un proceso breve y visible.</h2>
+          <span class="eyebrow">Un recorrido por etapas</span>
+          <h2>Empieza con claridad. Crece cuando lo necesites.</h2>
         </div>
-        <p>Compras un resultado. Nosotros resolvemos la parte técnica y te pedimos solo la información necesaria.</p>
+        <p>La solicitud inicial es asistida. La continuidad y los nuevos alcances se revisan según las condiciones vigentes.</p>
       </div>
-      <div class="steps">
-        <div class="step"><strong>Elige</strong><p>Selecciona la configuración que corresponde a tu necesidad.</p></div>
-        <div class="step"><strong>Comparte</strong><p>Entrega textos, datos, identidad disponible y accesos necesarios.</p></div>
-        <div class="step"><strong>Construimos</strong><p>Construimos la experiencia dentro del diseño elegido.</p></div>
-        <div class="step"><strong>Revisas</strong><p>Agrupas tus observaciones en una revisión consolidada.</p></div>
-        <div class="step"><strong>Preparamos</strong><p>Dejamos la entrega preparada para publicación según la cotización.</p></div>
-      </div>
+      <ol class="steps" aria-label="Etapas para iniciar, mantener y ampliar tu presencia digital">
+        <li class="step"><h3>Activa</h3><p>Elige Landing, Catálogo o Web Corporativa y revisa su alcance. Hoy puedes preparar una solicitud asistida; enviarla no confirma una compra ni un pago.</p></li>
+        <li class="step"><h3>Mantén</h3><p>El período contratado y sus condiciones siguen los términos vigentes. La renovación anual es opcional y se informa antes del siguiente período.</p></li>
+        <li class="step"><h3>Amplía</h3><p>Nuevas funciones, integraciones y otros alcances se evalúan y cotizan por separado; no se incluyen por defecto.</p></li>
+      </ol>
     </div>
   </section>
 
-  <section class="section-tight">
-    <div class="container trust-grid">
-      <article class="trust-card"><span class="trust-index">01 / Control</span><h3>El dominio lo compras y conservas tú.</h3><p>La cotización define si se incluye su conexión. La propiedad y el acceso permanecen bajo tu control.</p></article>
-      <article class="trust-card"><span class="trust-index">02 / Claridad</span><h3>Sabes qué entra antes de comenzar.</h3><p>Alcance, límite de contenido, revisión, exclusiones y posibles costos externos se muestran antes de activar.</p></article>
-      <article class="trust-card"><span class="trust-index">03 / Entrega</span><h3>Recibes una base responsive.</h3><p>La preparación para publicación y cualquier conexión se realizan únicamente según la cotización.</p></article>
-      <article class="trust-card"><span class="trust-index">04 / Evolución</span><h3>Puedes crecer sin comprarlo todo hoy.</h3><p>Agenda, pagos, analítica o nuevas capacidades se evalúan solo cuando exista una necesidad real.</p></article>
+  <section class="section-tight" aria-labelledby="trust-heading">
+    <div class="container">
+      <h2 class="sr-only" id="trust-heading">Fundamentos para avanzar con claridad.</h2>
+      <div class="trust-grid">
+        <article class="trust-card"><span class="trust-index">01 / Control</span><h3>El dominio lo compras y conservas tú.</h3><p>La cotización define si se incluye su conexión. La propiedad y el acceso permanecen bajo tu control.</p></article>
+        <article class="trust-card"><span class="trust-index">02 / Claridad</span><h3>Sabes qué entra antes de comenzar.</h3><p>Alcance, límite de contenido, revisión, exclusiones y posibles costos externos se muestran antes de activar.</p></article>
+        <article class="trust-card"><span class="trust-index">03 / Entrega</span><h3>Conoces el resultado acordado.</h3><p>La entrega y su aceptación corresponden a la cotización; la preparación para publicación y cualquier conexión dependen del alcance confirmado.</p></article>
+        <article class="trust-card"><span class="trust-index">04 / Evolución</span><h3>Puedes crecer sin sumar todo desde el inicio.</h3><p>Nuevas funciones e integraciones se evalúan y cotizan por separado; no se incluyen automáticamente.</p></article>
+      </div>
     </div>
   </section>
 
@@ -158,8 +159,9 @@ export const prerender = true;
       <div>
         <span class="eyebrow eyebrow-dark">Tu primera base digital</span>
         <h2>Empieza y luego crece.</h2>
+        <p>Compara las tres opciones y, cuando elijas un alcance, prepara tu solicitud para revisarla antes de enviarla.</p>
       </div>
-      <a class="button button-dark" href="#elegir">Elegir mi opción</a>
+      <a class="button button-dark" href="#precios">Explorar opciones</a>
     </div>
   </section>
 

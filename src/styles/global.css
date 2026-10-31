@@ -300,13 +300,11 @@
   .hero-video[data-video-state="loaded"] iframe { opacity: .42; }
   .hero::after { position: absolute; right: -9rem; top: -5rem; z-index: -1; width: min(42rem, 70vw); aspect-ratio: 1; content: ""; background: url('/assets/evaas-symbol.webp') center/contain no-repeat; opacity: .105; filter: saturate(.8); }
   .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: clamp(3rem, 7vw, 7rem); }
-  .hero h1 { max-width: 12ch; }
+  .hero h1 { max-width: 14ch; font-size: clamp(3rem, 6vw, 5.8rem); }
   .hero h1 span { color: var(--cyan); }
   .hero-copy > p { max-width: 42rem; margin-top: 1.6rem; color: var(--color-text-muted); font-size: clamp(1.05rem, 1.7vw, 1.32rem); }
+  .hero-copy > .hero-attributes { margin-top: .9rem; color: var(--color-text-muted); font-size: .85rem; font-weight: 720; letter-spacing: .08em; }
   .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
-  .hero-price { display: flex; align-items: center; gap: 1rem; margin-top: 2.4rem; }
-  .hero-price strong { font-size: 1.45rem; }
-  .hero-price span { max-width: 13rem; color: var(--muted); font-size: .78rem; line-height: 1.4; }
   .hero-stage { display: block; min-width: 0; padding: clamp(1.35rem,3vw,2.2rem); border: 1px solid var(--line); border-radius: 1.5rem; color: inherit; background: var(--color-surface); text-decoration: none; transition: border-color .25s, background .25s, transform .25s; }
   .hero-stage:hover { border-color: var(--color-brand); background: var(--color-surface-elevated); transform: translateY(-3px); }
   .hero-stage:focus-visible { outline: 3px solid var(--color-commercial-action); outline-offset: .4rem; }
@@ -399,11 +397,11 @@
   .compare-value b { color: var(--color-panel-text); }
   .compare-note { margin-top: 1rem; color: var(--color-panel-muted); font-size: .84rem; }
 
-  .steps { display: grid; grid-template-columns: repeat(5, 1fr); counter-reset: step; }
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; counter-reset: step; }
   .step { position: relative; min-height: 13rem; padding: 1.5rem; border: 1px solid var(--line); border-right: 0; counter-increment: step; }
   .step:last-child { border-right: 1px solid var(--line); }
   .step::before { display: grid; width: 2rem; height: 2rem; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--cyan); content: "0" counter(step); font-size: .7rem; }
-  .step strong { display: block; margin-top: 2.2rem; font-size: 1.1rem; }
+  .step h3 { margin-top: 2.2rem; font-size: 1.1rem; }
   .step p { margin-top: .5rem; color: var(--muted); font-size: .84rem; }
 
   .trust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
