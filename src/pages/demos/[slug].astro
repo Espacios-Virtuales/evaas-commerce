@@ -4,7 +4,7 @@ import LandingArchetypeDemo from '../../components/LandingArchetypeDemo.astro';
 import CatalogArchetypeDemo from '../../components/CatalogArchetypeDemo.astro';
 import CorporateArchetypeDemo from '../../components/CorporateArchetypeDemo.astro';
 import ProjectColorSelector from '../../components/ProjectColorSelector.astro';
-import { products, commonClientInputs, formatCLP, type Product } from '../../data/products';
+import { products, commonClientInputs, formatCLP, PUBLIC_PRICE_PERIOD, type Product } from '../../data/products';
 
 export const prerender = true;
 export function getStaticPaths() {
@@ -28,9 +28,9 @@ const isCatalog = product.slug === 'catalogo';
         </div>
         <div class="page-hero-copy">
           <p>{product.purpose}</p>
-          <span class="price-line">{formatCLP(product.finalPrice)} · Valor final</span>
+          <span class="price-line">{formatCLP(product.finalPrice)} · Valor final · {PUBLIC_PRICE_PERIOD}</span>
           <small>Boleta o factura</small>
-          <a class="button demo-hero-cta" href={`/activar/${product.slug}`} data-track="product_selected" data-product={product.slug}>Elegir {product.name}</a>
+          <a class="button demo-hero-cta" href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="product_selected" data-product={product.slug}>Preparar solicitud</a>
           <small>Ejemplo aplicado: {product.demoCategory.toLowerCase()}.</small>
         </div>
       </div>
@@ -63,10 +63,10 @@ const isCatalog = product.slug === 'catalogo';
         <div>
           <span class="eyebrow">EVAAS · Producto</span><br>
           <strong>¿Quieres comenzar con {product.name}?</strong>
-          <p>Valor final: {formatCLP(product.finalPrice)} · boleta o factura. Revisa el alcance completo antes de activar.</p>
+          <p>Valor final: {formatCLP(product.finalPrice)} · {PUBLIC_PRICE_PERIOD} · boleta o factura. Revisa el alcance completo antes de preparar la solicitud.</p>
           <div class="demo-return-links"><a href={`/productos/${product.slug}`}>Revisar producto</a><a href="/#showroom">Volver al showroom</a></div>
         </div>
-        <a class="button" href={`/activar/${product.slug}`} data-track="demo_completed" data-demo={product.slug} data-product={product.slug}>Elegir {product.name}</a>
+        <a class="button" href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="demo_completed" data-demo={product.slug} data-product={product.slug}>Preparar solicitud</a>
       </div>
     </div>
   </section>

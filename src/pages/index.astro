@@ -4,7 +4,7 @@ import ProductCard from '../components/ProductCard.astro';
 import ProductSelector from '../components/ProductSelector.astro';
 import HeroVideo from '../components/HeroVideo.astro';
 import ProductArchetypeIcon from '../components/ProductArchetypeIcon.astro';
-import { products, formatCLP } from '../data/products';
+import { products, formatCLP, PUBLIC_PRICE_PERIOD } from '../data/products';
 
 export const prerender = true;
 ---
@@ -31,7 +31,7 @@ export const prerender = true;
         <ul class="hero-product-list">
           {products.map((product) => <li><ProductArchetypeIcon type={product.slug} /><span>{product.name}</span></li>)}
         </ul>
-        <div class="hero-panel-price"><small>Desde · Valor final · boleta o factura</small><strong>{formatCLP(products[0].finalPrice)}</strong></div>
+        <div class="hero-panel-price"><small>Desde · valor final · {PUBLIC_PRICE_PERIOD}</small><strong>{formatCLP(products[0].finalPrice)}</strong></div>
         <span class="stage-price-link">Ver productos y precios →</span>
       </a>
     </div>
@@ -43,7 +43,7 @@ export const prerender = true;
         <a href={`#producto-${product.slug}`} data-track="product_viewed" data-product={product.slug}>
           <small>0{index + 1} · {product.eyebrow}</small>
           <strong>{product.name}</strong>
-          <span>{formatCLP(product.finalPrice)} · Valor final →</span>
+          <span>{formatCLP(product.finalPrice)} · {PUBLIC_PRICE_PERIOD} →</span>
         </a>
       ))}
     </div>
@@ -87,7 +87,7 @@ export const prerender = true;
           <span class="eyebrow">Tres puntos de partida</span>
           <h2>Elige lo que necesitas,<br /><span class="display-serif">simple.</span></h2>
         </div>
-        <p>Todas incluyen una base profesional preparada para publicación según la cotización. Lo que cambia es la cantidad de información y la forma de recorrerla.</p>
+        <p>Conoce el alcance, el valor anual vigente y sus límites antes de preparar una solicitud. La preparación para publicación se confirma según la cotización.</p>
       </div>
       <div class="products-grid">
         {products.map((product, index) => (
@@ -106,22 +106,32 @@ export const prerender = true;
         </div>
         <p>No necesitas comparar funciones técnicas. Solo identifica que quieres mostrar en el recorrido de tu identidad.</p>
       </div>
-      <div class="compare-wrap" role="region" aria-label="Comparación de configuraciones" tabindex="0">
-        <div class="compare-grid">
-          <div class="compare-row compare-head">
-            <span></span>
-            {products.map((product) => <div><strong>{product.name}</strong><span>{formatCLP(product.finalPrice)} · Valor final</span></div>)}
-          </div>
-          <div class="compare-row"><span class="compare-label">Ideal para</span><span class="compare-value">Una propuesta principal</span><span class="compare-value">Varios productos o servicios</span><span class="compare-value">Una empresa u organización</span></div>
-          <div class="compare-row"><span class="compare-label">Estructura</span><span class="compare-value">1 página · hasta 6 secciones</span><span class="compare-value">Hasta 12 ítems</span><span class="compare-value">4 áreas principales</span></div>
-          <div class="compare-row"><span class="compare-label">Aplicación de identidad existente</span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span></div>
-          <div class="compare-row"><span class="compare-label">Responsive</span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span></div>
-          <div class="compare-row"><span class="compare-label">Preparación para publicar</span><span class="compare-value">Según cotización*</span><span class="compare-value">Según cotización*</span><span class="compare-value">Según cotización*</span></div>
-          <div class="compare-row"><span class="compare-label">Revisión</span><span class="compare-value">1 consolidada</span><span class="compare-value">1 consolidada</span><span class="compare-value">1 consolidada</span></div>
-          <div class="compare-row"><span class="compare-label">Ecommerce</span><span class="compare-value">No</span><span class="compare-value">No</span><span class="compare-value">No</span></div>
-        </div>
+      <div class="compare-wrap" role="region" aria-label="Comparación de los tres productos. En pantallas angostas, desplaza la tabla horizontalmente." tabindex="0">
+        <table class="compare-grid">
+          <thead>
+            <tr>
+              <th scope="col">Característica</th>
+              {products.map((product) => <th scope="col">
+                <strong>{product.name}</strong>
+                <span>{formatCLP(product.finalPrice)} · {PUBLIC_PRICE_PERIOD}</span>
+                <a href={`/productos/${product.slug}`} aria-label={`Ver alcance de ${product.name}`}>Ver alcance</a>
+                <a href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="product_selected" data-product={product.slug}>Preparar solicitud</a>
+              </th>)}
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Finalidad y profundidad</th>{products.map((product) => <td><p>{product.purpose}</p><p><strong>Ideal para:</strong> {product.bestFor}</p></td>)}</tr>
+            <tr><th scope="row">Estructura</th>{products.map((product) => <td>{product.scope.split(' · ').slice(0, -1).join(' · ')}</td>)}</tr>
+            <tr><th scope="row">Diseño e identidad</th>{products.map((product) => <td>{product.includes.filter((item) => item.startsWith('Aplicación básica de tu identidad') || item === 'Diseño responsive').join(' · ')}</td>)}</tr>
+            <tr><th scope="row">Revisión consolidada</th>{products.map((product) => <td>{product.scope.split(' · ').at(-1)}</td>)}</tr>
+            <tr><th scope="row">Publicación</th>{products.map((product) => <td>{product.includes.find((item) => item.startsWith('Preparación para publicación'))}</td>)}</tr>
+            <tr><th scope="row">Dominio y costos externos</th>{products.map(() => <td>El cliente compra y conserva su dominio. Su conexión y cualquier costo externo se confirman en la cotización.</td>)}</tr>
+            <tr><th scope="row">No incluido</th>{products.map((product) => <td>{product.excludes.join(' · ')}</td>)}</tr>
+            <tr><th scope="row">Ampliaciones</th>{products.map(() => <td>Se evalúan y cotizan por separado; no se consideran capacidades instaladas.</td>)}</tr>
+          </tbody>
+        </table>
       </div>
-      <p class="compare-note">* Preparación para publicación según la cotización. La conexión de dominio y cualquier costo externo se confirman antes de contratar.</p>
+      <p class="compare-note">Los valores mostrados corresponden a contratación anual de 12 meses, con boleta o factura. En móvil, desplaza la tabla horizontalmente. Preparar o enviar una solicitud no confirma compra ni pago.</p>
     </div>
   </section>
 

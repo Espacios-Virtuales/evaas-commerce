@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProductArchetypeIcon from '../../components/ProductArchetypeIcon.astro';
-import { products, commonClientInputs, formatCLP, type Product } from '../../data/products';
+import { products, commonClientInputs, formatCLP, PUBLIC_PRICE_PERIOD, type Product } from '../../data/products';
 
 export const prerender = true;
 export function getStaticPaths() {
@@ -17,7 +17,7 @@ const { product } = Astro.props;
       <div class="breadcrumb"><a href="/">Inicio</a><span>/</span><span>Productos</span><span>/</span><strong>{product.name}</strong></div>
       <div class="page-hero-grid">
         <div><ProductArchetypeIcon type={product.slug} /><span class="eyebrow">{product.eyebrow}</span><h1>{product.name}</h1></div>
-        <div class="page-hero-copy"><p>{product.purpose}</p><span class="price-line">{formatCLP(product.finalPrice)} · Valor final</span><small>Boleta o factura</small></div>
+        <div class="page-hero-copy"><p>{product.purpose}</p><span class="price-line">{formatCLP(product.finalPrice)} · Valor final · {PUBLIC_PRICE_PERIOD}</span><small>Boleta o factura</small></div>
       </div>
     </div>
   </header>
@@ -50,13 +50,13 @@ const { product } = Astro.props;
         <span class="eyebrow eyebrow-dark">Producto EVAAS</span>
         <h2>{product.shortPurpose}</h2>
         <strong class="price-big">{formatCLP(product.finalPrice)}</strong>
-        <span class="tax-copy">Valor final · boleta o factura</span>
+        <span class="tax-copy">Valor final · {PUBLIC_PRICE_PERIOD} · boleta o factura</span>
         <ul>
           <li>{product.scope}</li>
           <li>Tu contenido dentro del alcance</li>
           <li>Preparación para publicación según la cotización</li>
         </ul>
-        <a class="button button-dark button-wide" href={`/activar/${product.slug}`} data-track="product_selected" data-product={product.slug}>Elegir {product.name}</a>
+        <a class="button button-dark button-wide" href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="product_selected" data-product={product.slug}>Preparar solicitud</a>
         <a class="text-link product-demo-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Ver demo →</a>
         <div class="control-note"><strong>Tu dominio sigue siendo tuyo.</strong><br />Tú lo compras y conservas; la cotización define si se incluye su conexión.</div>
       </aside>

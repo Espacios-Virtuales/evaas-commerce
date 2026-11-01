@@ -38,7 +38,7 @@
       <h3 data-result-name>Landing Comercial</h3>
       <p data-result-copy></p>
       <strong class="price" data-result-price></strong>
-      <a class="button button-dark" data-result-link href="/activar/landing" data-track="product_selected" data-product="landing">Elegir esta opción</a>
+      <a class="button button-dark" data-result-link href="/activar/landing" aria-label="Preparar solicitud para Landing Comercial" data-track="product_selected" data-product="landing">Preparar solicitud</a>
       <br />
       <button class="selector-reset" type="button">Volver a responder</button>
     </section>
@@ -59,7 +59,7 @@
 </div>
 
 <script>
-  import { products } from '../data/products';
+  import { products, PUBLIC_PRICE_PERIOD } from '../data/products';
   import { buildAdvancedNeedMessage, buildWhatsAppUrl, getSalesEmail, getWhatsAppConfig, type AdvancedProjectNeed } from '../lib/whatsapp';
 
   const selector = document.querySelector<HTMLElement>('[data-selector]');
@@ -123,9 +123,10 @@
 
       selector.querySelector<HTMLElement>('[data-result-name]')!.textContent = product.name;
       selector.querySelector<HTMLElement>('[data-result-copy]')!.textContent = product.purpose;
-      selector.querySelector<HTMLElement>('[data-result-price]')!.textContent = `$${new Intl.NumberFormat('es-CL').format(product.finalPrice)} · Valor final · boleta o factura`;
+      selector.querySelector<HTMLElement>('[data-result-price]')!.textContent = `$${new Intl.NumberFormat('es-CL').format(product.finalPrice)} · Valor final · ${PUBLIC_PRICE_PERIOD} · boleta o factura`;
       const link = selector.querySelector<HTMLAnchorElement>('[data-result-link]')!;
       link.href = `/activar/${product.slug}`;
+      link.setAttribute('aria-label', `Preparar solicitud para ${product.name}`);
       link.dataset.product = product.slug;
       result.classList.add('active');
       window.evaasTrack?.('selector_completed', { outcome: product.slug });

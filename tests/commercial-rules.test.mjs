@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import {
   COMMERCIAL_RULES_VERSION,
@@ -11,6 +12,59 @@ import {
   sanitizeCommercialRequestV3,
   isV3RuntimeEnabled
 } from '../src/lib/commercial-request-v3.ts';
+import { products, PUBLIC_PRICE_PERIOD } from '../src/data/products.ts';
+
+const readSource = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
+
+test('public catalog contains only the three canonical v0.6 products and prices', () => {
+  assert.deepEqual(products.map(({ slug }) => slug), ['landing', 'catalogo', 'corporativa']);
+  assert.deepEqual(products.map(({ finalPrice }) => finalPrice), [120_000, 160_000, 180_000]);
+  assert.equal(PUBLIC_PRICE_PERIOD, 'Contratación anual · 12 meses');
+  assert.ok(products.every(({ scope }) => scope.includes('1 revisión consolidada')));
+  assert.ok(products.every(({ includes }) => includes.includes('Diseño responsive')));
+  const exclusions = products.map(({ excludes }) => excludes.join(' ')).join(' ');
+  for (const excludedFeature of ['Ecommerce', 'carrito', 'pasarela de pago', 'stock', 'integraciones', 'funciones avanzadas']) {
+    assert.ok(exclusions.toLowerCase().includes(excludedFeature.toLowerCase()), `missing exclusion: ${excludedFeature}`);
+  }
+  assert.match(products.find(({ slug }) => slug === 'catalogo').purpose, /sin ecommerce/i);
+});
+
+test('public cards, comparison and selection explain scope and preserve the request flow', () => {
+  const card = readSource('../src/components/ProductCard.astro');
+  const home = readSource('../src/pages/index.astro');
+  const selector = readSource('../src/components/ProductSelector.astro');
+  const publicUi = `${card}\n${home}\n${selector}`;
+
+  assert.match(card, /product\.bestFor/);
+  assert.match(card, /product\.scope/);
+  assert.match(card, /product\.includes\.map/);
+  assert.match(card, /product\.excludes\.slice/);
+  assert.match(card, /Preparar solicitud/);
+  assert.match(card, /aria-label=\{`Preparar solicitud para \$\{product\.name\}`\}/);
+  assert.match(home, /<table class="compare-grid">/);
+  assert.match(home, /scope="col"/);
+  assert.match(home, /aria-label=\{`Preparar solicitud para \$\{product\.name\}`\}/);
+  assert.match(home, /scope="row"/);
+  assert.match(home, /product\.excludes\.join/);
+  assert.match(home, /Se evalúan y cotizan por separado/);
+  assert.match(home, /cualquier costo externo se confirman en la cotización/);
+  assert.match(home, /id="precios"/);
+  assert.match(home, /id="comparar"/);
+  assert.match(home, /id="elegir"/);
+  assert.match(selector, /PUBLIC_PRICE_PERIOD/);
+  assert.doesNotMatch(publicUi, /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920/);
+});
+
+test('all public product routes label the vigente price as annual and request based', () => {
+  const product = readSource('../src/pages/productos/[slug].astro');
+  const demo = readSource('../src/pages/demos/[slug].astro');
+  const activation = readSource('../src/pages/activar/[slug].astro');
+  const publicUi = `${product}\n${demo}\n${activation}`;
+
+  assert.match(publicUi, /PUBLIC_PRICE_PERIOD/);
+  assert.match(publicUi, /Preparar solicitud/);
+  assert.doesNotMatch(publicUi, /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920/);
+});
 
 const expected = [
   ['landing', 120_000, 19_900, 214_920],
