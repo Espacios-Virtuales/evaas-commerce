@@ -9,6 +9,7 @@ export function getStaticPaths() {
 }
 interface Props { product: Product }
 const { product } = Astro.props;
+const clientMaterials = [...new Set([...commonClientInputs, ...product.clientInputs])];
 ---
 
 <BaseLayout title={`${product.name} · EVAAS Commerce`} description={product.purpose}>
@@ -17,7 +18,7 @@ const { product } = Astro.props;
       <div class="breadcrumb"><a href="/">Inicio</a><span>/</span><span>Productos</span><span>/</span><strong>{product.name}</strong></div>
       <div class="page-hero-grid">
         <div><ProductArchetypeIcon type={product.slug} /><span class="eyebrow">{product.eyebrow}</span><h1>{product.name}</h1></div>
-        <div class="page-hero-copy"><p>{product.purpose}</p><span class="price-line">{formatCLP(product.finalPrice)} · Valor final · {PUBLIC_PRICE_PERIOD}</span><small>Boleta o factura</small></div>
+        <div class="page-hero-copy"><p>{product.purpose}</p><p><strong>Ideal para:</strong> {product.bestFor}</p><span class="price-line">{formatCLP(product.finalPrice)} · Valor final · {PUBLIC_PRICE_PERIOD}</span><small>Boleta o factura</small></div>
       </div>
     </div>
   </header>
@@ -29,21 +30,22 @@ const { product } = Astro.props;
           <span class="eyebrow">Alcance definido</span>
           <h2>Qué recibes</h2>
           <p>{product.scope}</p>
+          {product.slug === 'catalogo' && <aside class="additional-scope-note"><strong>Vitrina no transaccional.</strong><p>Presenta productos o servicios para consulta; no admite pedidos, carrito, checkout, cobros en línea ni ventas reales.</p></aside>}
           <ul class="scope-list">{product.includes.map((item) => <li>{item}</li>)}</ul>
         </section>
         <section class="scope-panel client-input-panel">
           <span class="eyebrow">Preparación del cliente</span>
           <h2>¿Qué necesitas para comenzar?</h2>
-          <p>Si ya los tienes, necesitaremos estos materiales para construir el producto dentro del alcance:</p>
-          <ul class="scope-list">{commonClientInputs.map((item) => <li>{item}</li>)}{product.clientInputs.map((item) => <li>{item}</li>)}</ul>
-          {product.additionalInputs.length > 0 && <ul class="scope-list">{product.additionalInputs.map((item) => <li>{item}</li>)}</ul>}
+          <p>Estos datos ayudan a preparar el proyecto dentro del alcance. Los materiales opcionales solo se aportan si ya están disponibles.</p>
+          <ul class="scope-list">{clientMaterials.map((item) => <li>{item}</li>)}</ul>
+          {product.additionalInputs.length > 0 && <><p class="scope-list-intro">Material complementario, si ya está disponible:</p><ul class="scope-list">{product.additionalInputs.map((item) => <li>{item}</li>)}</ul></>}
           <aside class="additional-scope-note"><strong>¿No tienes alguno de estos materiales?</strong><p>Podemos ayudarte a desarrollarlos como alcance adicional. Se cotizan y aprueban por separado antes de incorporarlos. Crear o reformular branding, logo, propuesta de valor y textos desde cero no forma parte automática del producto base; la producción fotográfica tampoco está incluida.</p></aside>
         </section>
         <section class="scope-panel">
           <span class="eyebrow">Límites claros</span>
           <h2>Qué no incluye</h2>
           <ul class="scope-list">{product.excludes.map((item) => <li>{item}</li>)}</ul>
-          <p class="not-included">Las necesidades fuera de este alcance se cotizan y aprueban por separado.</p>
+          <p class="not-included">Las necesidades fuera de este alcance se cotizan y aprueban por separado; no se consideran capacidades instaladas del producto base.</p>
         </section>
       </div>
       <aside class="sticky-purchase">
@@ -57,6 +59,7 @@ const { product } = Astro.props;
           <li>Preparación para publicación según la cotización</li>
         </ul>
         <a class="button button-dark button-wide" href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="product_selected" data-product={product.slug}>Preparar solicitud</a>
+        <span class="tax-copy">Preparar una solicitud no confirma compra ni pago.</span>
         <a class="text-link product-demo-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Ver demo →</a>
         <div class="control-note"><strong>Tu dominio sigue siendo tuyo.</strong><br />Tú lo compras y conservas; la cotización define si se incluye su conexión.</div>
       </aside>

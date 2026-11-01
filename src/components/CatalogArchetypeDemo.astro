@@ -50,13 +50,13 @@ const categories = [
 
   <section class="catalog-intro" aria-labelledby="catalog-intro-title">
     <div><span class="catalog-eyebrow">Una colección, dos recorridos</span><h3 id="catalog-intro-title">Materia honesta.<br /><em>Uso cotidiano.</em></h3></div>
-    <div><p>Este ejemplo presenta objetos de diseño y hogar con información breve sobre su forma y material. La estructura ayuda a encontrar una pieza y abrir una consulta, sin carrito ni compra en línea.</p><p class="catalog-note">El contenido, la marca y las piezas son ficticios y sirven solo como referencia de estructura.</p></div>
+    <div><p>Esta vitrina de ejemplo presenta objetos con información breve sobre su forma y material. No procesa pedidos, carrito, checkout, cobros en línea ni ventas reales.</p><p class="catalog-note">El contenido, la marca y las piezas son ficticios y sirven solo como referencia de estructura.</p></div>
   </section>
 
   <section class="catalog-collection" id="catalogo-categorias" aria-labelledby="catalog-collection-title">
     <div class="catalog-section-heading">
       <div><span class="catalog-eyebrow">Explora por categoría</span><h3 id="catalog-collection-title">Piezas para cada espacio.</h3></div>
-      <p>Dos grupos organizan esta muestra. El filtro facilita el recorrido cuando una colección crece.</p>
+      <p>Dos grupos organizan esta muestra. El filtro local de demostración solo ordena estas fichas ficticias y no consulta inventario real.</p>
     </div>
     <div class="catalog-category-cards" aria-label="Categorías del catálogo">
       <a class="catalog-category-card catalog-category-table" href="#catalogo-piezas" data-category-link="mesa">
@@ -75,7 +75,7 @@ const categories = [
     </div>
     <div class="catalog-filter" data-catalog-filter-controls hidden>
       <span>Filtrar piezas</span>
-      <div class="catalog-filter-options" role="group" aria-label="Filtrar piezas por categoría">
+      <div class="catalog-filter-options" role="group" aria-label="Filtrar piezas ficticias por categoría">
         {categories.map((category, index) => <button type="button" data-catalog-filter={category.id} aria-pressed={index === 0 ? 'true' : 'false'}>{category.label}</button>)}
       </div>
     </div>

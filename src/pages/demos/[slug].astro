@@ -13,8 +13,10 @@ export function getStaticPaths() {
 
 interface Props { product: Product }
 const { product } = Astro.props;
+const clientMaterials = [...new Set([...commonClientInputs, ...product.clientInputs])];
 const isLanding = product.slug === 'landing';
 const isCatalog = product.slug === 'catalogo';
+const isCorporate = product.slug === 'corporativa';
 ---
 
 <BaseLayout title={`Demo ${product.name} · EVAAS Commerce`} description={`Explora un ejemplo demostrativo de la configuración ${product.name} en EVAAS Commerce.`}>
@@ -28,9 +30,11 @@ const isCatalog = product.slug === 'catalogo';
         </div>
         <div class="page-hero-copy">
           <p>{product.purpose}</p>
+          <p><strong>Ideal para:</strong> {product.bestFor}</p>
           <span class="price-line">{formatCLP(product.finalPrice)} · Valor final · {PUBLIC_PRICE_PERIOD}</span>
           <small>Boleta o factura</small>
           <a class="button demo-hero-cta" href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="product_selected" data-product={product.slug}>Preparar solicitud</a>
+          <small>Preparar una solicitud no confirma compra ni pago.</small>
           <small>Ejemplo aplicado: {product.demoCategory.toLowerCase()}.</small>
         </div>
       </div>
@@ -40,30 +44,39 @@ const isCatalog = product.slug === 'catalogo';
   <section class="demo-workbench" data-demo-page data-demo={product.slug}>
     <div class="container">
       <div class="demo-toolbar">
-        <span class="demo-disclaimer">Demo interior · marca y contenido ficticios</span>
+        <span class="demo-disclaimer">Demostración visual · identidad, contenido y recursos visuales de ejemplo; no constituyen entrega ni prestaciones contratadas.</span>
       </div>
       <ProjectColorSelector
         name={`demo-${product.slug}-project-color`}
         previewTarget={isLanding ? '[data-landing-demo]' : isCatalog ? '[data-catalog-demo]' : '[data-corporate-demo]'}
       />
+      {isCatalog && <aside class="additional-scope-note demo-contract-note"><strong>Vitrina no transaccional.</strong><p>Esta demo no admite pedidos, carrito, checkout, cobros en línea ni ventas reales. Los filtros solo organizan fichas ficticias; no consultan inventario ni disponibilidad.</p></aside>}
+      {isCorporate && <aside class="additional-scope-note demo-contract-note"><strong>Composición de ejemplo.</strong><p>Los bloques Método y Casos amplían esta muestra visual. La Web Corporativa base incluye Inicio, Empresa, Servicios y Contacto; áreas adicionales se evalúan y cotizan por separado.</p></aside>}
       {isLanding ? <LandingArchetypeDemo /> : isCatalog ? <CatalogArchetypeDemo /> : <CorporateArchetypeDemo />}
 
       <div class="demo-detail client-inputs">
         <div>
-          <span class="eyebrow">Preparación del cliente</span>
+          <span class="eyebrow">Alcance y preparación</span>
           <h2>¿Qué necesitas para comenzar?</h2>
         </div>
         <div>
-          <p>Si ya los tienes, necesitaremos algunos materiales para construir {product.name} dentro del alcance:</p>
-          <ul>{commonClientInputs.map((item) => <li>{item}</li>)}{product.clientInputs.map((item) => <li>{item}</li>)}{product.additionalInputs.map((item) => <li>{item}</li>)}</ul>
+          <h3>Materiales del proyecto</h3>
+          <p>Estos datos ayudan a preparar el proyecto dentro del alcance. Los materiales opcionales solo se aportan si ya están disponibles.</p>
+          <ul class="scope-list">{clientMaterials.map((item) => <li>{item}</li>)}</ul>
+          {product.additionalInputs.length > 0 && <><p class="scope-list-intro">Material complementario, si ya está disponible:</p><ul class="scope-list">{product.additionalInputs.map((item) => <li>{item}</li>)}</ul></>}
           <aside class="additional-scope-note"><strong>¿No tienes alguno de estos materiales?</strong><p>Podemos ayudarte a desarrollarlos como alcance adicional. Se cotizan y aprueban por separado antes de incorporarlos. Crear o reformular branding, logo, propuesta de valor y textos desde cero no forma parte automática del producto base. La producción fotográfica no está incluida.</p></aside>
+          <section class="scope-panel demo-exclusions">
+            <h3>Fuera del alcance base</h3>
+            <ul class="scope-list">{product.excludes.map((item) => <li>{item}</li>)}</ul>
+            <p class="not-included">Otros alcances se evalúan y cotizan por separado.</p>
+          </section>
         </div>
       </div>
       <div class="demo-cta">
         <div>
           <span class="eyebrow">EVAAS · Producto</span><br>
           <strong>¿Quieres comenzar con {product.name}?</strong>
-          <p>Valor final: {formatCLP(product.finalPrice)} · {PUBLIC_PRICE_PERIOD} · boleta o factura. Revisa el alcance completo antes de preparar la solicitud.</p>
+          <p>Valor final: {formatCLP(product.finalPrice)} · {PUBLIC_PRICE_PERIOD} · boleta o factura. Revisa el alcance completo antes de preparar la solicitud. Enviarla no confirma compra ni pago.</p>
           <div class="demo-return-links"><a href={`/productos/${product.slug}`}>Revisar producto</a><a href="/#showroom">Volver al showroom</a></div>
         </div>
         <a class="button" href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="demo_completed" data-demo={product.slug} data-product={product.slug}>Preparar solicitud</a>
