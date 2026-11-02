@@ -108,7 +108,36 @@ Permanecen abiertos:
 
 Se preparó `docs/contracts/commerce/ACTIVATION_CONTINUITY_PILOT_v0.2.md` como borrador interno `DRAFT_NOT_FOR_PUBLICATION`; no es texto contractual efectivo. La fuente canónica y la API de cálculo H03 pueden implementarse y probarse en la rama, con la API apagada por defecto. La oferta pública v0.6 y producción permanecen sin cambios hasta completar los gates y un release separado.
 
-## 6. Fuentes leídas, no reemplazadas
+## 6. Addendum C08 · Estado documental y gate público (2026-11-01)
+
+Este addendum registra estados de C08 sin alterar las decisiones ni el historial OD-01–OD-22. La aprobación económica del propietario de 2026-10-22 no se reabre.
+
+| Estado | Valor a C08 | Evidencia y límite |
+|---|---|---|
+| `COMMERCIAL_MODEL_APPROVED_2026-10-22` | `TRUE / APPROVED` | OD-01–OD-05 y reglas canónicas existentes. Comprende los tres productos, activación única, continuidad mensual/anual, descuento de 10 % solo sobre 12 mensualidades de continuidad y no acumulación automática. No demuestra servicios. |
+| `TERMS_DRAFT_READY` | `TRUE` | `docs/contracts/commerce/ACTIVATION_CONTINUITY_PILOT_v0.3.md`, borrador interno no contratable preparado en C08. |
+| `OPERATIONAL_SCOPE_VERIFIED` | `BY_SERVICE_ONLY / NO_GLOBAL_PASS` | El estado y evidencia acotada de cada fila se encuentra en `docs/contracts/commerce/CONTINUITY_OPERATIONAL_MATRIX_v0.1.md`. Las candidatas recurrentes continúan `NOT_VERIFIED`; la regla pública de titularidad del dominio y el deber de informar costos externos están verificados solo como texto v0.6, no como continuidad. |
+| `LEGAL_REVIEW` | `PENDING` | No se aportó dictamen jurídico H03 ni revisión del texto v0.3. |
+| `TAX_REVIEW` | `PENDING` | No se aportó clasificación tributaria de las prestaciones H03 ni revisión contable del prepago anual. No se presume IVA, exención o tratamiento por el rótulo “valor final”. |
+| `TERMS_VERSION` | `1.0-draft` | Valor de `src/data/commercial-rules.ts`; v0.3 es revisión documental. No identifica términos efectivos. |
+| `EFFECTIVE_DATE` | `NOT_SET` | `TERMS_EFFECTIVE_DATE=null`. La aprobación económica no fija fecha de entrada en vigor. |
+| `PUBLICATION_AUTHORIZED` | `NO` | Requiere decisión explícita posterior y gate de release completo. |
+| `PUBLIC_TERMS_GATE` | `PENDING` | Falta evidencia de prestación recurrente concreta, revisiones jurídica y tributaria, y decisión de versión/fecha efectiva. |
+
+`TERMS_DRAFT_READY` permite preparar una previsualización interna y continuar C09 bajo el estado no público. No autoriza mostrar mensualidades, prepago, descuentos o condiciones H03 al cliente ni contratarlos. `/terminos` continúa en v0.6 y los contratos aceptados bajo v0.6 conservan su versión y alcance; sin migración tácita ni retroactividad.
+
+### Pendientes explícitos para release
+
+- Cerrar una ficha por servicio de continuidad con evidencia fechada, responsable, cuenta/proveedor, costos, frecuencia, alcance, límites, exclusiones y prueba. `NOT_VERIFIED` no significa servicio inexistente.
+- Obtener revisión jurídica y tributaria real, versionada, incluyendo reembolso/prepago, renovación, aceptación y condiciones al cliente.
+- Definir fecha efectiva mediante decisión separada; conservar `1.0-draft` y fecha nula mientras sea borrador.
+- Resolver prospectivamente la diferencia entre `/terminos` v0.6 (declaración pública de publicación/conexión) y el copy neutral de la UI C05–C07. No alterar acuerdos vigentes mediante esta conciliación.
+- Completar aceptación versionada independiente de solicitud/WhatsApp y alinear selector C09, handoff C10, cotización, reglas y términos antes de publicación C11.
+- Probar el release público y rollback a v0.6 con la misma versión de precios/condiciones en términos, UI, selector y handoff.
+
+Fuentes oficiales registradas para la revisión, no dictámenes: [Ley 19.496 (Ley Chile/BCN)](https://nuevo.leychile.cl/navegar?idNorma=61438), [orientación SERNAC sobre retracto](https://www.sernac.cl/portal/607/w3-propertyvalue-15024.html), [SII: servicios y desarrollo de software](https://www.sii.cl/preguntas_frecuentes/impuestos_mensuales/001_130_2449.htm), [SII: IVA digital](https://www.sii.cl/vat/faq1_esp.html) y [Ley 21.719 (BCN)](https://www.bcn.cl/leychile/Navegar/imprimir?idNorma=1209272). La revisión debe determinar la aplicación a cada servicio y cliente; C08 no emite conclusiones jurídicas o tributarias.
+
+## 7. Fuentes leídas, no reemplazadas
 
 - `docs/contracts/commerce/ACTIVATION_CONTINUITY_PILOT_v0.1.md`
 - `docs/finance/EVCOM_PILOT_PRICING_MODEL_v0.1.md`
