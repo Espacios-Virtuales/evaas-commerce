@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { CommercialRuleError, resolveH03Pricing } from '../../data/commercial-rules';
 import { normalizeCampaignCode, resolveCampaign } from '../../data/campaigns';
+import { isLocalInternalPreviewAllowed } from '../../lib/internal-preview-access';
 
 export const prerender = false;
 
@@ -9,7 +10,11 @@ const notAvailable = () => new Response(null, {
   headers: { 'Cache-Control': 'no-store' }
 });
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async (context) => {
+  // This endpoint is a local development preview, never a public pricing API.
+  if (!import.meta.env.DEV) return notAvailable();
+  if (!isLocalInternalPreviewAllowed(true, context.clientAddress)) return notAvailable();
+  const { request } = context;
   if (import.meta.env.EVCOM_H03_PRICING_API_ENABLED !== 'true') return notAvailable();
   if (request.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase() !== 'application/json') {
     return Response.json({ message: 'Formato de solicitud no válido.' }, { status: 415, headers: { 'Cache-Control': 'no-store' } });
@@ -27,6 +32,10 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
+    const allowedFields = new Set(['productSlug', 'continuityMode', 'campaignCode']);
+    if (Object.keys(input).some((key) => !allowedFields.has(key))) {
+      throw new CommercialRuleError('INVALID_SELECTION_FIELD', 'La selección contiene campos no permitidos.');
+    }
     if (input.campaignCode != null && typeof input.campaignCode !== 'string') {
       throw new CommercialRuleError('INVALID_CAMPAIGN', 'El código promocional no es válido.');
     }
@@ -40,7 +49,21 @@ export const POST: APIRoute = async ({ request }) => {
       campaignCode,
       campaignStatus
     });
-    return Response.json({ ok: true, pricing }, { headers: { 'Cache-Control': 'no-store' } });
+    const continuityListAmount = pricing.continuity?.cadence === 'monthly'
+      ? pricing.continuity.amount * 12
+      : pricing.continuity?.listAmount ?? 0;
+    const continuityForTwelveMonths = pricing.continuity?.cadence === 'monthly'
+      ? continuityListAmount
+      : pricing.continuity?.amount ?? 0;
+    return Response.json({
+      ok: true,
+      pricing,
+      comparison: {
+        continuityListAmount,
+        annualSavings: pricing.continuity?.discountAmount ?? 0,
+        estimatedTwelveMonthTotal: pricing.activation.amount + continuityForTwelveMonths
+      }
+    }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     if (error instanceof CommercialRuleError) {
       return Response.json({ message: error.message, code: error.code }, { status: 400, headers: { 'Cache-Control': 'no-store' } });

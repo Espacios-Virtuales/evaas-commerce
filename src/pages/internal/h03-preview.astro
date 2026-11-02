@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import H03CommercialPreview from '../../components/H03CommercialPreview.astro';
+import { isLocalInternalPreviewAllowed } from '../../lib/internal-preview-access';
+
+export const prerender = false;
+
+if (!import.meta.env.DEV || import.meta.env.EVCOM_H03_PRICING_API_ENABLED !== 'true') {
+  return new Response(null, { status: 404, headers: { 'Cache-Control': 'no-store' } });
+}
+if (!isLocalInternalPreviewAllowed(true, Astro.clientAddress)) {
+  return new Response(null, { status: 404, headers: { 'Cache-Control': 'no-store' } });
+}
+---
+
+<BaseLayout
+  title="Previsualización interna H03 · EVAAS Commerce"
+  description="Vista local de desarrollo para revisar internamente el modelo comercial H03."
+  noindex={true}
+  pageClass="h03-preview-page"
+>
+  <H03CommercialPreview />
+</BaseLayout>

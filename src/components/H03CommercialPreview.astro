@@ -1,0 +1,188 @@
+---
+import { products } from '../data/products';
+---
+
+<section class="h03-preview" aria-labelledby="h03-preview-title" data-h03-preview>
+  <header class="h03-preview-header">
+    <span class="eyebrow">Claro · Simple · Evolutivo</span>
+    <h1 id="h03-preview-title">Selector de modalidad y resumen comercial</h1>
+    <p>Explora el modelo interno H03. Los valores se consultan al servidor de desarrollo y no están disponibles para contratación pública.</p>
+    <p class="h03-preview-badge">Previsualización interna · modelo H03 no disponible para contratación pública</p>
+  </header>
+
+  <div class="h03-preview-grid">
+    <form class="h03-preview-controls" data-preview-form>
+      <label class="h03-field" for="h03-product">Producto</label>
+      <select id="h03-product" name="productSlug" data-product-select>
+        {products.map((product) => <option value={product.slug} data-purpose={product.purpose} data-scope={product.scope}>{product.name}</option>)}
+      </select>
+
+      <fieldset class="h03-modes">
+        <legend>Continuidad opcional</legend>
+        <label><input type="radio" name="continuityMode" value="none" checked /> <span><strong>Sin continuidad</strong><small>Solo se muestra la activación del modelo.</small></span></label>
+        <label><input type="radio" name="continuityMode" value="monthly" /> <span><strong>Mensual</strong><small>Estimación separada por mes.</small></span></label>
+        <label><input type="radio" name="continuityMode" value="annual_prepay" /> <span><strong>Anual prepagada</strong><small>10% menos sobre doce mensualidades de continuidad.</small></span></label>
+      </fieldset>
+
+      <p class="h03-third-party">Dominio, alojamiento, SSL, respaldos, soporte y otros servicios de terceros no se agregan a este cálculo. Su alcance y costo requieren evidencia y cotización.</p>
+      <button class="button button-dark" type="submit" data-submit>Consultar desglose interno</button>
+      <p class="h03-status" role="status" aria-live="polite" data-status>Consultando las reglas internas…</p>
+    </form>
+
+    <section class="h03-summary" aria-labelledby="h03-summary-title" aria-busy="true" data-summary>
+      <span class="eyebrow">Resultado del servidor</span>
+      <h2 id="h03-summary-title" data-name>Desglose pendiente</h2>
+      <p data-purpose-display></p>
+      <p class="h03-scope" data-scope-display></p>
+      <dl class="h03-breakdown" data-breakdown hidden>
+        <div><dt>Activación única · modelo H03</dt><dd data-activation></dd></div>
+        <div><dt data-continuity-label>Continuidad</dt><dd data-continuity></dd></div>
+        <div data-savings-row hidden><dt>Ahorro anual sobre 12 mensualidades de continuidad</dt><dd data-savings></dd></div>
+        <div class="h03-total-row"><dt>Proyección comparable de 12 meses</dt><dd data-total></dd></div>
+      </dl>
+      <p class="h03-estimate" data-estimate hidden></p>
+      <p class="h03-not-contract">La selección no genera compra, pago, reserva, membresía, cotización durable ni aceptación de términos. No se asignan fechas de cobro o inicio de servicio.</p>
+      <p class="h03-version" data-version hidden></p>
+      <button type="button" class="button button-disabled" disabled aria-describedby="h03-pending-copy">Solicitud H03 pendiente de habilitación</button>
+      <p id="h03-pending-copy" class="h03-pending-copy">La solicitud asistida pública sigue disponible bajo los términos v0.6. Esta vista no la prepara ni la envía.</p>
+      <a href="/#precios">Ver la oferta pública vigente</a>
+    </section>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-h03-preview]');
+    const form = root?.querySelector('[data-preview-form]');
+    const summary = root?.querySelector('[data-summary]');
+    const status = root?.querySelector('[data-status]');
+    const submit = root?.querySelector('[data-submit]');
+    const productSelect = root?.querySelector('[data-product-select]');
+    if (!root || !form || !summary || !status || !submit || !productSelect) return;
+
+    const formatCLP = (value) => `$${new Intl.NumberFormat('es-CL', { maximumFractionDigits: 0 }).format(value)}`;
+    const name = root.querySelector('[data-name]');
+    const purpose = root.querySelector('[data-purpose-display]');
+    const scope = root.querySelector('[data-scope-display]');
+    const breakdown = root.querySelector('[data-breakdown]');
+    const activation = root.querySelector('[data-activation]');
+    const continuity = root.querySelector('[data-continuity]');
+    const continuityLabel = root.querySelector('[data-continuity-label]');
+    const savingsRow = root.querySelector('[data-savings-row]');
+    const savings = root.querySelector('[data-savings]');
+    const total = root.querySelector('[data-total]');
+    const estimate = root.querySelector('[data-estimate]');
+    const version = root.querySelector('[data-version]');
+    let sequence = 0;
+
+    const loadBreakdown = async () => {
+      const requestSequence = ++sequence;
+      const selected = productSelect.selectedOptions[0];
+      const mode = new FormData(form).get('continuityMode');
+      summary.setAttribute('aria-busy', 'true');
+      breakdown.hidden = true;
+      estimate.hidden = true;
+      status.textContent = 'Consultando las reglas internas…';
+      submit.disabled = true;
+
+      try {
+        const response = await fetch('/api/commercial-pricing', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          cache: 'no-store',
+          body: JSON.stringify({ productSlug: productSelect.value, continuityMode: mode })
+        });
+        if (!response.ok) throw new Error('PREVIEW_UNAVAILABLE');
+        const result = await response.json();
+        if (requestSequence !== sequence) return;
+
+        const productName = selected.textContent?.trim() || 'Producto seleccionado';
+        name.textContent = productName;
+        purpose.textContent = selected.dataset.purpose || '';
+        scope.textContent = selected.dataset.scope || '';
+        activation.textContent = formatCLP(result.pricing.activation.amount);
+        if (result.pricing.continuity?.cadence === 'monthly') {
+          continuityLabel.textContent = 'Continuidad mensual';
+          continuity.textContent = `${formatCLP(result.pricing.continuity.amount)} por mes`;
+          estimate.textContent = `Estimación condicionada a mantener 12 meses: ${formatCLP(result.comparison.estimatedTwelveMonthTotal)} en total, incluida la activación. No constituye plazo obligatorio ni cobro.`;
+          estimate.hidden = false;
+        } else if (result.pricing.continuity?.cadence === 'annual_prepay') {
+          continuityLabel.textContent = 'Continuidad anual prepagada';
+          continuity.textContent = formatCLP(result.pricing.continuity.amount);
+          savings.textContent = formatCLP(result.comparison.annualSavings);
+          savingsRow.hidden = false;
+          estimate.textContent = `Comparación de 12 meses: ${formatCLP(result.comparison.estimatedTwelveMonthTotal)} incluida la activación. La vista no fija fechas de cobro o inicio.`;
+          estimate.hidden = false;
+        } else {
+          continuityLabel.textContent = 'Continuidad';
+          continuity.textContent = 'No seleccionada';
+        }
+        if (result.pricing.continuity?.cadence !== 'annual_prepay') savingsRow.hidden = true;
+        total.textContent = formatCLP(result.comparison.estimatedTwelveMonthTotal);
+        version.textContent = `${result.pricing.commercialRulesVersion} · términos ${result.pricing.termsVersion} · ${result.pricing.offerStatus}`;
+        version.hidden = false;
+        breakdown.hidden = false;
+        status.textContent = 'Desglose actualizado desde las reglas canónicas del servidor.';
+      } catch {
+        if (requestSequence !== sequence) return;
+        name.textContent = 'Desglose no disponible';
+        purpose.textContent = '';
+        scope.textContent = '';
+        savingsRow.hidden = true;
+        version.hidden = true;
+        status.textContent = 'No fue posible acceder a las reglas internas. No se muestran precios alternativos.';
+      } finally {
+        if (requestSequence === sequence) {
+          summary.setAttribute('aria-busy', 'false');
+          submit.disabled = false;
+        }
+      }
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      void loadBreakdown();
+    });
+    productSelect.addEventListener('change', () => void loadBreakdown());
+    form.querySelectorAll('input[name="continuityMode"]').forEach((input) => {
+      input.addEventListener('change', () => void loadBreakdown());
+    });
+    void loadBreakdown();
+  })();
+</script>
+
+<style>
+  :global(body.h03-preview-page) { min-width: 0; }
+  .h03-preview { width: min(100% - 2rem, 74rem); margin: 0 auto; padding-block: clamp(2rem, 6vw, 5rem); }
+  .h03-preview-header { max-width: 54rem; margin-bottom: 2rem; }
+  .h03-preview-header h1 { margin-top: .7rem; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.06; }
+  .h03-preview-header > p { max-width: 68ch; margin-top: .85rem; color: var(--muted); }
+  .h03-preview-badge { display: inline-flex; padding: .55rem .75rem; border: 1px solid var(--color-brand); border-radius: 999px; color: var(--color-brand); font-size: .82rem; font-weight: 700; }
+  .h03-preview-grid { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); align-items: start; gap: 1.25rem; }
+  .h03-preview-controls, .h03-summary { min-width: 0; padding: clamp(1.1rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 1.1rem; background: var(--ink-soft); }
+  .h03-field, .h03-modes legend { display: block; margin-bottom: .6rem; font-weight: 720; }
+  .h03-preview select { width: 100%; min-height: 3rem; padding: .65rem .8rem; border: 1px solid var(--line); border-radius: .55rem; color: var(--color-text); background: var(--color-surface); }
+  .h03-modes { display: grid; gap: .65rem; min-width: 0; margin: 1.5rem 0; padding: 0; border: 0; }
+  .h03-modes legend { padding: 0; }
+  .h03-modes label { display: grid; grid-template-columns: 1.2rem minmax(0, 1fr); align-items: start; gap: .65rem; padding: .85rem; border: 1px solid var(--line); border-radius: .7rem; cursor: pointer; }
+  .h03-modes input { width: 1.1rem; height: 1.1rem; margin: .12rem 0 0; accent-color: var(--color-brand); }
+  .h03-modes label span { display: grid; gap: .2rem; }
+  .h03-modes small, .h03-third-party, .h03-pending-copy { color: var(--muted); font-size: .86rem; }
+  .h03-third-party { margin-bottom: 1rem; }
+  .h03-status { min-height: 1.5em; margin-top: .8rem; color: var(--muted); font-size: .85rem; }
+  .h03-summary h2 { margin-top: .5rem; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+  .h03-summary > [data-purpose-display] { margin-top: .6rem; color: var(--muted); }
+  .h03-scope { margin-top: .6rem; font-weight: 650; }
+  .h03-breakdown { display: grid; gap: .65rem; margin: 1.4rem 0 .75rem; }
+  .h03-breakdown > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .8rem; padding-bottom: .65rem; border-bottom: 1px solid var(--line); }
+  .h03-breakdown dt { color: var(--muted); font-size: .9rem; }
+  .h03-breakdown dd { margin: 0; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+  .h03-breakdown .h03-total-row dt, .h03-breakdown .h03-total-row dd { color: var(--color-brand); font-weight: 760; }
+  .h03-estimate { margin-block: .8rem 1.1rem; color: var(--muted); font-size: .88rem; }
+  .h03-not-contract { margin-block: 1rem; padding: .85rem; border-left: 3px solid var(--color-brand); background: var(--color-surface); font-size: .86rem; }
+  .h03-version { color: var(--muted); font-size: .74rem; overflow-wrap: anywhere; }
+  .h03-summary .button { margin-top: 1rem; }
+  .h03-summary > a { display: inline-block; margin-top: 1rem; color: var(--color-brand); text-underline-offset: .2em; }
+  .h03-preview :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+  @media (max-width: 700px) { .h03-preview-grid { grid-template-columns: minmax(0, 1fr); } }
+</style>

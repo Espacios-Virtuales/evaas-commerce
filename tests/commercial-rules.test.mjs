@@ -13,6 +13,7 @@ import {
   isV3RuntimeEnabled
 } from '../src/lib/commercial-request-v3.ts';
 import { products, PUBLIC_PRICE_PERIOD } from '../src/data/products.ts';
+import { isLocalInternalPreviewAllowed } from '../src/lib/internal-preview-access.ts';
 
 const readSource = (path) => readFileSync(new URL(path, import.meta.url), 'utf8');
 
@@ -201,9 +202,63 @@ test('V3 runtime gate is closed unless explicitly enabled', () => {
   assert.equal(isV3RuntimeEnabled('true'), true);
 });
 
+test('H03 preview access is restricted to a local development server', () => {
+  assert.equal(isLocalInternalPreviewAllowed(true, '127.0.0.1'), true);
+  assert.equal(isLocalInternalPreviewAllowed(true, '::1'), true);
+  assert.equal(isLocalInternalPreviewAllowed(true, '::ffff:127.0.0.1'), true);
+  assert.equal(isLocalInternalPreviewAllowed(false, '127.0.0.1'), false);
+  assert.equal(isLocalInternalPreviewAllowed(true, '192.168.1.10'), false);
+  const route = readSource('../src/pages/internal/h03-preview.astro');
+  const api = readSource('../src/pages/api/commercial-pricing.ts');
+  const previewComponent = readSource('../src/components/H03CommercialPreview.astro');
+  const layout = readSource('../src/layouts/BaseLayout.astro');
+  assert.match(route, /!import\.meta\.env\.DEV \|\| import\.meta\.env\.EVCOM_H03_PRICING_API_ENABLED !== 'true'/);
+  assert.match(route, /isLocalInternalPreviewAllowed\(true, Astro\.clientAddress\)/);
+  assert.match(route, /status: 404/);
+  assert.match(api, /if \(!import\.meta\.env\.DEV\) return notAvailable\(\)/);
+  assert.match(api, /isLocalInternalPreviewAllowed\(true, context\.clientAddress\)/);
+  assert.match(api, /INVALID_SELECTION_FIELD/);
+  assert.match(api, /resolveH03Pricing/);
+  assert.match(previewComponent, /<script is:inline>/);
+  assert.match(layout, /showWhatsAppConversion = pagePath !== '\/internal\/h03-preview'/);
+});
+
 if (process.env.EVCOM_TEST_BASE_URL) {
   const api = `${process.env.EVCOM_TEST_BASE_URL}/api/commercial-pricing`;
-  test('enabled HTTP API recalculates client tampering and returns component breakdown', async () => {
+  test('public routes remain v0.6 and omit H03 continuity amounts', async () => {
+    const routes = [
+      '/', '/productos/landing', '/productos/catalogo', '/productos/corporativa',
+      '/demos/landing', '/demos/catalogo', '/demos/corporativa',
+      '/activar/landing', '/activar/catalogo', '/activar/corporativa', '/terminos'
+    ];
+    for (const route of routes) {
+      const response = await fetch(`${process.env.EVCOM_TEST_BASE_URL}${route}`);
+      const html = await response.text();
+      assert.equal(response.status, 200, route);
+      assert.doesNotMatch(html, /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920|Continuidad mensual opcional|anual prepagad[ao]/i, route);
+      assert.doesNotMatch(html, /Activación única · modelo H03/, route);
+      if (route === '/terminos') {
+        assert.match(html, /Versión 0\.6/);
+        assert.match(html, /contratación anual/i);
+        assert.match(html, /\$120\.000[\s\S]*\$160\.000[\s\S]*\$180\.000/);
+      }
+    }
+  });
+
+  test('local H03 preview page renders without embedding internal amounts in its HTML', async () => {
+    const response = await fetch(`${process.env.EVCOM_TEST_BASE_URL}/internal/h03-preview`);
+    const html = await response.text();
+    assert.equal(response.status, 200);
+    assert.match(html, /Previsualización interna · modelo H03 no disponible para contratación pública/);
+    assert.match(html, /name="continuityMode" value="none"/);
+    assert.match(html, /name="continuityMode" value="monthly"/);
+    assert.match(html, /name="continuityMode" value="annual_prepay"/);
+    assert.match(html, /Solicitud H03 pendiente de habilitación/);
+    assert.doesNotMatch(html, /data-whatsapp-conversion/);
+    assert.doesNotMatch(html, /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920/);
+  });
+
+  test('enabled HTTP API rejects client supplied monetary amounts', async () => {
     const response = await fetch(api, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -213,11 +268,65 @@ if (process.env.EVCOM_TEST_BASE_URL) {
       })
     });
     const body = await response.json();
-    assert.equal(response.status, 200);
-    assert.equal(body.pricing.activation.amount, 120_000);
-    assert.equal(body.pricing.continuity.amount, 214_920);
-    assert.equal(body.pricing.discountAmount, undefined);
-    assert.equal(body.pricing.offerStatus, 'DRAFT_NOT_FOR_PUBLICATION');
+    assert.equal(response.status, 400);
+    assert.equal(body.code, 'INVALID_SELECTION_FIELD');
+    assert.equal(Object.hasOwn(body, 'pricing'), false);
+  });
+
+  test('local preview endpoint serves all nine canonical product and continuity combinations', async () => {
+    const expected = [
+      ['landing', 'none', 120_000, null, 120_000, 0],
+      ['landing', 'monthly', 120_000, 19_900, 358_800, 0],
+      ['landing', 'annual_prepay', 120_000, 214_920, 334_920, 23_880],
+      ['catalogo', 'none', 160_000, null, 160_000, 0],
+      ['catalogo', 'monthly', 160_000, 24_900, 458_800, 0],
+      ['catalogo', 'annual_prepay', 160_000, 268_920, 428_920, 29_880],
+      ['corporativa', 'none', 180_000, null, 180_000, 0],
+      ['corporativa', 'monthly', 180_000, 29_900, 538_800, 0],
+      ['corporativa', 'annual_prepay', 180_000, 322_920, 502_920, 35_880]
+    ];
+
+    for (const [productSlug, continuityMode, activation, continuity, total, savings] of expected) {
+      const response = await fetch(api, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ productSlug, continuityMode })
+      });
+      const body = await response.json();
+      assert.equal(response.status, 200, `${productSlug}/${continuityMode}`);
+      assert.equal(body.pricing.productSlug, productSlug);
+      assert.equal(body.pricing.activation.amount, activation);
+      assert.equal(body.pricing.continuity?.amount ?? null, continuity);
+      assert.equal(body.comparison.estimatedTwelveMonthTotal, total);
+      assert.equal(body.comparison.annualSavings, savings);
+      assert.equal(Object.hasOwn(body, 'requestId'), false);
+      assert.equal(Object.hasOwn(body, 'orderId'), false);
+      assert.equal(Object.hasOwn(body, 'paymentId'), false);
+      assert.equal(Object.hasOwn(body, 'acceptedTermsAt'), false);
+    }
+  });
+
+  test('preview endpoint rejects invalid selection and client supplied amounts', async () => {
+    const invalidInputs = [
+      [{ productSlug: 'otro', continuityMode: 'none' }, 'INVALID_PRODUCT'],
+      [{ productSlug: 'landing', continuityMode: 'lifetime' }, 'INVALID_CONTINUITY_MODE'],
+      [{ productSlug: 'landing', continuityMode: 'monthly', activationAmount: 1 }, 'INVALID_SELECTION_FIELD'],
+      [{ productSlug: 'landing', continuityMode: 'annual_prepay', total: 1 }, 'INVALID_SELECTION_FIELD'],
+      [{ productSlug: 'landing', continuityMode: 'none', acceptedTermsAt: new Date().toISOString() }, 'INVALID_SELECTION_FIELD'],
+      [{ productSlug: 'landing', continuityMode: 'none', campaignCode: 'CIBERDAY' }, 'EXPIRED_CAMPAIGN']
+    ];
+
+    for (const [input, code] of invalidInputs) {
+      const response = await fetch(api, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(input)
+      });
+      const body = await response.json();
+      assert.equal(response.status, 400);
+      assert.equal(body.code, code);
+      assert.equal(Object.hasOwn(body, 'pricing'), false);
+    }
   });
 }
 

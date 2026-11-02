@@ -14,7 +14,8 @@ const server = spawn('./node_modules/.bin/astro', ['dev', '--host', '127.0.0.1',
   env: {
     ...process.env,
     EVCOM_H03_V3_RUNTIME_ENABLED: 'true',
-    EVCOM_H03_V3_RUNTIME_TOKEN: token
+    EVCOM_H03_V3_RUNTIME_TOKEN: token,
+    EVCOM_H03_PRICING_API_ENABLED: 'true'
   },
   stdio: ['ignore', 'pipe', 'pipe']
 });
@@ -43,6 +44,7 @@ try {
   ], {
     env: {
       ...process.env,
+      EVCOM_TEST_BASE_URL: baseUrl,
       EVCOM_TEST_V3_BASE_URL: baseUrl,
       EVCOM_TEST_V3_TOKEN: token
     },
@@ -57,4 +59,4 @@ try {
   }
 }
 
-process.stdout.write('V3 runtime smoke: PASS (authenticated endpoint and V2 regression).\n');
+process.stdout.write('V3 and local H03 preview runtime smoke: PASS (authenticated V3, canonical pricing, dev-only preview, and V2 regression).\n');
