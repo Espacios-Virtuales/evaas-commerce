@@ -9,7 +9,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "test:commercial": "node --experimental-strip-types tests/commercial-rules.test.mjs",
-    "test:commercial:v3-runtime": "node tests/v3-runtime-smoke.mjs"
+    "test:commercial:v3-runtime": "node tests/v3-runtime-smoke.mjs",
+    "test:commercial:v3-artifact": "node tests/c10-production-artifact-smoke.mjs",
+    "test:commercial:v3-browser": "node tests/c10-preview-browser-smoke.mjs"
   },
   "dependencies": {
     "@astrojs/vercel": "11.0.11",

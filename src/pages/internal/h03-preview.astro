@@ -11,6 +11,7 @@ if (!import.meta.env.DEV || import.meta.env.EVCOM_H03_PRICING_API_ENABLED !== 't
 if (!isLocalInternalPreviewAllowed(true, Astro.clientAddress)) {
   return new Response(null, { status: 404, headers: { 'Cache-Control': 'no-store' } });
 }
+const requestFlowEnabled = import.meta.env.EVCOM_H03_PREVIEW_REQUEST_ENABLED === 'true';
 ---
 
 <BaseLayout
@@ -19,5 +20,5 @@ if (!isLocalInternalPreviewAllowed(true, Astro.clientAddress)) {
   noindex={true}
   pageClass="h03-preview-page"
 >
-  <H03CommercialPreview />
+  <H03CommercialPreview requestFlowEnabled={requestFlowEnabled} />
 </BaseLayout>

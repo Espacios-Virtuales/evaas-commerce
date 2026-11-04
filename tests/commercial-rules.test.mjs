@@ -210,6 +210,7 @@ test('H03 preview access is restricted to a local development server', () => {
   assert.equal(isLocalInternalPreviewAllowed(true, '192.168.1.10'), false);
   const route = readSource('../src/pages/internal/h03-preview.astro');
   const api = readSource('../src/pages/api/commercial-pricing.ts');
+  const requestApi = readSource('../src/pages/api/internal/h03-preview-request.ts');
   const previewComponent = readSource('../src/components/H03CommercialPreview.astro');
   const layout = readSource('../src/layouts/BaseLayout.astro');
   assert.match(route, /!import\.meta\.env\.DEV \|\| import\.meta\.env\.EVCOM_H03_PRICING_API_ENABLED !== 'true'/);
@@ -219,12 +220,29 @@ test('H03 preview access is restricted to a local development server', () => {
   assert.match(api, /isLocalInternalPreviewAllowed\(true, context\.clientAddress\)/);
   assert.match(api, /INVALID_SELECTION_FIELD/);
   assert.match(api, /resolveH03Pricing/);
+  assert.match(requestApi, /EVCOM_H03_PREVIEW_REQUEST_ENABLED !== 'true'/);
+  assert.match(requestApi, /isLocalInternalPreviewAllowed\(true, context\.clientAddress\)/);
+  assert.match(requestApi, /isSameOrigin\(request\)/);
+  assert.match(requestApi, /sanitizeCommercialRequestV3/);
+  assert.match(requestApi, /REQUEST_EXPIRED/);
+  assert.match(requestApi, /buildWhatsAppUrl/);
+  assert.match(requestApi, /buildCommercialPricingComparison/);
   assert.match(previewComponent, /<script is:inline>/);
+  assert.match(previewComponent, /Previsualización interna · solicitud H03 en borrador/);
+  assert.match(previewComponent, /target="_blank" rel="noopener noreferrer" data-whatsapp-link/);
+  assert.match(previewComponent, /aria-live="polite"/);
+  assert.match(previewComponent, /data-create-request/);
+  assert.doesNotMatch(previewComponent, /localStorage|sessionStorage/);
   assert.match(layout, /showWhatsAppConversion = pagePath !== '\/internal\/h03-preview'/);
 });
 
 if (process.env.EVCOM_TEST_BASE_URL) {
   const api = `${process.env.EVCOM_TEST_BASE_URL}/api/commercial-pricing`;
+  const requestApi = `${process.env.EVCOM_TEST_BASE_URL}/api/internal/h03-preview-request`;
+  const requestHeaders = {
+    'content-type': 'application/json',
+    origin: process.env.EVCOM_TEST_BASE_URL
+  };
   test('public routes remain v0.6 and omit H03 continuity amounts', async () => {
     const routes = [
       '/', '/productos/landing', '/productos/catalogo', '/productos/corporativa',
@@ -253,7 +271,8 @@ if (process.env.EVCOM_TEST_BASE_URL) {
     assert.match(html, /name="continuityMode" value="none"/);
     assert.match(html, /name="continuityMode" value="monthly"/);
     assert.match(html, /name="continuityMode" value="annual_prepay"/);
-    assert.match(html, /Solicitud H03 pendiente de habilitación/);
+    assert.match(html, /Datos mínimos para el borrador de prueba/);
+    assert.match(html, /solicitud H03 en borrador/i);
     assert.doesNotMatch(html, /data-whatsapp-conversion/);
     assert.doesNotMatch(html, /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920/);
   });
@@ -327,6 +346,127 @@ if (process.env.EVCOM_TEST_BASE_URL) {
       assert.equal(body.code, code);
       assert.equal(Object.hasOwn(body, 'pricing'), false);
     }
+  });
+
+  test('V3 assisted request creates all nine canonical product and mode combinations', async () => {
+    const expected = [
+      ['landing', 'none', 120_000, null, 120_000, 0],
+      ['landing', 'monthly', 120_000, 19_900, 358_800, 0],
+      ['landing', 'annual_prepay', 120_000, 214_920, 334_920, 23_880],
+      ['catalogo', 'none', 160_000, null, 160_000, 0],
+      ['catalogo', 'monthly', 160_000, 24_900, 458_800, 0],
+      ['catalogo', 'annual_prepay', 160_000, 268_920, 428_920, 29_880],
+      ['corporativa', 'none', 180_000, null, 180_000, 0],
+      ['corporativa', 'monthly', 180_000, 29_900, 538_800, 0],
+      ['corporativa', 'annual_prepay', 180_000, 322_920, 502_920, 35_880]
+    ];
+    for (const [productSlug, continuityMode, activation, continuity, total, savings] of expected) {
+      const response = await fetch(requestApi, {
+        method: 'POST', headers: requestHeaders,
+        body: JSON.stringify({
+          action: 'create', productSlug, continuityMode,
+          projectName: 'Proyecto de prueba', domainStatus: 'unsure', projectObjective: 'Revisar alcance'
+        })
+      });
+      const body = await response.json();
+      assert.equal(response.status, 200, `${productSlug}/${continuityMode}`);
+      assert.equal(body.request.productSlug, productSlug);
+      assert.equal(body.request.continuityMode, continuityMode);
+      assert.equal(body.request.pricing.activation.amount, activation);
+      assert.equal(body.request.pricing.continuity?.amount ?? null, continuity);
+      assert.equal(body.comparison.estimatedTwelveMonthTotal, total);
+      assert.equal(body.comparison.annualSavings, savings);
+      assert.equal(body.whatsappPreparedNotSent, true);
+      assert.equal(body.request.termsEffectiveDate, null);
+      assert.equal(Object.hasOwn(body.request, 'orderId'), false);
+      assert.equal(Object.hasOwn(body.request, 'paymentId'), false);
+      assert.equal(Object.hasOwn(body.request, 'acceptedTermsAt'), false);
+    }
+  });
+
+  test('V3 validation rechecks TTL and canonical values before returning an explicit WhatsApp link', async () => {
+    const createResponse = await fetch(requestApi, {
+      method: 'POST', headers: requestHeaders,
+      body: JSON.stringify({
+        action: 'create', productSlug: 'catalogo', continuityMode: 'annual_prepay',
+        projectName: 'Proyecto de prueba', domainStatus: 'owned'
+      })
+    });
+    const created = await createResponse.json();
+    assert.equal(createResponse.status, 200);
+    const response = await fetch(requestApi, {
+      method: 'POST', headers: requestHeaders,
+      body: JSON.stringify({ action: 'validate', request: created.request })
+    });
+    const body = await response.json();
+    assert.equal(response.status, 200);
+    assert.equal(body.request.pricing.activation.amount, 160_000);
+    assert.equal(body.request.pricing.continuity.amount, 268_920);
+    assert.equal(body.whatsappAvailable, true);
+    assert.match(body.whatsappUrl, /^https:\/\/wa\.me\/56912345678\?/);
+    assert.match(body.whatsappDraft, /no constituye orden, pago ni aceptación contractual/);
+    assert.equal(body.whatsappPreparedNotSent, true);
+    assert.equal(Object.hasOwn(body, 'orderId'), false);
+    assert.equal(Object.hasOwn(body, 'paymentId'), false);
+
+    const tampered = { ...created.request, pricing: { ...created.request.pricing, activation: { amount: 1, cadence: 'one_time' } } };
+    const tamperedResponse = await fetch(requestApi, {
+      method: 'POST', headers: requestHeaders,
+      body: JSON.stringify({ action: 'validate', request: tampered })
+    });
+    assert.equal(tamperedResponse.status, 400);
+    assert.equal((await tamperedResponse.json()).code, 'INVALID_OR_TAMPERED_REQUEST');
+
+    const expiredResponse = await fetch(requestApi, {
+      method: 'POST', headers: requestHeaders,
+      body: JSON.stringify({ action: 'validate', request: { ...created.request, createdAt: '2020-01-01T00:00:00.000Z' } })
+    });
+    assert.equal(expiredResponse.status, 410);
+    assert.equal((await expiredResponse.json()).code, 'REQUEST_EXPIRED');
+
+    const badReferenceResponse = await fetch(requestApi, {
+      method: 'POST', headers: requestHeaders,
+      body: JSON.stringify({ action: 'validate', request: { ...created.request, requestId: 'not-a-reference' } })
+    });
+    assert.equal(badReferenceResponse.status, 400);
+    assert.equal((await badReferenceResponse.json()).code, 'INVALID_OR_TAMPERED_REQUEST');
+
+    const badTimestampResponse = await fetch(requestApi, {
+      method: 'POST', headers: requestHeaders,
+      body: JSON.stringify({ action: 'validate', request: { ...created.request, createdAt: 'not-a-date' } })
+    });
+    assert.equal(badTimestampResponse.status, 400);
+    assert.equal((await badTimestampResponse.json()).code, 'INVALID_REQUEST_TIME');
+
+    const badVersionResponse = await fetch(requestApi, {
+      method: 'POST', headers: requestHeaders,
+      body: JSON.stringify({ action: 'validate', request: { ...created.request, version: 2 } })
+    });
+    assert.equal(badVersionResponse.status, 400);
+    assert.equal((await badVersionResponse.json()).code, 'INVALID_OR_TAMPERED_REQUEST');
+  });
+
+  test('V3 request endpoint rejects invalid origin, field types, modes, and browser-supplied money', async () => {
+    const cases = [
+      [{ action: 'create', productSlug: 'unknown', continuityMode: 'none', projectName: 'X', domainStatus: 'unsure' }, 'INVALID_PRODUCT'],
+      [{ action: 'create', productSlug: 'landing', continuityMode: 'lifetime', projectName: 'X', domainStatus: 'unsure' }, 'INVALID_CONTINUITY_MODE'],
+      [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 1, domainStatus: 'unsure' }, 'INVALID_PROJECT'],
+      [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 'X', domainStatus: 'unsure', projectObjective: 1 }, 'INVALID_OBJECTIVE'],
+      [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 'X', domainStatus: 'unknown' }, 'INVALID_DOMAIN_STATUS'],
+      [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 'X', domainStatus: 'unsure', total: 1 }, 'INVALID_REQUEST_FIELD'],
+      [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 'X', domainStatus: 'unsure', acceptedTermsAt: new Date().toISOString() }, 'INVALID_REQUEST_FIELD']
+    ];
+    for (const [input, code] of cases) {
+      const response = await fetch(requestApi, { method: 'POST', headers: requestHeaders, body: JSON.stringify(input) });
+      assert.equal(response.status, 400);
+      assert.equal((await response.json()).code, code);
+    }
+    const originResponse = await fetch(requestApi, {
+      method: 'POST', headers: { 'content-type': 'application/json', origin: 'https://untrusted.example' },
+      body: JSON.stringify({ action: 'create' })
+    });
+    assert.equal(originResponse.status, 403);
+    assert.equal((await originResponse.json()).code, 'INVALID_ORIGIN');
   });
 }
 

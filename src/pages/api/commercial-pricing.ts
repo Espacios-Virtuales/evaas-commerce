@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { CommercialRuleError, resolveH03Pricing } from '../../data/commercial-rules';
 import { normalizeCampaignCode, resolveCampaign } from '../../data/campaigns';
 import { isLocalInternalPreviewAllowed } from '../../lib/internal-preview-access';
+import { buildCommercialPricingComparison } from '../../lib/commercial-pricing-presentation';
 
 export const prerender = false;
 
@@ -49,20 +50,10 @@ export const POST: APIRoute = async (context) => {
       campaignCode,
       campaignStatus
     });
-    const continuityListAmount = pricing.continuity?.cadence === 'monthly'
-      ? pricing.continuity.amount * 12
-      : pricing.continuity?.listAmount ?? 0;
-    const continuityForTwelveMonths = pricing.continuity?.cadence === 'monthly'
-      ? continuityListAmount
-      : pricing.continuity?.amount ?? 0;
     return Response.json({
       ok: true,
       pricing,
-      comparison: {
-        continuityListAmount,
-        annualSavings: pricing.continuity?.discountAmount ?? 0,
-        estimatedTwelveMonthTotal: pricing.activation.amount + continuityForTwelveMonths
-      }
+      comparison: buildCommercialPricingComparison(pricing)
     }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     if (error instanceof CommercialRuleError) {

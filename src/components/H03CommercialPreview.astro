@@ -1,5 +1,11 @@
 ---
 import { products } from '../data/products';
+
+interface Props {
+  requestFlowEnabled?: boolean;
+}
+
+const { requestFlowEnabled = false } = Astro.props;
 ---
 
 <section class="h03-preview" aria-labelledby="h03-preview-title" data-h03-preview>
@@ -24,6 +30,26 @@ import { products } from '../data/products';
         <label><input type="radio" name="continuityMode" value="annual_prepay" /> <span><strong>Anual prepagada</strong><small>10% menos sobre doce mensualidades de continuidad.</small></span></label>
       </fieldset>
 
+      {requestFlowEnabled && <fieldset class="h03-request-fields">
+        <legend>Datos mínimos para el borrador de prueba</legend>
+        <label for="h03-project-name">Nombre del proyecto</label>
+        <input id="h03-project-name" name="projectName" type="text" maxlength="100" autocomplete="off" required data-project-name />
+        <span class="h03-field-hint">No ingreses datos de contacto, claves ni información de pago.</span>
+        <label for="h03-domain-status">Estado del dominio</label>
+        <select id="h03-domain-status" name="domainStatus" data-domain-status>
+          <option value="unsure">Necesito orientación</option>
+          <option value="owned">Ya tengo dominio</option>
+          <option value="needed">Necesito comprar dominio</option>
+        </select>
+        <label for="h03-project-objective">Objetivo, si quieres agregar contexto</label>
+        <textarea id="h03-project-objective" name="projectObjective" maxlength="600" rows="3" data-project-objective></textarea>
+        <span class="h03-field-hint">Se usa solo para mostrar y preparar este borrador en memoria; no se guarda en una orden ni cuenta.</span>
+        <button class="button button-dark" type="button" data-create-request>Preparar solicitud de prueba</button>
+        <p class="h03-request-note">Esta acción no acepta términos, no contrata y no envía el mensaje. Revisa también el <a href="/privacidad">aviso de privacidad vigente</a>.</p>
+        <p class="h03-request-status" role="status" aria-live="polite" data-request-status></p>
+      </fieldset>}
+      {!requestFlowEnabled && <p class="h03-pending-copy">El recorrido de solicitud H03 permanece deshabilitado en esta ejecución.</p>}
+
       <p class="h03-third-party">Dominio, alojamiento, SSL, respaldos, soporte y otros servicios de terceros no se agregan a este cálculo. Su alcance y costo requieren evidencia y cotización.</p>
       <button class="button button-dark" type="submit" data-submit>Consultar desglose interno</button>
       <p class="h03-status" role="status" aria-live="polite" data-status>Consultando las reglas internas…</p>
@@ -43,11 +69,39 @@ import { products } from '../data/products';
       <p class="h03-estimate" data-estimate hidden></p>
       <p class="h03-not-contract">La selección no genera compra, pago, reserva, membresía, cotización durable ni aceptación de términos. No se asignan fechas de cobro o inicio de servicio.</p>
       <p class="h03-version" data-version hidden></p>
-      <button type="button" class="button button-disabled" disabled aria-describedby="h03-pending-copy">Solicitud H03 pendiente de habilitación</button>
-      <p id="h03-pending-copy" class="h03-pending-copy">La solicitud asistida pública sigue disponible bajo los términos v0.6. Esta vista no la prepara ni la envía.</p>
+      <p id="h03-pending-copy" class="h03-pending-copy">La solicitud asistida pública sigue disponible bajo los términos v0.6. Esta vista interna no la modifica ni la envía.</p>
       <a href="/#precios">Ver la oferta pública vigente</a>
     </section>
   </div>
+
+  {requestFlowEnabled && <section class="h03-request-review" aria-labelledby="h03-request-title" data-request-panel hidden>
+    <span class="eyebrow">Previsualización interna · solicitud H03 en borrador</span>
+    <h2 id="h03-request-title">Revisa el borrador antes de preparar WhatsApp</h2>
+    <p>Esta solicitud temporal no es compra, pago, reserva, activación aceptada ni aceptación contractual. No se ha enviado ningún mensaje.</p>
+    <dl class="h03-review-grid">
+      <div><dt>Producto</dt><dd data-request-product></dd></div>
+      <div><dt>Propósito</dt><dd data-request-purpose></dd></div>
+      <div><dt>Alcance base</dt><dd data-request-scope></dd></div>
+      <div><dt>Modalidad</dt><dd data-request-mode></dd></div>
+      <div><dt>Activación · borrador interno</dt><dd data-request-activation></dd></div>
+      <div><dt>Continuidad seleccionada</dt><dd data-request-continuity></dd></div>
+      <div data-request-savings-row hidden><dt>Ahorro anual (10% solo sobre continuidad)</dt><dd data-request-savings></dd></div>
+      <div><dt>Comparación estimada a 12 meses</dt><dd data-request-total></dd></div>
+    </dl>
+    <p class="h03-estimate" data-request-continuity-note></p>
+    <p class="h03-third-party">Dominio, alojamiento, SSL, respaldos, soporte y otros servicios externos no están incluidos por defecto ni tienen precio asignado en este borrador; requieren alcance, evidencia y cotización.</p>
+    <p class="h03-expiry" data-request-expiry></p>
+    <label for="h03-whatsapp-draft">Mensaje para revisión</label>
+    <textarea id="h03-whatsapp-draft" rows="12" readonly data-whatsapp-draft></textarea>
+    <div class="h03-review-actions">
+      <button class="button button-dark" type="button" data-validate-request>Validar vigencia y habilitar enlace</button>
+      <button class="button button-outline" type="button" data-copy-message>Copiar texto</button>
+      <a class="button button-dark" href="#" target="_blank" rel="noopener noreferrer" data-whatsapp-link hidden>Abrir WhatsApp y revisar mensaje</a>
+      <button class="button button-outline" type="button" data-new-request>Preparar un borrador nuevo</button>
+    </div>
+    <p class="h03-request-status" role="status" aria-live="polite" data-review-status></p>
+    <p class="h03-pending-copy">Abrir WhatsApp no envía el mensaje. Tú decides si lo compartes al pulsar Enviar en WhatsApp. Si el navegador bloquea la pestaña o WhatsApp no está configurado, el texto permanece disponible para copiar.</p>
+  </section>}
 </section>
 
 <script is:inline>
@@ -73,7 +127,67 @@ import { products } from '../data/products';
     const total = root.querySelector('[data-total]');
     const estimate = root.querySelector('[data-estimate]');
     const version = root.querySelector('[data-version]');
+    const createRequestButton = root.querySelector('[data-create-request]');
+    const requestPanel = root.querySelector('[data-request-panel]');
+    const requestStatus = root.querySelector('[data-request-status]');
+    const reviewStatus = root.querySelector('[data-review-status]');
+    const validateRequestButton = root.querySelector('[data-validate-request]');
+    const copyMessageButton = root.querySelector('[data-copy-message]');
+    const whatsappLink = root.querySelector('[data-whatsapp-link]');
+    const messageField = root.querySelector('[data-whatsapp-draft]');
+    const newRequestButton = root.querySelector('[data-new-request]');
+    let currentRequest = null;
+    let ttlExpiresAt = 0;
+    let whatsappDraft = '';
+    let ttlTimer = null;
     let sequence = 0;
+
+    const formatMode = (mode) => ({
+      none: 'Sin continuidad',
+      monthly: 'Continuidad mensual',
+      annual_prepay: 'Continuidad anual prepagada'
+    }[mode] || 'Modalidad no disponible');
+    const clearWhatsAppLink = () => {
+      whatsappLink.hidden = true;
+      whatsappLink.removeAttribute('href');
+    };
+    const clearRequestDraft = () => {
+      currentRequest = null;
+      ttlExpiresAt = 0;
+      whatsappDraft = '';
+      clearWhatsAppLink();
+      if (ttlTimer) window.clearInterval(ttlTimer);
+      ttlTimer = null;
+      if (requestPanel) requestPanel.hidden = true;
+      if (reviewStatus) reviewStatus.textContent = '';
+    };
+    const updateExpiry = () => {
+      if (!currentRequest || !ttlExpiresAt) return;
+      const remaining = ttlExpiresAt - Date.now();
+      if (remaining <= 0) {
+        currentRequest = null;
+        whatsappDraft = '';
+        messageField.value = '';
+        copyMessageButton.disabled = true;
+        clearWhatsAppLink();
+        validateRequestButton.disabled = true;
+        if (ttlTimer) window.clearInterval(ttlTimer);
+        ttlTimer = null;
+        root.querySelector('[data-request-expiry]').textContent = 'El borrador venció. Prepara uno nuevo antes de continuar.';
+        reviewStatus.textContent = 'Borrador vencido; no se puede reutilizar.';
+        return;
+      }
+      const minutes = Math.floor(remaining / 60_000);
+      const seconds = Math.floor((remaining % 60_000) / 1_000);
+      root.querySelector('[data-request-expiry]').textContent = `Vigencia temporal: ${minutes} min ${String(seconds).padStart(2, '0')} s. El servidor volverá a validar antes de habilitar WhatsApp.`;
+    };
+
+    const invalidateRequestOnEdit = () => {
+      if (requestPanel && !requestPanel.hidden) {
+        clearRequestDraft();
+        if (requestStatus) requestStatus.textContent = 'Cambió la selección o el contexto. Prepara una solicitud nueva para revisar los cambios.';
+      }
+    };
 
     const loadBreakdown = async () => {
       const requestSequence = ++sequence;
@@ -143,9 +257,162 @@ import { products } from '../data/products';
       event.preventDefault();
       void loadBreakdown();
     });
-    productSelect.addEventListener('change', () => void loadBreakdown());
+    productSelect.addEventListener('change', () => { invalidateRequestOnEdit(); void loadBreakdown(); });
     form.querySelectorAll('input[name="continuityMode"]').forEach((input) => {
-      input.addEventListener('change', () => void loadBreakdown());
+      input.addEventListener('change', () => { invalidateRequestOnEdit(); void loadBreakdown(); });
+    });
+    form.querySelectorAll('[data-project-name], [data-domain-status], [data-project-objective]').forEach((input) => {
+      input.addEventListener('input', invalidateRequestOnEdit);
+      input.addEventListener('change', invalidateRequestOnEdit);
+    });
+
+    createRequestButton?.addEventListener('click', async () => {
+      const selectedMode = new FormData(form).get('continuityMode');
+      const projectName = form.querySelector('[data-project-name]')?.value;
+      const domainStatus = form.querySelector('[data-domain-status]')?.value;
+      const projectObjective = form.querySelector('[data-project-objective]')?.value;
+      if (!projectName || !domainStatus) {
+        form.reportValidity();
+        return;
+      }
+      clearRequestDraft();
+      createRequestButton.disabled = true;
+      requestStatus.textContent = 'Preparando un borrador temporal con el cálculo canónico…';
+      try {
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 10_000);
+        const response = await fetch('/api/internal/h03-preview-request', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          cache: 'no-store',
+          signal: controller.signal,
+          body: JSON.stringify({
+            action: 'create',
+            productSlug: productSelect.value,
+            continuityMode: selectedMode,
+            projectName,
+            domainStatus,
+            projectObjective
+          })
+        });
+        window.clearTimeout(timeout);
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.code || 'REQUEST_UNAVAILABLE');
+
+        currentRequest = result.request;
+        ttlExpiresAt = Date.parse(result.ttlExpiresAt);
+        whatsappDraft = result.whatsappDraft;
+        requestPanel.hidden = false;
+        root.querySelector('[data-request-product]').textContent = result.product.name;
+        root.querySelector('[data-request-purpose]').textContent = result.product.purpose;
+        root.querySelector('[data-request-scope]').textContent = result.product.scope;
+        root.querySelector('[data-request-mode]').textContent = formatMode(result.request.continuityMode);
+        root.querySelector('[data-request-activation]').textContent = formatCLP(result.request.pricing.activation.amount);
+        root.querySelector('[data-request-continuity]').textContent = result.request.pricing.continuity
+          ? `${formatCLP(result.request.pricing.continuity.amount)} ${result.request.pricing.continuity.cadence === 'monthly' ? 'por mes' : 'prepago de continuidad'}`
+          : 'No seleccionada';
+        const continuityNote = root.querySelector('[data-request-continuity-note]');
+        continuityNote.textContent = result.request.continuityMode === 'monthly'
+          ? 'La cifra de continuidad es mensual. No indica un cobro inicial ni obliga a mantener doce meses; la comparación a doce meses es solo una estimación.'
+          : result.request.continuityMode === 'annual_prepay'
+            ? 'El monto anual corresponde al prepago de continuidad y se muestra separado de la activación. Este borrador no registra cobro ni fecha de inicio.'
+            : 'No se eligió continuidad; la proyección muestra solo la activación del modelo interno.';
+        root.querySelector('[data-request-savings-row]').hidden = result.request.pricing.continuity?.cadence !== 'annual_prepay';
+        root.querySelector('[data-request-savings]').textContent = formatCLP(result.comparison.annualSavings);
+        root.querySelector('[data-request-total]').textContent = formatCLP(result.comparison.estimatedTwelveMonthTotal);
+        root.querySelector('[data-request-expiry]').textContent = '';
+        messageField.value = whatsappDraft;
+        copyMessageButton.disabled = false;
+        validateRequestButton.disabled = false;
+        clearWhatsAppLink();
+        reviewStatus.textContent = 'Borrador preparado y disponible para revisión. No se ha enviado ningún mensaje.';
+        requestStatus.textContent = 'Borrador interno preparado. Revisa el resumen y el texto antes de validar el enlace.';
+        updateExpiry();
+        ttlTimer = window.setInterval(updateExpiry, 1_000);
+        requestPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (error) {
+        const code = error?.name === 'AbortError' ? 'TIMEOUT' : error?.message;
+        requestStatus.textContent = code === 'TIMEOUT'
+          ? 'La solicitud agotó el tiempo de espera. No se preparó un enlace de WhatsApp; puedes intentarlo otra vez.'
+          : 'No fue posible preparar el borrador. No se muestran precios alternativos ni se genera un enlace.';
+      } finally {
+        createRequestButton.disabled = false;
+      }
+    });
+
+    validateRequestButton?.addEventListener('click', async () => {
+      if (!currentRequest || Date.now() >= ttlExpiresAt) {
+        updateExpiry();
+        return;
+      }
+      clearWhatsAppLink();
+      validateRequestButton.disabled = true;
+      reviewStatus.textContent = 'Validando vigencia y reglas del borrador en el servidor…';
+      try {
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 10_000);
+        const response = await fetch('/api/internal/h03-preview-request', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          cache: 'no-store',
+          signal: controller.signal,
+          body: JSON.stringify({ action: 'validate', request: currentRequest })
+        });
+        window.clearTimeout(timeout);
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          if (response.status === 410 || result.code === 'REQUEST_EXPIRED') {
+            currentRequest = null;
+            whatsappDraft = '';
+            messageField.value = '';
+            copyMessageButton.disabled = true;
+            validateRequestButton.disabled = true;
+            clearWhatsAppLink();
+            root.querySelector('[data-request-expiry]').textContent = 'El borrador venció. Prepara uno nuevo antes de continuar.';
+            reviewStatus.textContent = 'Borrador vencido; no se puede reutilizar.';
+            if (ttlTimer) window.clearInterval(ttlTimer);
+            ttlTimer = null;
+            return;
+          }
+          throw new Error(result.code || 'VALIDATION_FAILED');
+        }
+        whatsappDraft = result.whatsappDraft;
+        messageField.value = whatsappDraft;
+        if (result.whatsappUrl && result.whatsappAvailable) {
+          whatsappLink.href = result.whatsappUrl;
+          whatsappLink.hidden = false;
+          reviewStatus.textContent = 'Vigencia validada. El enlace quedó disponible; se abrirá solo cuando lo pulses.';
+        } else {
+          reviewStatus.textContent = 'Vigencia validada. WhatsApp no está configurado; puedes copiar y revisar el texto, sin enlace externo.';
+        }
+        ttlExpiresAt = Date.parse(result.ttlExpiresAt);
+        updateExpiry();
+      } catch (error) {
+        const code = error?.name === 'AbortError' ? 'TIMEOUT' : error?.message;
+        reviewStatus.textContent = code === 'TIMEOUT'
+          ? 'La validación agotó el tiempo de espera. No se habilitó ningún enlace.'
+          : 'No se pudo validar el borrador. No se habilitó ningún enlace; puedes intentarlo otra vez mientras siga vigente.';
+      } finally {
+        if (currentRequest) validateRequestButton.disabled = false;
+      }
+    });
+
+    copyMessageButton?.addEventListener('click', async () => {
+      if (!whatsappDraft) return;
+      try {
+        await navigator.clipboard.writeText(whatsappDraft);
+        reviewStatus.textContent = 'Texto copiado. Aún no se ha enviado.';
+      } catch {
+        messageField.focus();
+        messageField.select();
+        reviewStatus.textContent = 'No se pudo copiar automáticamente. El texto quedó seleccionado para copiarlo manualmente.';
+      }
+    });
+
+    newRequestButton?.addEventListener('click', () => {
+      clearRequestDraft();
+      requestStatus.textContent = 'Puedes preparar un borrador actualizado.';
+      form.querySelector('[data-project-name]')?.focus();
     });
     void loadBreakdown();
   })();
@@ -162,6 +429,23 @@ import { products } from '../data/products';
   .h03-preview-controls, .h03-summary { min-width: 0; padding: clamp(1.1rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 1.1rem; background: var(--ink-soft); }
   .h03-field, .h03-modes legend { display: block; margin-bottom: .6rem; font-weight: 720; }
   .h03-preview select { width: 100%; min-height: 3rem; padding: .65rem .8rem; border: 1px solid var(--line); border-radius: .55rem; color: var(--color-text); background: var(--color-surface); }
+  .h03-preview input:not([type="radio"]), .h03-preview textarea { width: 100%; min-width: 0; padding: .7rem .8rem; border: 1px solid var(--line); border-radius: .55rem; color: var(--color-text); background: var(--color-surface); font: inherit; }
+  .h03-request-fields { display: grid; gap: .65rem; min-width: 0; margin: 1.4rem 0; padding: 0; border: 0; }
+  .h03-request-fields legend { margin-bottom: .25rem; font-weight: 720; }
+  .h03-request-fields > label, .h03-request-review > label { margin-top: .35rem; font-weight: 650; }
+  .h03-field-hint { color: var(--muted); font-size: .8rem; }
+  .h03-request-note, .h03-request-status, .h03-expiry { color: var(--muted); font-size: .86rem; }
+  .h03-request-review { min-width: 0; margin-top: 1.25rem; padding: clamp(1.1rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 1.1rem; background: var(--ink-soft); scroll-margin-top: 7rem; }
+  .h03-request-review h2 { margin-top: .55rem; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+  .h03-review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; margin-block: 1.25rem; }
+  .h03-review-grid > div { min-width: 0; padding: .8rem; border: 1px solid var(--line); border-radius: .65rem; }
+  .h03-review-grid dt { color: var(--muted); font-size: .82rem; }
+  .h03-review-grid dd { margin: .3rem 0 0; font-weight: 680; overflow-wrap: anywhere; }
+  .h03-request-review textarea { display: block; margin-top: .4rem; min-height: 12rem; resize: vertical; }
+  .h03-review-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: .8rem; }
+  .h03-review-actions > * { min-height: 2.9rem; }
+  .h03-review-actions .button-outline { border: 1px solid var(--line); color: var(--color-text); background: var(--color-surface); }
+  .h03-preview :disabled { cursor: not-allowed; opacity: .68; }
   .h03-modes { display: grid; gap: .65rem; min-width: 0; margin: 1.5rem 0; padding: 0; border: 0; }
   .h03-modes legend { padding: 0; }
   .h03-modes label { display: grid; grid-template-columns: 1.2rem minmax(0, 1fr); align-items: start; gap: .65rem; padding: .85rem; border: 1px solid var(--line); border-radius: .7rem; cursor: pointer; }
@@ -184,5 +468,11 @@ import { products } from '../data/products';
   .h03-summary .button { margin-top: 1rem; }
   .h03-summary > a { display: inline-block; margin-top: 1rem; color: var(--color-brand); text-underline-offset: .2em; }
   .h03-preview :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
-  @media (max-width: 700px) { .h03-preview-grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 700px) {
+    .h03-preview-grid { grid-template-columns: minmax(0, 1fr); }
+    .h03-review-grid { grid-template-columns: minmax(0, 1fr); }
+    .h03-review-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+    .h03-review-actions > * { width: 100%; }
+    .h03-request-review { scroll-margin-top: 10rem; }
+  }
 </style>
