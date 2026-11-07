@@ -99,6 +99,7 @@ test('unsupported values and customer supplied totals cannot replace canonical p
     activationAmount: 1,
     continuityAmount: 1,
     discountAmount: 999_999,
+    annualDiscount: 999_999,
     total: 1
   });
   assert.equal(pricing.activation.amount, 120_000);
@@ -247,7 +248,8 @@ if (process.env.EVCOM_TEST_BASE_URL) {
     const routes = [
       '/', '/productos/landing', '/productos/catalogo', '/productos/corporativa',
       '/demos/landing', '/demos/catalogo', '/demos/corporativa',
-      '/activar/landing', '/activar/catalogo', '/activar/corporativa', '/terminos'
+      '/activar/landing', '/activar/catalogo', '/activar/corporativa',
+      '/confirmacion', '/terminos', '/privacidad'
     ];
     for (const route of routes) {
       const response = await fetch(`${process.env.EVCOM_TEST_BASE_URL}${route}`);
@@ -283,7 +285,7 @@ if (process.env.EVCOM_TEST_BASE_URL) {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         productSlug: 'landing', continuityMode: 'annual_prepay',
-        activationAmount: 1, continuityAmount: 1, discountAmount: 999_999, total: 1
+        activationAmount: 1, continuityAmount: 1, discountAmount: 999_999, annualDiscount: 999_999, total: 1
       })
     });
     const body = await response.json();
@@ -330,6 +332,8 @@ if (process.env.EVCOM_TEST_BASE_URL) {
       [{ productSlug: 'otro', continuityMode: 'none' }, 'INVALID_PRODUCT'],
       [{ productSlug: 'landing', continuityMode: 'lifetime' }, 'INVALID_CONTINUITY_MODE'],
       [{ productSlug: 'landing', continuityMode: 'monthly', activationAmount: 1 }, 'INVALID_SELECTION_FIELD'],
+      [{ productSlug: 'landing', continuityMode: 'monthly', continuityAmount: 1 }, 'INVALID_SELECTION_FIELD'],
+      [{ productSlug: 'landing', continuityMode: 'annual_prepay', annualDiscount: 999_999 }, 'INVALID_SELECTION_FIELD'],
       [{ productSlug: 'landing', continuityMode: 'annual_prepay', total: 1 }, 'INVALID_SELECTION_FIELD'],
       [{ productSlug: 'landing', continuityMode: 'none', acceptedTermsAt: new Date().toISOString() }, 'INVALID_SELECTION_FIELD'],
       [{ productSlug: 'landing', continuityMode: 'none', campaignCode: 'CIBERDAY' }, 'EXPIRED_CAMPAIGN']
@@ -372,12 +376,15 @@ if (process.env.EVCOM_TEST_BASE_URL) {
       assert.equal(response.status, 200, `${productSlug}/${continuityMode}`);
       assert.equal(body.request.productSlug, productSlug);
       assert.equal(body.request.continuityMode, continuityMode);
+      assert.match(body.request.requestId, /^[0-9a-f-]{36}$/i);
       assert.equal(body.request.pricing.activation.amount, activation);
       assert.equal(body.request.pricing.continuity?.amount ?? null, continuity);
       assert.equal(body.comparison.estimatedTwelveMonthTotal, total);
       assert.equal(body.comparison.annualSavings, savings);
+      assert.equal(Date.parse(body.ttlExpiresAt) - Date.parse(body.request.createdAt), 60 * 60 * 1000);
       assert.equal(body.whatsappPreparedNotSent, true);
       assert.equal(body.request.termsEffectiveDate, null);
+      assert.equal(Object.hasOwn(body.request, 'quoteId'), false);
       assert.equal(Object.hasOwn(body.request, 'orderId'), false);
       assert.equal(Object.hasOwn(body.request, 'paymentId'), false);
       assert.equal(Object.hasOwn(body.request, 'acceptedTermsAt'), false);
@@ -454,6 +461,7 @@ if (process.env.EVCOM_TEST_BASE_URL) {
       [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 'X', domainStatus: 'unsure', projectObjective: 1 }, 'INVALID_OBJECTIVE'],
       [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 'X', domainStatus: 'unknown' }, 'INVALID_DOMAIN_STATUS'],
       [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 'X', domainStatus: 'unsure', total: 1 }, 'INVALID_REQUEST_FIELD'],
+      [{ action: 'create', productSlug: 'landing', continuityMode: 'annual_prepay', projectName: 'X', domainStatus: 'unsure', annualDiscount: 999_999 }, 'INVALID_REQUEST_FIELD'],
       [{ action: 'create', productSlug: 'landing', continuityMode: 'none', projectName: 'X', domainStatus: 'unsure', acceptedTermsAt: new Date().toISOString() }, 'INVALID_REQUEST_FIELD']
     ];
     for (const [input, code] of cases) {
@@ -494,13 +502,16 @@ if (process.env.EVCOM_TEST_V3_BASE_URL) {
       assert.equal(response.status, 401);
       assert.equal((await response.json()).code, 'UNAUTHORIZED');
     }
+    const unsupported = await fetch(api);
+    assert.equal(unsupported.status, 404, 'unsupported methods stay unavailable');
+    assert.doesNotMatch(await unsupported.text(), /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920/);
   });
 
   test('authenticated V3 runtime ignores submitted amounts and returns a draft-only request', async () => {
     const response = await fetch(api, {
       method: 'POST',
       headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
-      body: JSON.stringify({ ...payload, activationAmount: 1, continuityAmount: 1, discountAmount: 0, total: 1 })
+      body: JSON.stringify({ ...payload, activationAmount: 1, continuityAmount: 1, discountAmount: 0, annualDiscount: 999_999, total: 1 })
     });
     const body = await response.json();
     assert.equal(response.status, 200);
@@ -512,6 +523,9 @@ if (process.env.EVCOM_TEST_V3_BASE_URL) {
     assert.equal(body.request.termsEffectiveDate, null);
     assert.equal(body.whatsappPreparedNotSent, true);
     assert.match(body.whatsappDraft, /no constituye orden, pago ni aceptación contractual/);
+    assert.match(body.whatsappDraft, /Referencia de solicitud:/);
+    assert.doesNotMatch(body.whatsappDraft, /Referencia de cotización:/i);
+    assert.equal(Object.hasOwn(body.request, 'quoteId'), false);
     assert.equal(Object.hasOwn(body.request, 'orderId'), false);
     assert.equal(Object.hasOwn(body.request, 'paymentId'), false);
   });

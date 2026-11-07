@@ -20,7 +20,10 @@ const tempRuntime = await mkdtemp(join(tmpdir(), 'evcom-commercial-runtime-brows
 const excluded = new Set(['.git', 'node_modules', 'dist', '.vercel', '.astro', '.env', '.agents', '.codex', '.aws']);
 await cp(repository, tempRuntime, {
   recursive: true,
-  filter: (path) => !excluded.has(path.split('/').at(-1))
+  filter: (path) => {
+    const name = path.split('/').at(-1);
+    return !excluded.has(name) && !name.startsWith('.env') && name !== 'copy.env';
+  }
 });
 await symlink(join(repository, 'node_modules'), join(tempRuntime, 'node_modules'), 'dir');
 const astroPort = await pickPort();
@@ -34,6 +37,7 @@ const astro = spawn(join(tempRuntime, 'node_modules/.bin/astro'), ['dev', '--hos
   cwd: tempRuntime,
   stdio: ['ignore', 'pipe', 'pipe']
 });
+process.stdout.write(`Browser smoke PID=${process.pid}; started isolated Astro PID=${astro.pid} port=${astroPort} runtime=${tempRuntime}\n`);
 let astroOutput = '';
 astro.stdout.on('data', (chunk) => { astroOutput += chunk.toString(); });
 astro.stderr.on('data', (chunk) => { astroOutput += chunk.toString(); });
@@ -73,6 +77,7 @@ try {
   }
   assert.ok(activePort, `Chrome remote debugging did not start:\n${chromeErrors}`);
   const version = await (await fetch(`http://127.0.0.1:${activePort}/json/version`)).json();
+  process.stdout.write(`Started isolated Chrome PID=${chrome.pid} debuggingPort=${activePort}\n`);
   ws = new WebSocket(version.webSocketDebuggerUrl);
   await new Promise((resolve, reject) => { ws.addEventListener('open', resolve, { once: true }); ws.addEventListener('error', reject, { once: true }); });
 
@@ -278,11 +283,13 @@ try {
   const reviewReports = [];
   for (const width of [320, 500, 1440]) {
     await command('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: false });
+    await evaluate(`(() => {document.documentElement.style.scrollBehavior='auto';window.scrollTo({top:0,behavior:'instant'})})()`);
+    await evaluate(`new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))`);
     await evaluate(`(() => {
       const panel=document.querySelector('[data-request-panel]');
       const header=document.querySelector('.site-header');
-      document.documentElement.style.scrollBehavior='auto';
-      window.scrollTo({top:panel.getBoundingClientRect().top+window.scrollY-header.getBoundingClientRect().bottom-24,behavior:'instant'});
+      const panelTop=panel.getBoundingClientRect().top+window.scrollY;
+      window.scrollTo({top:panelTop-header.getBoundingClientRect().height-24,behavior:'instant'});
     })()`);
     await evaluate(`new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))`);
     const report = await evaluate(`(() => ({width:innerWidth,documentWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth,reviewVisible:!document.querySelector('[data-request-panel]').hidden,reviewWidth:Math.round(document.querySelector('[data-request-panel]').getBoundingClientRect().width),reviewTop:Math.round(document.querySelector('[data-request-panel]').getBoundingClientRect().top),eyebrowTop:Math.round(document.querySelector('[data-request-panel] .eyebrow').getBoundingClientRect().top),headerBottom:Math.round(document.querySelector('.site-header').getBoundingClientRect().bottom),reviewHeadingVisible:document.querySelector('#commercial-request-title').getBoundingClientRect().top>=document.querySelector('.site-header').getBoundingClientRect().bottom,projectLabels:document.querySelector('#commercial-project-name').labels.length,liveStatus:document.querySelector('[data-review-status]').getAttribute('aria-live'),linkTarget:document.querySelector('[data-whatsapp-link]').target}))()`);
@@ -325,11 +332,27 @@ try {
   process.stdout.write(JSON.stringify({ responsive: reports, reviewResponsive: reviewReports, request: requestState, apiFailure, validated: { href: validatedState.href, status: validatedState.status, targetCount: targetsBefore }, explicitWhatsAppClick: { fired: explicitClick.fired, openedComposer: Boolean(openedWhatsApp), messageFallbackVisible: messageFallback.visible, messageStillRequiresWhatsAppSend: true }, keyboard: { firstRadio, keyboardMode, nextIsProjectName, focusStyle }, loading, errorState, screenshots: '/tmp/evcom-commercial-preview-{320,500,1440}.png and /tmp/evcom-commercial-request-{320,500,1440}.png' }, null, 2) + '\n');
 } finally {
   if (ws && ws.readyState === WebSocket.OPEN) ws.close();
-  if (chrome?.exitCode === null) chrome.kill('SIGTERM');
+  if (chrome?.exitCode === null) {
+    const chromePid = chrome.pid;
+    chrome.kill('SIGTERM');
+    const exited = await Promise.race([once(chrome, 'exit').then(() => true), new Promise((resolve) => setTimeout(() => resolve(false), 2500))]);
+    if (!exited) {
+      chrome.kill('SIGKILL');
+      await once(chrome, 'exit');
+    }
+    process.stdout.write(`Stopped isolated Chrome PID=${chromePid}\n`);
+  }
   if (astro.exitCode === null) {
+    const astroPid = astro.pid;
     astro.kill('SIGTERM');
-    await Promise.race([once(astro, 'exit'), new Promise((resolve) => setTimeout(resolve, 2500))]);
+    const exited = await Promise.race([once(astro, 'exit').then(() => true), new Promise((resolve) => setTimeout(() => resolve(false), 2500))]);
+    if (!exited) {
+      astro.kill('SIGKILL');
+      await once(astro, 'exit');
+    }
+    process.stdout.write(`Stopped isolated Astro PID=${astroPid}\n`);
   }
   if (tempProfile) await rm(tempProfile, { recursive: true, force: true }).catch(() => {});
   await rm(tempRuntime, { recursive: true, force: true }).catch(() => {});
+  process.stdout.write(`Removed browser smoke temporary runtime${tempRuntime ? `=${tempRuntime}` : ''}\n`);
 }

@@ -51,7 +51,7 @@ function walk(directory) {
 
 const staticRoot = join(repository, '.vercel/output/static');
 const publicFiles = walk(staticRoot).filter((path) => /\.(?:html|js|css|json)$/.test(path));
-const commercialLeak = /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920|(?:19|24|29)900|(?:214|268|322)920|EVCOM_COMMERCIAL_REQUEST_PREVIEW_ENABLED|EVCOM-COMMERCIAL-PILOT-2026-10-22|commercialRulesVersion|DRAFT_NOT_FOR_PUBLICATION|annual_prepay/;
+const commercialLeak = /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920|(?:19|24|29)900|(?:214|268|322)920|EVCOM_COMMERCIAL_(?:PRICING_PREVIEW_ENABLED|REQUEST_PREVIEW_ENABLED|REQUEST_V3_RUNTIME_ENABLED|REQUEST_V3_RUNTIME_TOKEN)|EVCOM-COMMERCIAL-PILOT-2026-10-22|commercialRulesVersion|DRAFT_NOT_FOR_PUBLICATION|annual_prepay|continuidad mensual opcional|continuidad anual prepagada|\/internal\/commercial-preview|\/api\/internal\/commercial-request-preview/i;
 for (const path of publicFiles) {
   assert.doesNotMatch(readFileSync(path, 'utf8'), commercialLeak, `internal commercial data must not appear in public asset ${path}`);
 }
