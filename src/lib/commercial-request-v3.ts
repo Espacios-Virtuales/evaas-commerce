@@ -1,7 +1,7 @@
 import {
   CommercialRuleError,
   COMMERCIAL_RULES,
-  resolveH03Pricing,
+  resolveCommercialRulesPricing,
   type CommercialPriceBreakdown,
   type ContinuityMode
 } from '../data/commercial-rules.ts';
@@ -70,7 +70,7 @@ export function createCommercialRequestV3(input: {
   const createdAtMs = Date.parse(createdAt);
   if (!Number.isFinite(createdAtMs)) throw new CommercialRuleError('INVALID_CREATED_AT', 'La fecha de solicitud no es válida.');
 
-  const pricing = resolveH03Pricing({
+  const pricing = resolveCommercialRulesPricing({
     productSlug: input.productSlug,
     continuityMode: input.continuityMode,
     campaignCode: input.campaignCode,

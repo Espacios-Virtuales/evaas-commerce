@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CommercialSelectionPreview from '../../components/CommercialSelectionPreview.astro';
+import { isLocalInternalPreviewAllowed } from '../../lib/internal-preview-access';
+
+export const prerender = false;
+
+if (!import.meta.env.DEV || import.meta.env.EVCOM_COMMERCIAL_PRICING_PREVIEW_ENABLED !== 'true') {
+  return new Response(null, { status: 404, headers: { 'Cache-Control': 'no-store' } });
+}
+if (!isLocalInternalPreviewAllowed(true, Astro.clientAddress)) {
+  return new Response(null, { status: 404, headers: { 'Cache-Control': 'no-store' } });
+}
+const requestPreviewEnabled = import.meta.env.EVCOM_COMMERCIAL_REQUEST_PREVIEW_ENABLED === 'true';
+---
+
+<BaseLayout
+  title="Previsualización comercial interna · EVAAS Commerce"
+  description="Vista local de desarrollo para revisar internamente las modalidades comerciales."
+  noindex={true}
+  pageClass="commercial-preview-page"
+>
+  <CommercialSelectionPreview requestPreviewEnabled={requestPreviewEnabled} />
+</BaseLayout>

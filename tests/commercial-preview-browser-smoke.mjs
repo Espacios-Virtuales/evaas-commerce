@@ -16,8 +16,8 @@ const pickPort = async () => {
 };
 
 const repository = process.cwd();
-const tempRuntime = await mkdtemp(join(tmpdir(), 'evcom-c10-runtime-browser-'));
-const excluded = new Set(['.git', 'node_modules', 'dist', '.vercel', '.astro', '.env']);
+const tempRuntime = await mkdtemp(join(tmpdir(), 'evcom-commercial-runtime-browser-'));
+const excluded = new Set(['.git', 'node_modules', 'dist', '.vercel', '.astro', '.env', '.agents', '.codex', '.aws']);
 await cp(repository, tempRuntime, {
   recursive: true,
   filter: (path) => !excluded.has(path.split('/').at(-1))
@@ -27,8 +27,8 @@ const astroPort = await pickPort();
 const astro = spawn(join(tempRuntime, 'node_modules/.bin/astro'), ['dev', '--host', '127.0.0.1', '--port', String(astroPort)], {
   env: {
     ...process.env,
-    EVCOM_H03_PRICING_API_ENABLED: 'true',
-    EVCOM_H03_PREVIEW_REQUEST_ENABLED: 'true',
+    EVCOM_COMMERCIAL_PRICING_PREVIEW_ENABLED: 'true',
+    EVCOM_COMMERCIAL_REQUEST_PREVIEW_ENABLED: 'true',
     PUBLIC_EV_WHATSAPP: '56912345678'
   },
   cwd: tempRuntime,
@@ -54,9 +54,9 @@ try {
   }
   assert.ok(ready, `Astro did not become ready:\n${astroOutput}`);
 
-  tempProfile = await mkdtemp(join(tmpdir(), 'evcom-c10-chrome-'));
+  tempProfile = await mkdtemp(join(tmpdir(), 'evcom-commercial-chrome-'));
   chrome = spawn('google-chrome', [
-    '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage',
+    '--headless=new', '--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage', '--disable-crash-reporter', '--disable-breakpad',
     '--no-proxy-server', '--remote-debugging-port=0', `--user-data-dir=${tempProfile}`, 'about:blank'
   ], { stdio: ['ignore', 'ignore', 'pipe'] });
   let chromeErrors = '';
@@ -99,6 +99,7 @@ try {
     pending.set(id, { resolve, reject });
     ws.send(JSON.stringify({ id, method, params, sessionId }));
   });
+  const pageTargetCount = async () => (await browserCommand('Target.getTargets')).targetInfos.filter((target) => target.type === 'page').length;
   const evaluate = async (expression) => {
     const result = await command('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
     if (result.exceptionDetails) throw new Error(result.exceptionDetails.text);
@@ -108,7 +109,7 @@ try {
   await command('Page.enable');
   await command('Runtime.enable');
   await command('Network.enable');
-  await command('Page.navigate', { url: `${baseUrl}/internal/h03-preview` });
+  await command('Page.navigate', { url: `${baseUrl}/internal/commercial-preview` });
   const waitForReady = async () => {
     for (let i = 0; i < 100; i += 1) {
       const state = await evaluate(`(() => ({
@@ -119,7 +120,7 @@ try {
       if (state.loaded && state.done && state.status.includes('reglas canónicas')) return state;
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    throw new Error(`H03 preview did not load canonical values: ${await evaluate('document.body.innerText')}`);
+    throw new Error(`Commercial preview did not load canonical values: ${await evaluate('document.body.innerText')}`);
   };
   await waitForReady();
 
@@ -129,7 +130,7 @@ try {
     const bg = (el) => { let color=[11,11,12]; const chain=[]; for(let n=el;n;n=n.parentElement) chain.unshift(n); for(const n of chain){const c=parse(getComputedStyle(n).backgroundColor);if(c&&c[3]>0)color=blend(c,color);} return color; };
     const lum = (rgb) => { const a=rgb.map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4); return .2126*a[0]+.7152*a[1]+.0722*a[2]; };
     const ratio = (a,b) => { const x=lum(a),y=lum(b); return (Math.max(x,y)+.05)/(Math.min(x,y)+.05); };
-    return [...document.querySelectorAll('.h03-preview-header h1,.h03-preview-header > p:not(.h03-preview-badge),.h03-preview-badge,.h03-field,.h03-modes small,.h03-request-fields label,.h03-field-hint,.h03-request-note,.h03-third-party,.h03-status,.h03-not-contract,.h03-summary button,.h03-request-review > p,.h03-review-grid dt,.h03-review-grid dd,.h03-expiry,.h03-review-actions .button')].filter((el)=>el.getClientRects().length>0).map((el)=>{
+    return [...document.querySelectorAll('.commercial-preview-header h1,.commercial-preview-header > p:not(.commercial-preview-badge),.commercial-preview-badge,.commercial-field,.commercial-modes small,.commercial-request-fields label,.commercial-field-hint,.commercial-request-note,.commercial-third-party,.commercial-status,.commercial-not-contract,.commercial-summary button,.commercial-request-review > p,.commercial-review-grid dt,.commercial-review-grid dd,.commercial-expiry,.commercial-review-actions .button')].filter((el)=>el.getClientRects().length>0).map((el)=>{
       const style=getComputedStyle(el); const fg=parse(style.color); const background=bg(el); const effective=style.opacity==='1'?fg:blend([...fg.slice(0,3),+style.opacity],background);
       return {label:el.className||el.tagName,text:(el.textContent||'').trim().slice(0,48),ratio:+ratio(effective,background).toFixed(2),fontSize:style.fontSize,weight:style.fontWeight};
     });
@@ -140,20 +141,20 @@ try {
     await command('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: false });
     await command('Runtime.evaluate', { expression: 'new Promise(requestAnimationFrame)', awaitPromise: true });
     const report = await evaluate(`(() => {
-      const root=document.querySelector('.h03-preview');
-      const select=document.querySelector('#h03-product');
-      const heading=document.querySelector('#h03-preview-title');
+      const root=document.querySelector('.commercial-preview');
+      const select=document.querySelector('#commercial-product');
+      const heading=document.querySelector('#commercial-preview-title');
       return {
         width:innerWidth, clientWidth:document.documentElement.clientWidth, documentWidth:document.documentElement.scrollWidth, bodyWidth:document.body.scrollWidth,
         overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth || document.body.scrollWidth>document.documentElement.clientWidth,
-        h03Width:Math.round(root.getBoundingClientRect().width), gridColumns:getComputedStyle(document.querySelector('.h03-preview-grid')).gridTemplateColumns,
+        commercialWidth:Math.round(root.getBoundingClientRect().width), gridColumns:getComputedStyle(document.querySelector('.commercial-preview-grid')).gridTemplateColumns,
         status:document.querySelector('[data-status]').textContent,
         labelCount:select.labels.length, productOptions:select.options.length,
         productNames:[...select.options].map(option=>option.textContent.trim()),
         modeRadios:document.querySelectorAll('input[name="continuityMode"]').length,
         internalRequestButton:!!document.querySelector('[data-create-request]'),
         whatsappConversion:!!document.querySelector('[data-whatsapp-conversion]'),
-        badge:document.querySelector('.h03-preview-badge').textContent
+        badge:document.querySelector('.commercial-preview-badge').textContent
       };
     })()`);
     assert.equal(report.overflow, false, `horizontal overflow at ${width}px: ${JSON.stringify(report)}`);
@@ -176,11 +177,11 @@ try {
     }
     await evaluate(`document.documentElement.dataset.theme='dark'`);
     const screenshot = await command('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
-    await writeFile(`/tmp/evcom-c10-preview-${width}.png`, Buffer.from(screenshot.data, 'base64'));
+    await writeFile(`/tmp/evcom-commercial-preview-${width}.png`, Buffer.from(screenshot.data, 'base64'));
     reports.push(report);
   }
 
-  await evaluate(`document.querySelector('#h03-product').focus()`);
+  await evaluate(`document.querySelector('#commercial-product').focus()`);
   const sendKey = async (key, code, virtualKey) => {
     await command('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode: virtualKey });
     await command('Input.dispatchKeyEvent', { type: 'keyUp', key, code, windowsVirtualKeyCode: virtualKey });
@@ -199,14 +200,14 @@ try {
   assert.notEqual(focusStyle.style, 'none');
   assert.notEqual(focusStyle.width, '0px');
 
-  const targetsBefore = (await browserCommand('Target.getTargets')).targetInfos.length;
+  const targetsBefore = await pageTargetCount();
   await evaluate(`(() => {
     const form=document.querySelector('[data-preview-form]');
-    document.querySelector('#h03-product').value='catalogo';
-    document.querySelector('#h03-product').dispatchEvent(new Event('change',{bubbles:true}));
+    document.querySelector('#commercial-product').value='catalogo';
+    document.querySelector('#commercial-product').dispatchEvent(new Event('change',{bubbles:true}));
     const mode=document.querySelector('input[name="continuityMode"][value="annual_prepay"]');
     mode.checked=true; mode.dispatchEvent(new Event('change',{bubbles:true}));
-    document.querySelector('[data-project-name]').value='Proyecto de prueba C10';
+    document.querySelector('[data-project-name]').value='Proyecto de prueba commercial';
     document.querySelector('[data-domain-status]').value='owned';
     document.querySelector('[data-project-objective]').value='Revisar una vitrina no transaccional';
     document.querySelector('[data-create-request]').click();
@@ -224,9 +225,9 @@ try {
   assert.equal(requestState.activation, '$160.000');
   assert.match(requestState.continuity, /\$268\.920/);
   assert.match(requestState.continuityNote, /prepago de continuidad.*separado de la activación/i);
-  assert.equal((await browserCommand('Target.getTargets')).targetInfos.length, targetsBefore, 'draft creation must not open a new browser target');
+  assert.equal(await pageTargetCount(), targetsBefore, 'draft creation must not open a new browser target');
 
-  await command('Network.setBlockedURLs', { urls: ['*h03-preview-request*'] });
+  await command('Network.setBlockedURLs', { urls: ['*commercial-request-preview*'] });
   await evaluate(`document.querySelector('[data-validate-request]').click()`);
   let apiFailure;
   for (let i = 0; i < 100; i += 1) {
@@ -249,9 +250,9 @@ try {
   assert.match(validatedState.href, /^https:\/\/wa\.me\/56912345678\?/);
   assert.match(validatedState.message, /no constituye orden, pago ni aceptación contractual/);
   assert.match(validatedState.status, /El enlace quedó disponible/);
-  assert.equal((await browserCommand('Target.getTargets')).targetInfos.length, targetsBefore, 'validating the draft must not open WhatsApp automatically');
+  assert.equal(await pageTargetCount(), targetsBefore, 'validating the draft must not open WhatsApp automatically');
 
-  await evaluate(`(() => {window.__c10WhatsAppClick={fired:false,defaultPrevented:false,trusted:false};const link=document.querySelector('[data-whatsapp-link]');link.addEventListener('click',event=>{window.__c10WhatsAppClick={fired:true,defaultPrevented:event.defaultPrevented,trusted:event.isTrusted}},{once:true});link.focus()})()`);
+  await evaluate(`(() => {window.__commercialWhatsAppClick={fired:false,defaultPrevented:false,trusted:false};const link=document.querySelector('[data-whatsapp-link]');link.addEventListener('click',event=>{window.__commercialWhatsAppClick={fired:true,defaultPrevented:event.defaultPrevented,trusted:event.isTrusted}},{once:true});link.focus()})()`);
   await command('Network.setBlockedURLs', { urls: ['*wa.me/*'] });
   await sendKey('Enter', 'Enter', 13);
   let openedWhatsApp;
@@ -261,7 +262,7 @@ try {
     if (openedWhatsApp) break;
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  const explicitClick = await evaluate(`window.__c10WhatsAppClick`);
+  const explicitClick = await evaluate(`window.__commercialWhatsAppClick`);
   assert.equal(explicitClick.fired, true, 'the WhatsApp action was triggered by an explicit keyboard activation');
   assert.equal(explicitClick.trusted, true);
   assert.equal(explicitClick.defaultPrevented, false);
@@ -277,9 +278,14 @@ try {
   const reviewReports = [];
   for (const width of [320, 500, 1440]) {
     await command('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: false });
-    await evaluate(`document.querySelector('[data-request-panel]').scrollIntoView({behavior:'instant',block:'start'})`);
+    await evaluate(`(() => {
+      const panel=document.querySelector('[data-request-panel]');
+      const header=document.querySelector('.site-header');
+      document.documentElement.style.scrollBehavior='auto';
+      window.scrollTo({top:panel.getBoundingClientRect().top+window.scrollY-header.getBoundingClientRect().bottom-24,behavior:'instant'});
+    })()`);
     await evaluate(`new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))`);
-    const report = await evaluate(`(() => ({width:innerWidth,documentWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth,reviewVisible:!document.querySelector('[data-request-panel]').hidden,reviewWidth:Math.round(document.querySelector('[data-request-panel]').getBoundingClientRect().width),reviewTop:Math.round(document.querySelector('[data-request-panel]').getBoundingClientRect().top),eyebrowTop:Math.round(document.querySelector('[data-request-panel] .eyebrow').getBoundingClientRect().top),headerBottom:Math.round(document.querySelector('.site-header').getBoundingClientRect().bottom),reviewHeadingVisible:document.querySelector('#h03-request-title').getBoundingClientRect().top>=document.querySelector('.site-header').getBoundingClientRect().bottom,projectLabels:document.querySelector('#h03-project-name').labels.length,liveStatus:document.querySelector('[data-review-status]').getAttribute('aria-live'),linkTarget:document.querySelector('[data-whatsapp-link]').target}))()`);
+    const report = await evaluate(`(() => ({width:innerWidth,documentWidth:document.documentElement.scrollWidth,clientWidth:document.documentElement.clientWidth,overflow:document.documentElement.scrollWidth>document.documentElement.clientWidth,reviewVisible:!document.querySelector('[data-request-panel]').hidden,reviewWidth:Math.round(document.querySelector('[data-request-panel]').getBoundingClientRect().width),reviewTop:Math.round(document.querySelector('[data-request-panel]').getBoundingClientRect().top),eyebrowTop:Math.round(document.querySelector('[data-request-panel] .eyebrow').getBoundingClientRect().top),headerBottom:Math.round(document.querySelector('.site-header').getBoundingClientRect().bottom),reviewHeadingVisible:document.querySelector('#commercial-request-title').getBoundingClientRect().top>=document.querySelector('.site-header').getBoundingClientRect().bottom,projectLabels:document.querySelector('#commercial-project-name').labels.length,liveStatus:document.querySelector('[data-review-status]').getAttribute('aria-live'),linkTarget:document.querySelector('[data-whatsapp-link]').target}))()`);
     assert.equal(report.overflow, false, `review overflow at ${width}px: ${JSON.stringify(report)}`);
     assert.equal(report.reviewVisible, true);
     assert.ok(report.eyebrowTop >= report.headerBottom, `review banner must clear sticky header at ${width}px: ${JSON.stringify(report)}`);
@@ -298,12 +304,12 @@ try {
     }
     await evaluate(`document.documentElement.dataset.theme='dark'`);
     const screenshot = await command('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
-    await writeFile(`/tmp/evcom-c10-request-${width}.png`, Buffer.from(screenshot.data, 'base64'));
+    await writeFile(`/tmp/evcom-commercial-request-${width}.png`, Buffer.from(screenshot.data, 'base64'));
     reviewReports.push(report);
   }
 
   await command('Network.setBlockedURLs', { urls: ['*commercial-pricing*'] });
-  const loading = await evaluate(`(() => {const select=document.querySelector('#h03-product');select.value='corporativa';select.dispatchEvent(new Event('change',{bubbles:true}));return {busy:document.querySelector('[data-summary]').getAttribute('aria-busy'),status:document.querySelector('[data-status]').textContent,role:document.querySelector('[data-status]').getAttribute('role')}})()`);
+  const loading = await evaluate(`(() => {const select=document.querySelector('#commercial-product');select.value='corporativa';select.dispatchEvent(new Event('change',{bubbles:true}));return {busy:document.querySelector('[data-summary]').getAttribute('aria-busy'),status:document.querySelector('[data-status]').textContent,role:document.querySelector('[data-status]').getAttribute('role')}})()`);
   assert.equal(loading.busy, 'true');
   assert.equal(loading.status, 'Consultando las reglas internas…');
   assert.equal(loading.role, 'status');
@@ -316,7 +322,7 @@ try {
   assert.equal(errorState.status, 'No fue posible acceder a las reglas internas. No se muestran precios alternativos.');
   assert.equal(errorState.hasPrices, false);
 
-  process.stdout.write(JSON.stringify({ responsive: reports, reviewResponsive: reviewReports, request: requestState, apiFailure, validated: { href: validatedState.href, status: validatedState.status, targetCount: targetsBefore }, explicitWhatsAppClick: { fired: explicitClick.fired, openedComposer: Boolean(openedWhatsApp), messageFallbackVisible: messageFallback.visible, messageStillRequiresWhatsAppSend: true }, keyboard: { firstRadio, keyboardMode, nextIsProjectName, focusStyle }, loading, errorState, screenshots: '/tmp/evcom-c10-preview-{320,500,1440}.png and /tmp/evcom-c10-request-{320,500,1440}.png' }, null, 2) + '\n');
+  process.stdout.write(JSON.stringify({ responsive: reports, reviewResponsive: reviewReports, request: requestState, apiFailure, validated: { href: validatedState.href, status: validatedState.status, targetCount: targetsBefore }, explicitWhatsAppClick: { fired: explicitClick.fired, openedComposer: Boolean(openedWhatsApp), messageFallbackVisible: messageFallback.visible, messageStillRequiresWhatsAppSend: true }, keyboard: { firstRadio, keyboardMode, nextIsProjectName, focusStyle }, loading, errorState, screenshots: '/tmp/evcom-commercial-preview-{320,500,1440}.png and /tmp/evcom-commercial-request-{320,500,1440}.png' }, null, 2) + '\n');
 } finally {
   if (ws && ws.readyState === WebSocket.OPEN) ws.close();
   if (chrome?.exitCode === null) chrome.kill('SIGTERM');

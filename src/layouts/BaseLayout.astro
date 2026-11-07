@@ -22,8 +22,8 @@ const {
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 const pagePath = Astro.url.pathname.replace(/\/$/, '') || '/';
-const showCyberdayPopup = !['/terminos', '/privacidad', '/confirmacion', '/internal/h03-preview'].includes(pagePath);
-const showWhatsAppConversion = pagePath !== '/internal/h03-preview';
+const showCyberdayPopup = !['/terminos', '/privacidad', '/confirmacion', '/internal/commercial-preview'].includes(pagePath);
+const showWhatsAppConversion = pagePath !== '/internal/commercial-preview';
 ---
 
 <!doctype html>

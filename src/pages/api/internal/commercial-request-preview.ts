@@ -48,8 +48,8 @@ function validRequestShape(value: unknown): value is Record<string, unknown> {
 export const POST: APIRoute = async (context) => {
   // Both server-side switches, DEV mode, loopback access, and same-origin are required.
   if (!import.meta.env.DEV
-      || import.meta.env.EVCOM_H03_PRICING_API_ENABLED !== 'true'
-      || import.meta.env.EVCOM_H03_PREVIEW_REQUEST_ENABLED !== 'true') return unavailable();
+      || import.meta.env.EVCOM_COMMERCIAL_PRICING_PREVIEW_ENABLED !== 'true'
+      || import.meta.env.EVCOM_COMMERCIAL_REQUEST_PREVIEW_ENABLED !== 'true') return unavailable();
   if (!isLocalInternalPreviewAllowed(true, context.clientAddress)) return unavailable();
 
   const { request } = context;

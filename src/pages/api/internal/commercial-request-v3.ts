@@ -36,8 +36,8 @@ function authorized(request: Request, token: string): boolean {
 
 export const POST: APIRoute = async ({ request }) => {
   // Keep the route invisible unless both an explicit runtime switch and server secret exist.
-  if (!isV3RuntimeEnabled(process.env.EVCOM_H03_V3_RUNTIME_ENABLED)) return unavailable();
-  const token = process.env.EVCOM_H03_V3_RUNTIME_TOKEN || '';
+  if (!isV3RuntimeEnabled(process.env.EVCOM_COMMERCIAL_REQUEST_V3_RUNTIME_ENABLED)) return unavailable();
+  const token = process.env.EVCOM_COMMERCIAL_REQUEST_V3_RUNTIME_TOKEN || '';
   if (token.length < 32) return error('El runtime interno no está configurado.', 503, 'RUNTIME_NOT_CONFIGURED');
   if (!authorized(request, token)) return error('Acceso no autorizado.', 401, 'UNAUTHORIZED');
   if (request.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase() !== 'application/json') {

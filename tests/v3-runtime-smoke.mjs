@@ -7,10 +7,10 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 const repository = resolve(new URL('..', import.meta.url).pathname);
-const excluded = new Set(['.git', 'node_modules', 'dist', '.vercel', '.astro', '.env']);
+const excluded = new Set(['.git', 'node_modules', 'dist', '.vercel', '.astro', '.env', '.agents', '.codex', '.aws']);
 
 function createRuntimeRoot() {
-  const runtimeRoot = mkdtempSync(join(tmpdir(), 'evaas-commerce-c10-runtime-'));
+  const runtimeRoot = mkdtempSync(join(tmpdir(), 'evaas-commerce-commercial-runtime-'));
   cpSync(repository, runtimeRoot, {
     recursive: true,
     filter: (path) => !excluded.has(path.split('/').at(-1))
@@ -19,7 +19,7 @@ function createRuntimeRoot() {
   return runtimeRoot;
 }
 
-const token = 'c04b-local-internal-runtime-test-token-2026';
+const token = 'commercial-local-internal-runtime-test-token-2026';
 async function startServer(env) {
   const runtimeRoot = createRuntimeRoot();
   const portServer = createServer();
@@ -37,18 +37,23 @@ async function startServer(env) {
   server.stderr.on('data', (chunk) => { output += chunk.toString(); });
   let baseUrl = `http://127.0.0.1:${port}`;
   let ready = false;
-  for (let attempt = 0; attempt < 50; attempt += 1) {
+  let lastStatus = 'no response';
+  for (let attempt = 0; attempt < 100; attempt += 1) {
     const managedUrl = output.match(/Dev server running at (https?:\/\/[^\s]+)/)?.[1];
     if (managedUrl) baseUrl = managedUrl;
     try {
       const response = await fetch(baseUrl);
+      lastStatus = String(response.status);
       if (response.status === 200) { ready = true; break; }
     } catch {
       if (server.exitCode !== null && !managedUrl) throw new Error(`Astro server exited early.\n${output}`);
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
-  assert.ok(ready, `Astro server did not become ready.\n${output}`);
+  if (!ready) {
+    await stopServer(server);
+    throw new Error(`Astro server did not become ready (HTTP ${lastStatus}, exit ${server.exitCode}).\n${output}`);
+  }
   return { server, baseUrl, runtimeRoot, getOutput: () => output };
 }
 
@@ -60,10 +65,10 @@ async function stopServer(server) {
 }
 
 const enabled = await startServer({
-  EVCOM_H03_V3_RUNTIME_ENABLED: 'true',
-  EVCOM_H03_V3_RUNTIME_TOKEN: token,
-  EVCOM_H03_PRICING_API_ENABLED: 'true',
-  EVCOM_H03_PREVIEW_REQUEST_ENABLED: 'true',
+  EVCOM_COMMERCIAL_REQUEST_V3_RUNTIME_ENABLED: 'true',
+  EVCOM_COMMERCIAL_REQUEST_V3_RUNTIME_TOKEN: token,
+  EVCOM_COMMERCIAL_PRICING_PREVIEW_ENABLED: 'true',
+  EVCOM_COMMERCIAL_REQUEST_PREVIEW_ENABLED: 'true',
   PUBLIC_EV_WHATSAPP: '56912345678'
 });
 
@@ -88,40 +93,40 @@ try {
 }
 
 const disabled = await startServer({
-  EVCOM_H03_V3_RUNTIME_ENABLED: 'true',
-  EVCOM_H03_V3_RUNTIME_TOKEN: token,
-  EVCOM_H03_PRICING_API_ENABLED: 'true',
-  EVCOM_H03_PREVIEW_REQUEST_ENABLED: 'false',
+  EVCOM_COMMERCIAL_REQUEST_V3_RUNTIME_ENABLED: 'true',
+  EVCOM_COMMERCIAL_REQUEST_V3_RUNTIME_TOKEN: token,
+  EVCOM_COMMERCIAL_PRICING_PREVIEW_ENABLED: 'true',
+  EVCOM_COMMERCIAL_REQUEST_PREVIEW_ENABLED: 'false',
   PUBLIC_EV_WHATSAPP: '56912345678'
 });
 try {
-  const preview = await fetch(`${disabled.baseUrl}/internal/h03-preview`);
-  assert.equal(preview.status, 200, 'C09 pricing preview remains available when only the C10 request gate is off');
+  const preview = await fetch(`${disabled.baseUrl}/internal/commercial-preview`);
+  assert.equal(preview.status, 200, 'commercial pricing preview remains available when only the commercial request gate is off');
   const html = await preview.text();
-  assert.match(html, /El recorrido de solicitud H03 permanece deshabilitado/);
+  assert.match(html, /El recorrido de solicitud asistida permanece deshabilitado/);
   assert.doesNotMatch(html, /<button[^>]*data-create-request/);
-  const endpoint = await fetch(`${disabled.baseUrl}/api/internal/h03-preview-request`, {
+  const endpoint = await fetch(`${disabled.baseUrl}/api/internal/commercial-request-preview`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', origin: disabled.baseUrl },
     body: JSON.stringify({ action: 'create' })
   });
-  assert.equal(endpoint.status, 404, 'C10 request endpoint is unavailable with its server-side gate off');
+  assert.equal(endpoint.status, 404, 'commercial request endpoint is unavailable with its server-side gate off');
   assert.equal(await endpoint.text(), '');
-  const getEndpoint = await fetch(`${disabled.baseUrl}/api/internal/h03-preview-request`);
-  assert.equal(getEndpoint.status, 404, 'unsupported methods remain unavailable when C10 is disabled');
+  const getEndpoint = await fetch(`${disabled.baseUrl}/api/internal/commercial-request-preview`);
+  assert.equal(getEndpoint.status, 404, 'unsupported methods remain unavailable when commercial is disabled');
   assert.equal(await getEndpoint.text(), '');
 } finally {
   await stopServer(disabled.server);
 }
 
 const noWhatsApp = await startServer({
-  EVCOM_H03_PRICING_API_ENABLED: 'true',
-  EVCOM_H03_PREVIEW_REQUEST_ENABLED: 'true',
-  EVCOM_H03_V3_RUNTIME_ENABLED: 'false',
+  EVCOM_COMMERCIAL_PRICING_PREVIEW_ENABLED: 'true',
+  EVCOM_COMMERCIAL_REQUEST_PREVIEW_ENABLED: 'true',
+  EVCOM_COMMERCIAL_REQUEST_V3_RUNTIME_ENABLED: 'false',
   PUBLIC_EV_WHATSAPP: ''
 });
 try {
-  const requestApi = `${noWhatsApp.baseUrl}/api/internal/h03-preview-request`;
+  const requestApi = `${noWhatsApp.baseUrl}/api/internal/commercial-request-preview`;
   const headers = { 'content-type': 'application/json', origin: noWhatsApp.baseUrl };
   const createdResponse = await fetch(requestApi, {
     method: 'POST', headers,
@@ -142,4 +147,4 @@ try {
   await stopServer(noWhatsApp.server);
 }
 
-process.stdout.write('V3, C10 assisted-request, and local H03 preview HTTP smoke: PASS (canonical rules, TTL/tampering, explicit WhatsApp preparation, unconfigured WhatsApp fallback, gate-off 404, and V2 regression).\n');
+process.stdout.write('V3 assisted-request and local commercial preview HTTP smoke: PASS (canonical rules, TTL/tampering, explicit WhatsApp preparation, unconfigured WhatsApp fallback, gate-off 404, and V2 regression).\n');

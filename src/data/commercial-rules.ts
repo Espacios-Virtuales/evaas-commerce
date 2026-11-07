@@ -1,6 +1,6 @@
 import type { ProductSlug } from './products';
 
-export const COMMERCIAL_RULES_VERSION = 'EVCOM-H03-PILOT-2026-10-22' as const;
+export const COMMERCIAL_RULES_VERSION = 'EVCOM-COMMERCIAL-PILOT-2026-10-22' as const;
 export const TERMS_VERSION = '1.0-draft' as const;
 export const TERMS_EFFECTIVE_DATE = null;
 export const COMMERCIAL_RULES_PUBLIC = false as const;
@@ -52,7 +52,7 @@ export class CommercialRuleError extends Error {
   }
 }
 
-export function resolveH03Pricing(input: {
+export function resolveCommercialRulesPricing(input: {
   productSlug: unknown;
   continuityMode?: unknown;
   campaignCode?: unknown;
@@ -82,7 +82,7 @@ export function resolveH03Pricing(input: {
     if (input.campaignStatus !== 'active') {
       throw new CommercialRuleError('INVALID_CAMPAIGN', 'El código promocional no es válido.');
     }
-    throw new CommercialRuleError('CAMPAIGN_NOT_COMPATIBLE', 'Las promociones no se acumulan con las reglas comerciales H03.');
+    throw new CommercialRuleError('CAMPAIGN_NOT_COMPATIBLE', 'Las promociones no se acumulan con las reglas comerciales vigentes.');
   }
 
   const productRules = COMMERCIAL_RULES[productSlug];

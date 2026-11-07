@@ -4,7 +4,7 @@ import test from 'node:test';
 import {
   COMMERCIAL_RULES_VERSION,
   CommercialRuleError,
-  resolveH03Pricing
+  resolveCommercialRulesPricing
 } from '../src/data/commercial-rules.ts';
 import {
   buildCommercialRequestV3Message,
@@ -75,16 +75,16 @@ const expected = [
 
 for (const [productSlug, activation, monthly, annual] of expected) {
   test(`${productSlug}: canonical rules resolve activation and both continuity cadences`, () => {
-    const activationOnly = resolveH03Pricing({ productSlug, continuityMode: 'none' });
+    const activationOnly = resolveCommercialRulesPricing({ productSlug, continuityMode: 'none' });
     assert.equal(activationOnly.activation.amount, activation);
     assert.equal(activationOnly.activation.cadence, 'one_time');
     assert.equal(activationOnly.continuity, null);
 
-    const monthlyPrice = resolveH03Pricing({ productSlug, continuityMode: 'monthly' });
+    const monthlyPrice = resolveCommercialRulesPricing({ productSlug, continuityMode: 'monthly' });
     assert.equal(monthlyPrice.continuity.amount, monthly);
     assert.equal(monthlyPrice.continuity.cadence, 'monthly');
 
-    const annualPrice = resolveH03Pricing({ productSlug, continuityMode: 'annual_prepay' });
+    const annualPrice = resolveCommercialRulesPricing({ productSlug, continuityMode: 'annual_prepay' });
     assert.equal(annualPrice.continuity.amount, annual);
     assert.equal(annualPrice.continuity.listAmount, monthly * 12);
     assert.equal(annualPrice.continuity.discountAmount, monthly * 12 - annual);
@@ -93,7 +93,7 @@ for (const [productSlug, activation, monthly, annual] of expected) {
 }
 
 test('unsupported values and customer supplied totals cannot replace canonical prices', () => {
-  const pricing = resolveH03Pricing({
+  const pricing = resolveCommercialRulesPricing({
     productSlug: 'landing',
     continuityMode: 'annual_prepay',
     activationAmount: 1,
@@ -109,12 +109,12 @@ test('unsupported values and customer supplied totals cannot replace canonical p
 });
 
 test('unknown products and continuity modes fail explicitly', () => {
-  assert.throws(() => resolveH03Pricing({ productSlug: 'unknown' }), (error) => {
+  assert.throws(() => resolveCommercialRulesPricing({ productSlug: 'unknown' }), (error) => {
     assert.ok(error instanceof CommercialRuleError);
     assert.equal(error.code, 'INVALID_PRODUCT');
     return true;
   });
-  assert.throws(() => resolveH03Pricing({ productSlug: 'landing', continuityMode: 'lifetime' }), (error) => {
+  assert.throws(() => resolveCommercialRulesPricing({ productSlug: 'landing', continuityMode: 'lifetime' }), (error) => {
     assert.ok(error instanceof CommercialRuleError);
     assert.equal(error.code, 'INVALID_CONTINUITY_MODE');
     return true;
@@ -122,24 +122,24 @@ test('unknown products and continuity modes fail explicitly', () => {
 });
 
 test('campaigns are rejected when expired, unknown, or active because stacking is disabled', () => {
-  assert.throws(() => resolveH03Pricing({ productSlug: 'landing', campaignCode: 'CIBERDAY', campaignStatus: 'expired' }), (error) => {
+  assert.throws(() => resolveCommercialRulesPricing({ productSlug: 'landing', campaignCode: 'CIBERDAY', campaignStatus: 'expired' }), (error) => {
     assert.equal(error.code, 'EXPIRED_CAMPAIGN');
     return true;
   });
-  assert.throws(() => resolveH03Pricing({ productSlug: 'landing', campaignCode: 'NOT-A-CODE', campaignStatus: 'unknown' }), (error) => {
+  assert.throws(() => resolveCommercialRulesPricing({ productSlug: 'landing', campaignCode: 'NOT-A-CODE', campaignStatus: 'unknown' }), (error) => {
     assert.equal(error.code, 'INVALID_CAMPAIGN');
     return true;
   });
-  assert.throws(() => resolveH03Pricing({ productSlug: 'landing', campaignCode: 'CIBERDAY', campaignStatus: 'active' }), (error) => {
+  assert.throws(() => resolveCommercialRulesPricing({ productSlug: 'landing', campaignCode: 'CIBERDAY', campaignStatus: 'active' }), (error) => {
     assert.equal(error.code, 'CAMPAIGN_NOT_COMPATIBLE');
     return true;
   });
 });
 
 test('rules and terms are versioned as a non-public draft with no payment contract', () => {
-  const pricing = resolveH03Pricing({ productSlug: 'corporativa', continuityMode: 'monthly' });
+  const pricing = resolveCommercialRulesPricing({ productSlug: 'corporativa', continuityMode: 'monthly' });
   assert.equal(pricing.commercialRulesVersion, COMMERCIAL_RULES_VERSION);
-  assert.equal(pricing.commercialRulesVersion, 'EVCOM-H03-PILOT-2026-10-22');
+  assert.equal(pricing.commercialRulesVersion, 'EVCOM-COMMERCIAL-PILOT-2026-10-22');
   assert.equal(pricing.termsVersion, '1.0-draft');
   assert.equal(pricing.termsEffectiveDate, null);
   assert.equal(Object.hasOwn(pricing, 'requestId'), false);
@@ -202,25 +202,25 @@ test('V3 runtime gate is closed unless explicitly enabled', () => {
   assert.equal(isV3RuntimeEnabled('true'), true);
 });
 
-test('H03 preview access is restricted to a local development server', () => {
+test('Commercial preview access is restricted to a local development server', () => {
   assert.equal(isLocalInternalPreviewAllowed(true, '127.0.0.1'), true);
   assert.equal(isLocalInternalPreviewAllowed(true, '::1'), true);
   assert.equal(isLocalInternalPreviewAllowed(true, '::ffff:127.0.0.1'), true);
   assert.equal(isLocalInternalPreviewAllowed(false, '127.0.0.1'), false);
   assert.equal(isLocalInternalPreviewAllowed(true, '192.168.1.10'), false);
-  const route = readSource('../src/pages/internal/h03-preview.astro');
+  const route = readSource('../src/pages/internal/commercial-preview.astro');
   const api = readSource('../src/pages/api/commercial-pricing.ts');
-  const requestApi = readSource('../src/pages/api/internal/h03-preview-request.ts');
-  const previewComponent = readSource('../src/components/H03CommercialPreview.astro');
+  const requestApi = readSource('../src/pages/api/internal/commercial-request-preview.ts');
+  const previewComponent = readSource('../src/components/CommercialSelectionPreview.astro');
   const layout = readSource('../src/layouts/BaseLayout.astro');
-  assert.match(route, /!import\.meta\.env\.DEV \|\| import\.meta\.env\.EVCOM_H03_PRICING_API_ENABLED !== 'true'/);
+  assert.match(route, /!import\.meta\.env\.DEV \|\| import\.meta\.env\.EVCOM_COMMERCIAL_PRICING_PREVIEW_ENABLED !== 'true'/);
   assert.match(route, /isLocalInternalPreviewAllowed\(true, Astro\.clientAddress\)/);
   assert.match(route, /status: 404/);
   assert.match(api, /if \(!import\.meta\.env\.DEV\) return notAvailable\(\)/);
   assert.match(api, /isLocalInternalPreviewAllowed\(true, context\.clientAddress\)/);
   assert.match(api, /INVALID_SELECTION_FIELD/);
-  assert.match(api, /resolveH03Pricing/);
-  assert.match(requestApi, /EVCOM_H03_PREVIEW_REQUEST_ENABLED !== 'true'/);
+  assert.match(api, /resolveCommercialRulesPricing/);
+  assert.match(requestApi, /EVCOM_COMMERCIAL_REQUEST_PREVIEW_ENABLED !== 'true'/);
   assert.match(requestApi, /isLocalInternalPreviewAllowed\(true, context\.clientAddress\)/);
   assert.match(requestApi, /isSameOrigin\(request\)/);
   assert.match(requestApi, /sanitizeCommercialRequestV3/);
@@ -228,22 +228,22 @@ test('H03 preview access is restricted to a local development server', () => {
   assert.match(requestApi, /buildWhatsAppUrl/);
   assert.match(requestApi, /buildCommercialPricingComparison/);
   assert.match(previewComponent, /<script is:inline>/);
-  assert.match(previewComponent, /Previsualización interna · solicitud H03 en borrador/);
+  assert.match(previewComponent, /Previsualización interna · solicitud comercial en borrador/);
   assert.match(previewComponent, /target="_blank" rel="noopener noreferrer" data-whatsapp-link/);
   assert.match(previewComponent, /aria-live="polite"/);
   assert.match(previewComponent, /data-create-request/);
   assert.doesNotMatch(previewComponent, /localStorage|sessionStorage/);
-  assert.match(layout, /showWhatsAppConversion = pagePath !== '\/internal\/h03-preview'/);
+  assert.match(layout, /showWhatsAppConversion = pagePath !== '\/internal\/commercial-preview'/);
 });
 
 if (process.env.EVCOM_TEST_BASE_URL) {
   const api = `${process.env.EVCOM_TEST_BASE_URL}/api/commercial-pricing`;
-  const requestApi = `${process.env.EVCOM_TEST_BASE_URL}/api/internal/h03-preview-request`;
+  const requestApi = `${process.env.EVCOM_TEST_BASE_URL}/api/internal/commercial-request-preview`;
   const requestHeaders = {
     'content-type': 'application/json',
     origin: process.env.EVCOM_TEST_BASE_URL
   };
-  test('public routes remain v0.6 and omit H03 continuity amounts', async () => {
+  test('public routes remain v0.6 and omit unpublished continuity amounts', async () => {
     const routes = [
       '/', '/productos/landing', '/productos/catalogo', '/productos/corporativa',
       '/demos/landing', '/demos/catalogo', '/demos/corporativa',
@@ -254,7 +254,7 @@ if (process.env.EVCOM_TEST_BASE_URL) {
       const html = await response.text();
       assert.equal(response.status, 200, route);
       assert.doesNotMatch(html, /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920|Continuidad mensual opcional|anual prepagad[ao]/i, route);
-      assert.doesNotMatch(html, /Activación única · modelo H03/, route);
+      assert.doesNotMatch(html, /Activación única · borrador interno/, route);
       if (route === '/terminos') {
         assert.match(html, /Versión 0\.6/);
         assert.match(html, /contratación anual/i);
@@ -263,16 +263,16 @@ if (process.env.EVCOM_TEST_BASE_URL) {
     }
   });
 
-  test('local H03 preview page renders without embedding internal amounts in its HTML', async () => {
-    const response = await fetch(`${process.env.EVCOM_TEST_BASE_URL}/internal/h03-preview`);
+  test('local commercial preview page renders without embedding internal amounts in its HTML', async () => {
+    const response = await fetch(`${process.env.EVCOM_TEST_BASE_URL}/internal/commercial-preview`);
     const html = await response.text();
     assert.equal(response.status, 200);
-    assert.match(html, /Previsualización interna · modelo H03 no disponible para contratación pública/);
+    assert.match(html, /Previsualización interna · precios y modalidades no disponibles para contratación pública/);
     assert.match(html, /name="continuityMode" value="none"/);
     assert.match(html, /name="continuityMode" value="monthly"/);
     assert.match(html, /name="continuityMode" value="annual_prepay"/);
     assert.match(html, /Datos mínimos para el borrador de prueba/);
-    assert.match(html, /solicitud H03 en borrador/i);
+    assert.match(html, /solicitud comercial en borrador/i);
     assert.doesNotMatch(html, /data-whatsapp-conversion/);
     assert.doesNotMatch(html, /\$(?:19|24|29)\.900|\$(?:214|268|322)\.920/);
   });

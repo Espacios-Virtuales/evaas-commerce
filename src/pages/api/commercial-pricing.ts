@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { CommercialRuleError, resolveH03Pricing } from '../../data/commercial-rules';
+import { CommercialRuleError, resolveCommercialRulesPricing } from '../../data/commercial-rules';
 import { normalizeCampaignCode, resolveCampaign } from '../../data/campaigns';
 import { isLocalInternalPreviewAllowed } from '../../lib/internal-preview-access';
 import { buildCommercialPricingComparison } from '../../lib/commercial-pricing-presentation';
@@ -16,7 +16,7 @@ export const POST: APIRoute = async (context) => {
   if (!import.meta.env.DEV) return notAvailable();
   if (!isLocalInternalPreviewAllowed(true, context.clientAddress)) return notAvailable();
   const { request } = context;
-  if (import.meta.env.EVCOM_H03_PRICING_API_ENABLED !== 'true') return notAvailable();
+  if (import.meta.env.EVCOM_COMMERCIAL_PRICING_PREVIEW_ENABLED !== 'true') return notAvailable();
   if (request.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase() !== 'application/json') {
     return Response.json({ message: 'Formato de solicitud no válido.' }, { status: 415, headers: { 'Cache-Control': 'no-store' } });
   }
@@ -44,7 +44,7 @@ export const POST: APIRoute = async (context) => {
     const campaignStatus = campaignCode
       ? resolveCampaign(campaignCode) ? 'active' as const : campaignCode === 'CIBERDAY' ? 'expired' as const : 'unknown' as const
       : undefined;
-    const pricing = resolveH03Pricing({
+    const pricing = resolveCommercialRulesPricing({
       productSlug: input.productSlug,
       continuityMode: input.continuityMode,
       campaignCode,
