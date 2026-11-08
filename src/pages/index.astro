@@ -4,26 +4,26 @@ import ProductCard from '../components/ProductCard.astro';
 import ProductSelector from '../components/ProductSelector.astro';
 import HeroVideo from '../components/HeroVideo.astro';
 import ProductArchetypeIcon from '../components/ProductArchetypeIcon.astro';
-import { products, formatCLP } from '../data/products';
+import { products, formatCLP, PUBLIC_PRICE_PERIOD } from '../data/products';
 
 export const prerender = true;
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="EVAAS Commerce · Presencia digital para tu proyecto"
+  description="Tres formas claras de presentar tu proyecto con EVAAS Commerce. Explora una landing, un catálogo o una web corporativa y prepara una solicitud asistida."
+>
   <section class="hero">
     <HeroVideo />
     <div class="container hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow">EVAAS Commerce · Activación Digital</span>
-        <h1>Presencia digital <span>profesional</span> desde el primer día.</h1>
-        <p>Elige una base, visualiza y activa fácil.</p>
+        <span class="eyebrow">EVAAS Commerce · una experiencia de Espacios Virtuales</span>
+        <h1>Una presencia digital <span>que puede crecer contigo.</span></h1>
+        <p>Presenta tu proyecto con claridad. Elige una landing, un catálogo o una web corporativa; conoce su alcance y prepara una solicitud asistida.</p>
+        <p class="hero-attributes">Claro · Simple · Evolutivo</p>
         <div class="hero-actions">
-          <a class="button" href="#showroom">Ver ejemplos</a>
+          <a class="button" href="#precios">Explorar productos</a>
           <a class="button button-secondary" href="#elegir">Encontrar mi opción</a>
-        </div>
-        <div class="hero-price">
-          <strong>Desde {formatCLP(products[0].finalPrice)} · Valor final · boleta o factura</strong>
-          <span>Los costos externos, si corresponden, se informan antes.</span>
         </div>
       </div>
       <a class="hero-stage" href="#precios" aria-label="Ver productos y precios">
@@ -31,7 +31,7 @@ export const prerender = true;
         <ul class="hero-product-list">
           {products.map((product) => <li><ProductArchetypeIcon type={product.slug} /><span>{product.name}</span></li>)}
         </ul>
-        <div class="hero-panel-price"><small>Desde · Valor final · boleta o factura</small><strong>{formatCLP(products[0].finalPrice)}</strong></div>
+        <div class="hero-panel-price"><small>Desde · valor final · {PUBLIC_PRICE_PERIOD}</small><strong>{formatCLP(products[0].finalPrice)}</strong></div>
         <span class="stage-price-link">Ver productos y precios →</span>
       </a>
     </div>
@@ -43,7 +43,7 @@ export const prerender = true;
         <a href={`#producto-${product.slug}`} data-track="product_viewed" data-product={product.slug}>
           <small>0{index + 1} · {product.eyebrow}</small>
           <strong>{product.name}</strong>
-          <span>{formatCLP(product.finalPrice)} · Valor final →</span>
+          <span>{formatCLP(product.finalPrice)} · {PUBLIC_PRICE_PERIOD} →</span>
         </a>
       ))}
     </div>
@@ -87,7 +87,7 @@ export const prerender = true;
           <span class="eyebrow">Tres puntos de partida</span>
           <h2>Elige lo que necesitas,<br /><span class="display-serif">simple.</span></h2>
         </div>
-        <p>Todas incluyen una base profesional y lista para publicar. Lo que cambia es la cantidad de información y la forma de recorrerla.</p>
+        <p>Conoce el alcance, el valor anual vigente y sus límites antes de preparar una solicitud. La preparación para publicación se confirma según la cotización.</p>
       </div>
       <div class="products-grid">
         {products.map((product, index) => (
@@ -106,23 +106,32 @@ export const prerender = true;
         </div>
         <p>No necesitas comparar funciones técnicas. Solo identifica que quieres mostrar en el recorrido de tu identidad.</p>
       </div>
-      <div class="compare-wrap" role="region" aria-label="Comparación de configuraciones" tabindex="0">
-        <div class="compare-grid">
-          <div class="compare-row compare-head">
-            <span></span>
-            {products.map((product) => <div><strong>{product.name}</strong><span>{formatCLP(product.finalPrice)} · Valor final</span></div>)}
-          </div>
-          <div class="compare-row"><span class="compare-label">Ideal para</span><span class="compare-value">Una propuesta principal</span><span class="compare-value">Varios productos o servicios</span><span class="compare-value">Una empresa u organización</span></div>
-          <div class="compare-row"><span class="compare-label">Estructura</span><span class="compare-value">1 página · hasta 6 secciones</span><span class="compare-value">Hasta 12 ítems</span><span class="compare-value">4 áreas principales</span></div>
-          <div class="compare-row"><span class="compare-label">Aplicación de identidad existente</span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span></div>
-          <div class="compare-row"><span class="compare-label">Responsive</span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span><span class="compare-value"><b>Sí</b></span></div>
-          <div class="compare-row"><span class="compare-label">Dominio propio</span><span class="compare-value">Se conecta</span><span class="compare-value">Se conecta</span><span class="compare-value">Se conecta</span></div>
-          <div class="compare-row"><span class="compare-label">Vercel</span><span class="compare-value">Publicación inicial*</span><span class="compare-value">Publicación inicial*</span><span class="compare-value">Publicación inicial*</span></div>
-          <div class="compare-row"><span class="compare-label">Revisión</span><span class="compare-value">1 consolidada</span><span class="compare-value">1 consolidada</span><span class="compare-value">1 consolidada</span></div>
-          <div class="compare-row"><span class="compare-label">Ecommerce</span><span class="compare-value">No</span><span class="compare-value">No</span><span class="compare-value">No</span></div>
-        </div>
+      <div class="compare-wrap" role="region" aria-label="Comparación de los tres productos. En pantallas angostas, desplaza la tabla horizontalmente." tabindex="0">
+        <table class="compare-grid">
+          <thead>
+            <tr>
+              <th scope="col">Característica</th>
+              {products.map((product) => <th scope="col">
+                <strong>{product.name}</strong>
+                <span>{formatCLP(product.finalPrice)} · {PUBLIC_PRICE_PERIOD}</span>
+                <a href={`/productos/${product.slug}`} aria-label={`Ver alcance de ${product.name}`}>Ver alcance</a>
+                <a href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="product_selected" data-product={product.slug}>Preparar solicitud</a>
+              </th>)}
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Finalidad y profundidad</th>{products.map((product) => <td><p>{product.purpose}</p><p><strong>Ideal para:</strong> {product.bestFor}</p></td>)}</tr>
+            <tr><th scope="row">Estructura</th>{products.map((product) => <td>{product.scope.split(' · ').slice(0, -1).join(' · ')}</td>)}</tr>
+            <tr><th scope="row">Diseño e identidad</th>{products.map((product) => <td>{product.includes.filter((item) => item.startsWith('Aplicación básica de tu identidad') || item === 'Diseño responsive').join(' · ')}</td>)}</tr>
+            <tr><th scope="row">Revisión consolidada</th>{products.map((product) => <td>{product.scope.split(' · ').at(-1)}</td>)}</tr>
+            <tr><th scope="row">Publicación</th>{products.map((product) => <td>{product.includes.find((item) => item.startsWith('Preparación para publicación'))}</td>)}</tr>
+            <tr><th scope="row">Dominio y costos externos</th>{products.map(() => <td>El cliente compra y conserva su dominio. Su conexión y cualquier costo externo se confirman en la cotización.</td>)}</tr>
+            <tr><th scope="row">No incluido</th>{products.map((product) => <td>{product.excludes.join(' · ')}</td>)}</tr>
+            <tr><th scope="row">Ampliaciones</th>{products.map(() => <td>Se evalúan y cotizan por separado; no se consideran capacidades instaladas.</td>)}</tr>
+          </tbody>
+        </table>
       </div>
-      <p class="compare-note">* Publicación inicial en una cuenta o plan compatible. Si un proveedor externo exige un costo comercial, se informa antes de publicar.</p>
+      <p class="compare-note">Los valores mostrados corresponden a contratación anual de 12 meses, con boleta o factura. En móvil, desplaza la tabla horizontalmente. Preparar o enviar una solicitud no confirma compra ni pago.</p>
     </div>
   </section>
 
@@ -130,27 +139,28 @@ export const prerender = true;
     <div class="container">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">Cómo funciona</span>
-          <h2>Un proceso breve y visible.</h2>
+          <span class="eyebrow">Un recorrido por etapas</span>
+          <h2>Empieza con claridad. Crece cuando lo necesites.</h2>
         </div>
-        <p>Compras un resultado. Nosotros resolvemos la parte técnica y te pedimos solo la información necesaria.</p>
+        <p>La solicitud inicial es asistida. La continuidad y los nuevos alcances se revisan según las condiciones vigentes.</p>
       </div>
-      <div class="steps">
-        <div class="step"><strong>Elige</strong><p>Selecciona la configuración que corresponde a tu necesidad.</p></div>
-        <div class="step"><strong>Comparte</strong><p>Entrega textos, datos, identidad disponible y accesos necesarios.</p></div>
-        <div class="step"><strong>Construimos</strong><p>Construimos la experiencia dentro del diseño elegido.</p></div>
-        <div class="step"><strong>Revisas</strong><p>Agrupas tus observaciones en una revisión consolidada.</p></div>
-        <div class="step"><strong>Publicamos</strong><p>Conectamos la presencia a tu dominio y dejamos la base operativa.</p></div>
-      </div>
+      <ol class="steps" aria-label="Etapas para iniciar, mantener y ampliar tu presencia digital">
+        <li class="step"><h3>Activa</h3><p>Elige Landing, Catálogo o Web Corporativa y revisa su alcance. Hoy puedes preparar una solicitud asistida; enviarla no confirma una compra ni un pago.</p></li>
+        <li class="step"><h3>Mantén</h3><p>El período contratado y sus condiciones siguen los términos vigentes. La renovación anual es opcional y se informa antes del siguiente período.</p></li>
+        <li class="step"><h3>Amplía</h3><p>Nuevas funciones, integraciones y otros alcances se evalúan y cotizan por separado; no se incluyen por defecto.</p></li>
+      </ol>
     </div>
   </section>
 
-  <section class="section-tight">
-    <div class="container trust-grid">
-      <article class="trust-card"><span class="trust-index">01 / Control</span><h3>El dominio lo compras y conservas tú.</h3><p>Espacios Virtuales realiza la configuración y la conexión. La propiedad y el acceso permanecen bajo tu control.</p></article>
-      <article class="trust-card"><span class="trust-index">02 / Claridad</span><h3>Sabes qué entra antes de comenzar.</h3><p>Alcance, límite de contenido, revisión, exclusiones y posibles costos externos se muestran antes de activar.</p></article>
-      <article class="trust-card"><span class="trust-index">03 / Entrega</span><h3>Recibes una base publicada y responsive.</h3><p>No una maqueta. La activación termina con una presencia funcional, conectada y lista para recibir visitas.</p></article>
-      <article class="trust-card"><span class="trust-index">04 / Evolución</span><h3>Puedes crecer sin comprarlo todo hoy.</h3><p>Agenda, pagos, analítica o nuevas capacidades se evalúan solo cuando exista una necesidad real.</p></article>
+  <section class="section-tight" aria-labelledby="trust-heading">
+    <div class="container">
+      <h2 class="sr-only" id="trust-heading">Fundamentos para avanzar con claridad.</h2>
+      <div class="trust-grid">
+        <article class="trust-card"><span class="trust-index">01 / Control</span><h3>El dominio lo compras y conservas tú.</h3><p>La cotización define si se incluye su conexión. La propiedad y el acceso permanecen bajo tu control.</p></article>
+        <article class="trust-card"><span class="trust-index">02 / Claridad</span><h3>Sabes qué entra antes de comenzar.</h3><p>Alcance, límite de contenido, revisión, exclusiones y posibles costos externos se muestran antes de activar.</p></article>
+        <article class="trust-card"><span class="trust-index">03 / Entrega</span><h3>Conoces el resultado acordado.</h3><p>La entrega y su aceptación corresponden a la cotización; la preparación para publicación y cualquier conexión dependen del alcance confirmado.</p></article>
+        <article class="trust-card"><span class="trust-index">04 / Evolución</span><h3>Puedes crecer sin sumar todo desde el inicio.</h3><p>Nuevas funciones e integraciones se evalúan y cotizan por separado; no se incluyen automáticamente.</p></article>
+      </div>
     </div>
   </section>
 
@@ -159,8 +169,9 @@ export const prerender = true;
       <div>
         <span class="eyebrow eyebrow-dark">Tu primera base digital</span>
         <h2>Empieza y luego crece.</h2>
+        <p>Compara las tres opciones y, cuando elijas un alcance, prepara tu solicitud para revisarla antes de enviarla.</p>
       </div>
-      <a class="button button-dark" href="#elegir">Elegir mi opción</a>
+      <a class="button button-dark" href="#precios">Explorar opciones</a>
     </div>
   </section>
 

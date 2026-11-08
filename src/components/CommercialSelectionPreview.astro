@@ -1,0 +1,478 @@
+---
+import { products } from '../data/products';
+
+interface Props {
+  requestPreviewEnabled?: boolean;
+}
+
+const { requestPreviewEnabled = false } = Astro.props;
+---
+
+<section class="commercial-preview" aria-labelledby="commercial-preview-title" data-commercial-preview>
+  <header class="commercial-preview-header">
+    <span class="eyebrow">Claro · Simple · Evolutivo</span>
+    <h1 id="commercial-preview-title">Selector de modalidad y resumen comercial</h1>
+    <p>Explora las modalidades comerciales en una vista interna. Los valores se consultan al servidor de desarrollo y no están disponibles para contratación pública.</p>
+    <p class="commercial-preview-badge">Previsualización interna · precios y modalidades no disponibles para contratación pública</p>
+  </header>
+
+  <div class="commercial-preview-grid">
+    <form class="commercial-preview-controls" data-preview-form>
+      <label class="commercial-field" for="commercial-product">Producto</label>
+      <select id="commercial-product" name="productSlug" data-product-select>
+        {products.map((product) => <option value={product.slug} data-purpose={product.purpose} data-scope={product.scope}>{product.name}</option>)}
+      </select>
+
+      <fieldset class="commercial-modes">
+        <legend>Continuidad opcional</legend>
+        <label><input type="radio" name="continuityMode" value="none" checked /> <span><strong>Sin continuidad</strong><small>Solo se muestra la activación del modelo.</small></span></label>
+        <label><input type="radio" name="continuityMode" value="monthly" /> <span><strong>Mensual</strong><small>Estimación separada por mes.</small></span></label>
+        <label><input type="radio" name="continuityMode" value="annual_prepay" /> <span><strong>Anual prepagada</strong><small>10% menos sobre doce mensualidades de continuidad.</small></span></label>
+      </fieldset>
+
+      {requestPreviewEnabled && <fieldset class="commercial-request-fields">
+        <legend>Datos mínimos para el borrador de prueba</legend>
+        <label for="commercial-project-name">Nombre del proyecto</label>
+        <input id="commercial-project-name" name="projectName" type="text" maxlength="100" autocomplete="off" required data-project-name />
+        <span class="commercial-field-hint">No ingreses datos de contacto, claves ni información de pago.</span>
+        <label for="commercial-domain-status">Estado del dominio</label>
+        <select id="commercial-domain-status" name="domainStatus" data-domain-status>
+          <option value="unsure">Necesito orientación</option>
+          <option value="owned">Ya tengo dominio</option>
+          <option value="needed">Necesito comprar dominio</option>
+        </select>
+        <label for="commercial-project-objective">Objetivo, si quieres agregar contexto</label>
+        <textarea id="commercial-project-objective" name="projectObjective" maxlength="600" rows="3" data-project-objective></textarea>
+        <span class="commercial-field-hint">Se usa solo para mostrar y preparar este borrador en memoria; no se guarda en una orden ni cuenta.</span>
+        <button class="button button-dark" type="button" data-create-request>Preparar solicitud de prueba</button>
+        <p class="commercial-request-note">Esta acción no acepta términos, no contrata y no envía el mensaje. Revisa también el <a href="/privacidad">aviso de privacidad vigente</a>.</p>
+        <p class="commercial-request-status" role="status" aria-live="polite" data-request-status></p>
+      </fieldset>}
+      {!requestPreviewEnabled && <p class="commercial-pending-copy">El recorrido de solicitud asistida permanece deshabilitado en esta ejecución.</p>}
+
+      <p class="commercial-third-party">Dominio, alojamiento, SSL, respaldos, soporte y otros servicios de terceros no se agregan a este cálculo. Su alcance y costo requieren evidencia y cotización.</p>
+      <button class="button button-dark" type="submit" data-submit>Consultar desglose interno</button>
+      <p class="commercial-status" role="status" aria-live="polite" data-status>Consultando las reglas internas…</p>
+    </form>
+
+    <section class="commercial-summary" aria-labelledby="commercial-summary-title" aria-busy="true" data-summary>
+      <span class="eyebrow">Resultado del servidor</span>
+      <h2 id="commercial-summary-title" data-name>Desglose pendiente</h2>
+      <p data-purpose-display></p>
+      <p class="commercial-scope" data-scope-display></p>
+      <dl class="commercial-breakdown" data-breakdown hidden>
+        <div><dt>Activación única · borrador interno</dt><dd data-activation></dd></div>
+        <div><dt data-continuity-label>Continuidad</dt><dd data-continuity></dd></div>
+        <div data-savings-row hidden><dt>Ahorro anual sobre 12 mensualidades de continuidad</dt><dd data-savings></dd></div>
+        <div class="commercial-total-row"><dt>Proyección comparable de 12 meses</dt><dd data-total></dd></div>
+      </dl>
+      <p class="commercial-estimate" data-estimate hidden></p>
+      <p class="commercial-not-contract">La selección no genera compra, pago, reserva, membresía, cotización durable ni aceptación de términos. No se asignan fechas de cobro o inicio de servicio.</p>
+      <p class="commercial-version" data-version hidden></p>
+      <p id="commercial-pending-copy" class="commercial-pending-copy">La solicitud asistida pública sigue disponible bajo los términos v0.6. Esta vista interna no la modifica ni la envía.</p>
+      <a href="/#precios">Ver la oferta pública vigente</a>
+    </section>
+  </div>
+
+  {requestPreviewEnabled && <section class="commercial-request-review" aria-labelledby="commercial-request-title" data-request-panel hidden>
+    <span class="eyebrow">Previsualización interna · solicitud comercial en borrador</span>
+    <h2 id="commercial-request-title">Revisa el borrador antes de preparar WhatsApp</h2>
+    <p>Esta solicitud temporal no es compra, pago, reserva, activación aceptada ni aceptación contractual. No se ha enviado ningún mensaje.</p>
+    <dl class="commercial-review-grid">
+      <div><dt>Producto</dt><dd data-request-product></dd></div>
+      <div><dt>Propósito</dt><dd data-request-purpose></dd></div>
+      <div><dt>Alcance base</dt><dd data-request-scope></dd></div>
+      <div><dt>Modalidad</dt><dd data-request-mode></dd></div>
+      <div><dt>Activación · borrador interno</dt><dd data-request-activation></dd></div>
+      <div><dt>Continuidad seleccionada</dt><dd data-request-continuity></dd></div>
+      <div data-request-savings-row hidden><dt>Ahorro anual (10% solo sobre continuidad)</dt><dd data-request-savings></dd></div>
+      <div><dt>Comparación estimada a 12 meses</dt><dd data-request-total></dd></div>
+    </dl>
+    <p class="commercial-estimate" data-request-continuity-note></p>
+    <p class="commercial-third-party">Dominio, alojamiento, SSL, respaldos, soporte y otros servicios externos no están incluidos por defecto ni tienen precio asignado en este borrador; requieren alcance, evidencia y cotización.</p>
+    <p class="commercial-expiry" data-request-expiry></p>
+    <label for="commercial-whatsapp-draft">Mensaje para revisión</label>
+    <textarea id="commercial-whatsapp-draft" rows="12" readonly data-whatsapp-draft></textarea>
+    <div class="commercial-review-actions">
+      <button class="button button-dark" type="button" data-validate-request>Validar vigencia y habilitar enlace</button>
+      <button class="button button-outline" type="button" data-copy-message>Copiar texto</button>
+      <a class="button button-dark" href="#" target="_blank" rel="noopener noreferrer" data-whatsapp-link hidden>Abrir WhatsApp y revisar mensaje</a>
+      <button class="button button-outline" type="button" data-new-request>Preparar un borrador nuevo</button>
+    </div>
+    <p class="commercial-request-status" role="status" aria-live="polite" data-review-status></p>
+    <p class="commercial-pending-copy">Abrir WhatsApp no envía el mensaje. Tú decides si lo compartes al pulsar Enviar en WhatsApp. Si el navegador bloquea la pestaña o WhatsApp no está configurado, el texto permanece disponible para copiar.</p>
+  </section>}
+</section>
+
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-commercial-preview]');
+    const form = root?.querySelector('[data-preview-form]');
+    const summary = root?.querySelector('[data-summary]');
+    const status = root?.querySelector('[data-status]');
+    const submit = root?.querySelector('[data-submit]');
+    const productSelect = root?.querySelector('[data-product-select]');
+    if (!root || !form || !summary || !status || !submit || !productSelect) return;
+
+    const formatCLP = (value) => `$${new Intl.NumberFormat('es-CL', { maximumFractionDigits: 0 }).format(value)}`;
+    const name = root.querySelector('[data-name]');
+    const purpose = root.querySelector('[data-purpose-display]');
+    const scope = root.querySelector('[data-scope-display]');
+    const breakdown = root.querySelector('[data-breakdown]');
+    const activation = root.querySelector('[data-activation]');
+    const continuity = root.querySelector('[data-continuity]');
+    const continuityLabel = root.querySelector('[data-continuity-label]');
+    const savingsRow = root.querySelector('[data-savings-row]');
+    const savings = root.querySelector('[data-savings]');
+    const total = root.querySelector('[data-total]');
+    const estimate = root.querySelector('[data-estimate]');
+    const version = root.querySelector('[data-version]');
+    const createRequestButton = root.querySelector('[data-create-request]');
+    const requestPanel = root.querySelector('[data-request-panel]');
+    const requestStatus = root.querySelector('[data-request-status]');
+    const reviewStatus = root.querySelector('[data-review-status]');
+    const validateRequestButton = root.querySelector('[data-validate-request]');
+    const copyMessageButton = root.querySelector('[data-copy-message]');
+    const whatsappLink = root.querySelector('[data-whatsapp-link]');
+    const messageField = root.querySelector('[data-whatsapp-draft]');
+    const newRequestButton = root.querySelector('[data-new-request]');
+    let currentRequest = null;
+    let ttlExpiresAt = 0;
+    let whatsappDraft = '';
+    let ttlTimer = null;
+    let sequence = 0;
+
+    const formatMode = (mode) => ({
+      none: 'Sin continuidad',
+      monthly: 'Continuidad mensual',
+      annual_prepay: 'Continuidad anual prepagada'
+    }[mode] || 'Modalidad no disponible');
+    const clearWhatsAppLink = () => {
+      whatsappLink.hidden = true;
+      whatsappLink.removeAttribute('href');
+    };
+    const clearRequestDraft = () => {
+      currentRequest = null;
+      ttlExpiresAt = 0;
+      whatsappDraft = '';
+      clearWhatsAppLink();
+      if (ttlTimer) window.clearInterval(ttlTimer);
+      ttlTimer = null;
+      if (requestPanel) requestPanel.hidden = true;
+      if (reviewStatus) reviewStatus.textContent = '';
+    };
+    const updateExpiry = () => {
+      if (!currentRequest || !ttlExpiresAt) return;
+      const remaining = ttlExpiresAt - Date.now();
+      if (remaining <= 0) {
+        currentRequest = null;
+        whatsappDraft = '';
+        messageField.value = '';
+        copyMessageButton.disabled = true;
+        clearWhatsAppLink();
+        validateRequestButton.disabled = true;
+        if (ttlTimer) window.clearInterval(ttlTimer);
+        ttlTimer = null;
+        root.querySelector('[data-request-expiry]').textContent = 'El borrador venció. Prepara uno nuevo antes de continuar.';
+        reviewStatus.textContent = 'Borrador vencido; no se puede reutilizar.';
+        return;
+      }
+      const minutes = Math.floor(remaining / 60_000);
+      const seconds = Math.floor((remaining % 60_000) / 1_000);
+      root.querySelector('[data-request-expiry]').textContent = `Vigencia temporal: ${minutes} min ${String(seconds).padStart(2, '0')} s. El servidor volverá a validar antes de habilitar WhatsApp.`;
+    };
+
+    const invalidateRequestOnEdit = () => {
+      if (requestPanel && !requestPanel.hidden) {
+        clearRequestDraft();
+        if (requestStatus) requestStatus.textContent = 'Cambió la selección o el contexto. Prepara una solicitud nueva para revisar los cambios.';
+      }
+    };
+
+    const loadBreakdown = async () => {
+      const requestSequence = ++sequence;
+      const selected = productSelect.selectedOptions[0];
+      const mode = new FormData(form).get('continuityMode');
+      summary.setAttribute('aria-busy', 'true');
+      breakdown.hidden = true;
+      estimate.hidden = true;
+      status.textContent = 'Consultando las reglas internas…';
+      submit.disabled = true;
+
+      try {
+        const response = await fetch('/api/commercial-pricing', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          cache: 'no-store',
+          body: JSON.stringify({ productSlug: productSelect.value, continuityMode: mode })
+        });
+        if (!response.ok) throw new Error('PREVIEW_UNAVAILABLE');
+        const result = await response.json();
+        if (requestSequence !== sequence) return;
+
+        const productName = selected.textContent?.trim() || 'Producto seleccionado';
+        name.textContent = productName;
+        purpose.textContent = selected.dataset.purpose || '';
+        scope.textContent = selected.dataset.scope || '';
+        activation.textContent = formatCLP(result.pricing.activation.amount);
+        if (result.pricing.continuity?.cadence === 'monthly') {
+          continuityLabel.textContent = 'Continuidad mensual';
+          continuity.textContent = `${formatCLP(result.pricing.continuity.amount)} por mes`;
+          estimate.textContent = `Estimación condicionada a mantener 12 meses: ${formatCLP(result.comparison.estimatedTwelveMonthTotal)} en total, incluida la activación. No constituye plazo obligatorio ni cobro.`;
+          estimate.hidden = false;
+        } else if (result.pricing.continuity?.cadence === 'annual_prepay') {
+          continuityLabel.textContent = 'Continuidad anual prepagada';
+          continuity.textContent = formatCLP(result.pricing.continuity.amount);
+          savings.textContent = formatCLP(result.comparison.annualSavings);
+          savingsRow.hidden = false;
+          estimate.textContent = `Comparación de 12 meses: ${formatCLP(result.comparison.estimatedTwelveMonthTotal)} incluida la activación. La vista no fija fechas de cobro o inicio.`;
+          estimate.hidden = false;
+        } else {
+          continuityLabel.textContent = 'Continuidad';
+          continuity.textContent = 'No seleccionada';
+        }
+        if (result.pricing.continuity?.cadence !== 'annual_prepay') savingsRow.hidden = true;
+        total.textContent = formatCLP(result.comparison.estimatedTwelveMonthTotal);
+        version.textContent = `${result.pricing.commercialRulesVersion} · términos ${result.pricing.termsVersion} · ${result.pricing.offerStatus}`;
+        version.hidden = false;
+        breakdown.hidden = false;
+        status.textContent = 'Desglose actualizado desde las reglas canónicas del servidor.';
+      } catch {
+        if (requestSequence !== sequence) return;
+        name.textContent = 'Desglose no disponible';
+        purpose.textContent = '';
+        scope.textContent = '';
+        savingsRow.hidden = true;
+        version.hidden = true;
+        status.textContent = 'No fue posible acceder a las reglas internas. No se muestran precios alternativos.';
+      } finally {
+        if (requestSequence === sequence) {
+          summary.setAttribute('aria-busy', 'false');
+          submit.disabled = false;
+        }
+      }
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      void loadBreakdown();
+    });
+    productSelect.addEventListener('change', () => { invalidateRequestOnEdit(); void loadBreakdown(); });
+    form.querySelectorAll('input[name="continuityMode"]').forEach((input) => {
+      input.addEventListener('change', () => { invalidateRequestOnEdit(); void loadBreakdown(); });
+    });
+    form.querySelectorAll('[data-project-name], [data-domain-status], [data-project-objective]').forEach((input) => {
+      input.addEventListener('input', invalidateRequestOnEdit);
+      input.addEventListener('change', invalidateRequestOnEdit);
+    });
+
+    createRequestButton?.addEventListener('click', async () => {
+      const selectedMode = new FormData(form).get('continuityMode');
+      const projectName = form.querySelector('[data-project-name]')?.value;
+      const domainStatus = form.querySelector('[data-domain-status]')?.value;
+      const projectObjective = form.querySelector('[data-project-objective]')?.value;
+      if (!projectName || !domainStatus) {
+        form.reportValidity();
+        return;
+      }
+      clearRequestDraft();
+      createRequestButton.disabled = true;
+      requestStatus.textContent = 'Preparando un borrador temporal con el cálculo canónico…';
+      try {
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 10_000);
+        const response = await fetch('/api/internal/commercial-request-preview', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          cache: 'no-store',
+          signal: controller.signal,
+          body: JSON.stringify({
+            action: 'create',
+            productSlug: productSelect.value,
+            continuityMode: selectedMode,
+            projectName,
+            domainStatus,
+            projectObjective
+          })
+        });
+        window.clearTimeout(timeout);
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.code || 'REQUEST_UNAVAILABLE');
+
+        currentRequest = result.request;
+        ttlExpiresAt = Date.parse(result.ttlExpiresAt);
+        whatsappDraft = result.whatsappDraft;
+        requestPanel.hidden = false;
+        root.querySelector('[data-request-product]').textContent = result.product.name;
+        root.querySelector('[data-request-purpose]').textContent = result.product.purpose;
+        root.querySelector('[data-request-scope]').textContent = result.product.scope;
+        root.querySelector('[data-request-mode]').textContent = formatMode(result.request.continuityMode);
+        root.querySelector('[data-request-activation]').textContent = formatCLP(result.request.pricing.activation.amount);
+        root.querySelector('[data-request-continuity]').textContent = result.request.pricing.continuity
+          ? `${formatCLP(result.request.pricing.continuity.amount)} ${result.request.pricing.continuity.cadence === 'monthly' ? 'por mes' : 'prepago de continuidad'}`
+          : 'No seleccionada';
+        const continuityNote = root.querySelector('[data-request-continuity-note]');
+        continuityNote.textContent = result.request.continuityMode === 'monthly'
+          ? 'La cifra de continuidad es mensual. No indica un cobro inicial ni obliga a mantener doce meses; la comparación a doce meses es solo una estimación.'
+          : result.request.continuityMode === 'annual_prepay'
+            ? 'El monto anual corresponde al prepago de continuidad y se muestra separado de la activación. Este borrador no registra cobro ni fecha de inicio.'
+            : 'No se eligió continuidad; la proyección muestra solo la activación del modelo interno.';
+        root.querySelector('[data-request-savings-row]').hidden = result.request.pricing.continuity?.cadence !== 'annual_prepay';
+        root.querySelector('[data-request-savings]').textContent = formatCLP(result.comparison.annualSavings);
+        root.querySelector('[data-request-total]').textContent = formatCLP(result.comparison.estimatedTwelveMonthTotal);
+        root.querySelector('[data-request-expiry]').textContent = '';
+        messageField.value = whatsappDraft;
+        copyMessageButton.disabled = false;
+        validateRequestButton.disabled = false;
+        clearWhatsAppLink();
+        reviewStatus.textContent = 'Borrador preparado y disponible para revisión. No se ha enviado ningún mensaje.';
+        requestStatus.textContent = 'Borrador interno preparado. Revisa el resumen y el texto antes de validar el enlace.';
+        updateExpiry();
+        ttlTimer = window.setInterval(updateExpiry, 1_000);
+        requestPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (error) {
+        const code = error?.name === 'AbortError' ? 'TIMEOUT' : error?.message;
+        requestStatus.textContent = code === 'TIMEOUT'
+          ? 'La solicitud agotó el tiempo de espera. No se preparó un enlace de WhatsApp; puedes intentarlo otra vez.'
+          : 'No fue posible preparar el borrador. No se muestran precios alternativos ni se genera un enlace.';
+      } finally {
+        createRequestButton.disabled = false;
+      }
+    });
+
+    validateRequestButton?.addEventListener('click', async () => {
+      if (!currentRequest || Date.now() >= ttlExpiresAt) {
+        updateExpiry();
+        return;
+      }
+      clearWhatsAppLink();
+      validateRequestButton.disabled = true;
+      reviewStatus.textContent = 'Validando vigencia y reglas del borrador en el servidor…';
+      try {
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 10_000);
+        const response = await fetch('/api/internal/commercial-request-preview', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          cache: 'no-store',
+          signal: controller.signal,
+          body: JSON.stringify({ action: 'validate', request: currentRequest })
+        });
+        window.clearTimeout(timeout);
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          if (response.status === 410 || result.code === 'REQUEST_EXPIRED') {
+            currentRequest = null;
+            whatsappDraft = '';
+            messageField.value = '';
+            copyMessageButton.disabled = true;
+            validateRequestButton.disabled = true;
+            clearWhatsAppLink();
+            root.querySelector('[data-request-expiry]').textContent = 'El borrador venció. Prepara uno nuevo antes de continuar.';
+            reviewStatus.textContent = 'Borrador vencido; no se puede reutilizar.';
+            if (ttlTimer) window.clearInterval(ttlTimer);
+            ttlTimer = null;
+            return;
+          }
+          throw new Error(result.code || 'VALIDATION_FAILED');
+        }
+        whatsappDraft = result.whatsappDraft;
+        messageField.value = whatsappDraft;
+        if (result.whatsappUrl && result.whatsappAvailable) {
+          whatsappLink.href = result.whatsappUrl;
+          whatsappLink.hidden = false;
+          reviewStatus.textContent = 'Vigencia validada. El enlace quedó disponible; se abrirá solo cuando lo pulses.';
+        } else {
+          reviewStatus.textContent = 'Vigencia validada. WhatsApp no está configurado; puedes copiar y revisar el texto, sin enlace externo.';
+        }
+        ttlExpiresAt = Date.parse(result.ttlExpiresAt);
+        updateExpiry();
+      } catch (error) {
+        const code = error?.name === 'AbortError' ? 'TIMEOUT' : error?.message;
+        reviewStatus.textContent = code === 'TIMEOUT'
+          ? 'La validación agotó el tiempo de espera. No se habilitó ningún enlace.'
+          : 'No se pudo validar el borrador. No se habilitó ningún enlace; puedes intentarlo otra vez mientras siga vigente.';
+      } finally {
+        if (currentRequest) validateRequestButton.disabled = false;
+      }
+    });
+
+    copyMessageButton?.addEventListener('click', async () => {
+      if (!whatsappDraft) return;
+      try {
+        await navigator.clipboard.writeText(whatsappDraft);
+        reviewStatus.textContent = 'Texto copiado. Aún no se ha enviado.';
+      } catch {
+        messageField.focus();
+        messageField.select();
+        reviewStatus.textContent = 'No se pudo copiar automáticamente. El texto quedó seleccionado para copiarlo manualmente.';
+      }
+    });
+
+    newRequestButton?.addEventListener('click', () => {
+      clearRequestDraft();
+      requestStatus.textContent = 'Puedes preparar un borrador actualizado.';
+      form.querySelector('[data-project-name]')?.focus();
+    });
+    void loadBreakdown();
+  })();
+</script>
+
+<style>
+  :global(body.commercial-preview-page) { min-width: 0; }
+  .commercial-preview { width: min(100% - 2rem, 74rem); margin: 0 auto; padding-block: clamp(2rem, 6vw, 5rem); }
+  .commercial-preview-header { max-width: 54rem; margin-bottom: 2rem; }
+  .commercial-preview-header h1 { margin-top: .7rem; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.06; }
+  .commercial-preview-header > p { max-width: 68ch; margin-top: .85rem; color: var(--muted); }
+  .commercial-preview-badge { display: inline-flex; padding: .55rem .75rem; border: 1px solid var(--color-brand); border-radius: 999px; color: var(--color-brand); font-size: .82rem; font-weight: 700; }
+  .commercial-preview-grid { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); align-items: start; gap: 1.25rem; }
+  .commercial-preview-controls, .commercial-summary { min-width: 0; padding: clamp(1.1rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 1.1rem; background: var(--ink-soft); }
+  .commercial-field, .commercial-modes legend { display: block; margin-bottom: .6rem; font-weight: 720; }
+  .commercial-preview select { width: 100%; min-height: 3rem; padding: .65rem .8rem; border: 1px solid var(--line); border-radius: .55rem; color: var(--color-text); background: var(--color-surface); }
+  .commercial-preview input:not([type="radio"]), .commercial-preview textarea { width: 100%; min-width: 0; padding: .7rem .8rem; border: 1px solid var(--line); border-radius: .55rem; color: var(--color-text); background: var(--color-surface); font: inherit; }
+  .commercial-request-fields { display: grid; gap: .65rem; min-width: 0; margin: 1.4rem 0; padding: 0; border: 0; }
+  .commercial-request-fields legend { margin-bottom: .25rem; font-weight: 720; }
+  .commercial-request-fields > label, .commercial-request-review > label { margin-top: .35rem; font-weight: 650; }
+  .commercial-field-hint { color: var(--muted); font-size: .8rem; }
+  .commercial-request-note, .commercial-request-status, .commercial-expiry { color: var(--muted); font-size: .86rem; }
+  .commercial-request-review { min-width: 0; margin-top: 1.25rem; padding: clamp(1.1rem, 3vw, 2rem); border: 1px solid var(--line); border-radius: 1.1rem; background: var(--ink-soft); scroll-margin-top: 7rem; }
+  .commercial-request-review h2 { margin-top: .55rem; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+  .commercial-review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; margin-block: 1.25rem; }
+  .commercial-review-grid > div { min-width: 0; padding: .8rem; border: 1px solid var(--line); border-radius: .65rem; }
+  .commercial-review-grid dt { color: var(--muted); font-size: .82rem; }
+  .commercial-review-grid dd { margin: .3rem 0 0; font-weight: 680; overflow-wrap: anywhere; }
+  .commercial-request-review textarea { display: block; margin-top: .4rem; min-height: 12rem; resize: vertical; }
+  .commercial-review-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: .8rem; }
+  .commercial-review-actions > * { min-height: 2.9rem; }
+  .commercial-review-actions .button-outline { border: 1px solid var(--line); color: var(--color-text); background: var(--color-surface); }
+  .commercial-preview :disabled { cursor: not-allowed; opacity: .68; }
+  .commercial-modes { display: grid; gap: .65rem; min-width: 0; margin: 1.5rem 0; padding: 0; border: 0; }
+  .commercial-modes legend { padding: 0; }
+  .commercial-modes label { display: grid; grid-template-columns: 1.2rem minmax(0, 1fr); align-items: start; gap: .65rem; padding: .85rem; border: 1px solid var(--line); border-radius: .7rem; cursor: pointer; }
+  .commercial-modes input { width: 1.1rem; height: 1.1rem; margin: .12rem 0 0; accent-color: var(--color-brand); }
+  .commercial-modes label span { display: grid; gap: .2rem; }
+  .commercial-modes small, .commercial-third-party, .commercial-pending-copy { color: var(--muted); font-size: .86rem; }
+  .commercial-third-party { margin-bottom: 1rem; }
+  .commercial-status { min-height: 1.5em; margin-top: .8rem; color: var(--muted); font-size: .85rem; }
+  .commercial-summary h2 { margin-top: .5rem; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+  .commercial-summary > [data-purpose-display] { margin-top: .6rem; color: var(--muted); }
+  .commercial-scope { margin-top: .6rem; font-weight: 650; }
+  .commercial-breakdown { display: grid; gap: .65rem; margin: 1.4rem 0 .75rem; }
+  .commercial-breakdown > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: .8rem; padding-bottom: .65rem; border-bottom: 1px solid var(--line); }
+  .commercial-breakdown dt { color: var(--muted); font-size: .9rem; }
+  .commercial-breakdown dd { margin: 0; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+  .commercial-breakdown .commercial-total-row dt, .commercial-breakdown .commercial-total-row dd { color: var(--color-brand); font-weight: 760; }
+  .commercial-estimate { margin-block: .8rem 1.1rem; color: var(--muted); font-size: .88rem; }
+  .commercial-not-contract { margin-block: 1rem; padding: .85rem; border-left: 3px solid var(--color-brand); background: var(--color-surface); font-size: .86rem; }
+  .commercial-version { color: var(--muted); font-size: .74rem; overflow-wrap: anywhere; }
+  .commercial-summary .button { margin-top: 1rem; }
+  .commercial-summary > a { display: inline-block; margin-top: 1rem; color: var(--color-brand); text-underline-offset: .2em; }
+  .commercial-preview :focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+  @media (max-width: 700px) {
+    .commercial-preview-grid { grid-template-columns: minmax(0, 1fr); }
+    .commercial-review-grid { grid-template-columns: minmax(0, 1fr); }
+    .commercial-review-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+    .commercial-review-actions > * { width: 100%; }
+    .commercial-request-review { scroll-margin-top: 10rem; }
+  }
+</style>
