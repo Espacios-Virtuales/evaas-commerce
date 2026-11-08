@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { products, formatCLP, type Product } from '../../data/products';
+import { products, formatCLP, PUBLIC_PRICE_PERIOD, type Product } from '../../data/products';
 import { PROJECT_CATEGORIES } from '../../data/project-categories';
 
 export const prerender = true;
@@ -17,14 +17,13 @@ const { product } = Astro.props;
       <span class="eyebrow">Tu selección</span>
       <h1>{product.name}</h1>
       <span class="summary-price" data-commercial-price>{formatCLP(product.finalPrice)}</span>
-      <span class="muted" data-commercial-price-note>Valor final · boleta o factura</span>
+      <span class="muted" data-commercial-price-note>Valor final · {PUBLIC_PRICE_PERIOD} · boleta o factura</span>
       <p class="campaign-preview" data-campaign-preview hidden></p>
       <span class="muted" data-commercial-project-color>Color del proyecto · Por definir</span>
       <ul>
         <li>{product.scope}</li>
         <li>Aplicación básica de tu identidad disponible y responsive</li>
-        <li>Publicación inicial en Vercel*</li>
-        <li>Conexión de tu dominio</li>
+        <li>Preparación para publicación según la cotización*</li>
         <li>Sin ecommerce</li>
       </ul>
       <a href={`/productos/${product.slug}`}>Revisar alcance completo</a>
@@ -63,7 +62,7 @@ const { product } = Astro.props;
                 <div class="radio-card"><input id="domain-no" type="radio" name="domainStatus" value="needed" /><label for="domain-no"><strong>No</strong><span>Necesito comprarlo</span></label></div>
                 <div class="radio-card"><input id="domain-unsure" type="radio" name="domainStatus" value="unsure" /><label for="domain-unsure"><strong>No sé</strong><span>Necesito orientación</span></label></div>
               </div>
-              <small>El dominio lo compras y conservas tú. Te ayudamos a conectarlo.</small>
+              <small>El dominio lo compras y conservas tú. La cotización define si se incluye su conexión.</small>
             </fieldset>
             <div class="field field-full">
               <label for="campaignCode">Código promocional</label>
@@ -126,11 +125,11 @@ const { product } = Astro.props;
       const renderPricing = (pricing) => {
         priceNode.textContent = formatPrice(pricing.total);
         if (pricing.campaignCode) {
-          priceNote.textContent = `Valor final con ${pricing.campaignCode} · boleta o factura`;
+          priceNote.textContent = `Valor final · ${PUBLIC_PRICE_PERIOD} · promoción ${pricing.campaignCode} · boleta o factura`;
           campaignPreview.textContent = `${pricing.campaignCode} aplicado · 15% de descuento · Ahorras ${formatPrice(pricing.discountAmount)}.`;
           campaignPreview.hidden = false;
         } else {
-          priceNote.textContent = 'Valor final · boleta o factura';
+          priceNote.textContent = `Valor final · ${PUBLIC_PRICE_PERIOD} · boleta o factura`;
           campaignPreview.hidden = true;
         }
       };

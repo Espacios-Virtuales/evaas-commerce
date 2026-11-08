@@ -11,7 +11,7 @@ const { name, previewTarget } = Astro.props;
 
 <fieldset class="project-color-selector" data-project-color-selector data-preview-target={previewTarget} aria-describedby={`${name}-hint`}>
   <legend>Color del proyecto</legend>
-  <p id={`${name}-hint`}>Este color orienta tu proyecto; no cambia el producto elegido.</p>
+  <p id={`${name}-hint`}>El color cambia la previsualización y queda como referencia para la solicitud. No confirma una identidad visual ni modifica el producto.</p>
   <div class="project-color-options">
     {PROJECT_COLOR_OPTIONS.map((option) => (
       <label class="project-color-option">

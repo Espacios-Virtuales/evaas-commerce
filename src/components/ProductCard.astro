@@ -1,6 +1,6 @@
 ---
 import type { Product } from '../data/products';
-import { formatCLP } from '../data/products';
+import { formatCLP, PUBLIC_PRICE_PERIOD } from '../data/products';
 
 interface Props { product: Product; featured?: boolean; }
 const { product, featured = false } = Astro.props;
@@ -11,18 +11,27 @@ const { product, featured = false } = Astro.props;
   <small>{product.eyebrow}</small>
   <h3>{product.name}</h3>
   <p class="product-purpose">{product.purpose}</p>
+  <p class="product-best-for"><strong>Ideal para:</strong> {product.bestFor}</p>
   <div class="product-price">
     <strong>{formatCLP(product.finalPrice)}</strong>
-    <span>Valor final · boleta o factura</span>
+    <span>Valor final · {PUBLIC_PRICE_PERIOD} · boleta o factura</span>
   </div>
-  <ul class="product-includes">
-    <li>{product.scope}</li>
-    <li>Aplicación básica de tu identidad disponible</li>
-    <li>Publicación y conexión de dominio</li>
-    <li>Sin ecommerce</li>
-  </ul>
+  <section class="product-card-scope" aria-label={`Alcance de ${product.name}`}>
+    <h4>Alcance incluido</h4>
+    <ul class="product-includes">
+      <li>{product.scope}</li>
+      {product.includes.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+  <section class="product-card-limits" aria-label={`Límites de ${product.name}`}>
+    <h4>Fuera del alcance base</h4>
+    <ul class="product-excludes">
+      {product.excludes.slice(0, 3).map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
   <div class="card-actions">
-    <a class:list={['button', !featured && 'button-light']} href={`/activar/${product.slug}`} data-track="product_selected" data-product={product.slug}>Elegir {product.name}</a>
+    <a class:list={['button', !featured && 'button-light']} href={`/activar/${product.slug}`} aria-label={`Preparar solicitud para ${product.name}`} data-track="product_selected" data-product={product.slug}>Preparar solicitud</a>
+    <small>Enviar la solicitud no confirma una compra ni un pago.</small>
     <a class="text-link" href={`/demos/${product.slug}`} data-track="demo_opened" data-demo={product.slug}>Ver demo</a>
   </div>
 </article>

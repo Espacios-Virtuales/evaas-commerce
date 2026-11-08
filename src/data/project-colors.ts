@@ -1,4 +1,4 @@
-// Paleta contractual: docs/contracts/commerce-v04/brand-content.md (L01-C04).
+// Paleta contractual: docs/contracts/commerce-v04/brand-content.md.
 export const PROJECT_COLOR_OPTIONS = [
   { id: 'forest', label: 'Verde bosque', cssValue: '#224A36', textColor: '#FFFFFF' },
   { id: 'garnet', label: 'Granate', cssValue: '#722F37', textColor: '#FFFFFF' },
